@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ดาวน์โหลดเอกสารเทมเพลต</title>
+  <link rel="stylesheet" href="/User_Page/css_user/templates.css" />
+</head>
+<body>
+  <!-- 🔹 Navbar -->
+  <nav>
+    <div class="logo">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <span>Graduate Tracker</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
+      <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+      <li class="dropdown">
+        <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+        <ul class="dropdown-menu">
+          <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
+          <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
+          <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
+          <li><a href="/User_Page/html_user/form4.html">เชิญผู้ทรงคุณวุฒิตรวจประเมิน</a></li>
+          <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูลวิจัย</a></li>
+        </ul>
+      </li>
+      <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
+      <li><a href="/User_Page/html_user/templates.html" class="active">📥 ดาวน์โหลดเอกสาร</a></li>
+      <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
+      <li><a href="/User_Page/html_user/profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🔹 Content -->
+  <div class="form-container">
+    <h2>📥 ดาวน์โหลดเอกสารเทมเพลต</h2>
+    <div class="template-table">
+      <table>
+        <thead>
+          <tr>
+            <th>📄 ชื่อเอกสาร</th>
+            <th>ดาวน์โหลด (.docx)</th>
+            <th>ดาวน์โหลด (.pdf)</th>
+          </tr>
+        </thead>
+        <tbody id="template-list">
+          <!-- ดึงจาก templates.json ด้วย JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="/User_Page/js_user/templates.js"></script>
+</body>
+</html>

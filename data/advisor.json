@@ -1,0 +1,11 @@
+[
+  {
+    "email": "advisor1@kmitl.ac.th",
+    "password": "123456",
+    "fullname": "ผศ.สุระชัย พิมพ์สาลี",
+    "maxProjects": 10,
+    "currentProjects": 3,
+    "level": ["ปริญญาโท", "ปริญญาเอก"],
+    "departments": ["ครุศาสตร์วิศวกรรม"]
+  }
+]

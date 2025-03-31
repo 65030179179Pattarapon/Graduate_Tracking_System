@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ลงลายเซ็นออนไลน์</title>
+  <link rel="stylesheet" href="/assets/signature/signature.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>✍️ ลงลายเซ็นออนไลน์</h2>
+      <p>กรุณาเซ็นชื่อของคุณในกล่องด้านล่าง ระบบจะบันทึกลายเซ็นของคุณเพื่อใช้ในการยื่นเอกสารทุกฉบับ</p>
+
+      <canvas id="signature-pad"></canvas>
+
+      <div class="actions">
+        <button onclick="clearPad()">🧹 ล้างลายเซ็น</button>
+        <button onclick="submitSignature()">✅ บันทึกลายเซ็น</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/signature/signature.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>คู่มือการใช้งาน - Graduate Tracker</title>
+  <link rel="stylesheet" href="/User_Page/css_user/guide.css"/>
+</head>
+<body>
+  <nav>
+    <div class="logo">
+        <img src="/assets/images/logo.png" alt="KMITL Logo">
+        <span>Graduate Tracker</span>
+    </div>
+    <ul class="nav-links">
+        <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
+        <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+        <li class="dropdown">
+            <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+            <ul class="dropdown-menu">
+                <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
+                <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
+                <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
+                <li><a href="/User_Page/html_user/form4.html">เชิญผู้ทรงคุณวุฒิตรวจประเมิน</a></li>
+                <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูลวิจัย</a></li>
+            </ul>
+        </li>
+        <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
+        <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
+        <li><a href="/User_Page/html_user/guide.html" class="active">📖 คู่มือการใช้งาน</a></li>
+        <li><a href="/User_Page/html_user/profile.html">👤 โปรไฟล์</a></li>
+        <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <div class="guide-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ul>
+        <li onclick="showSection('topic1')">📄 ขั้นตอนการยื่นสอบหัวข้อ</li>
+        <li onclick="showSection('topic2')">📘 ขั้นตอนสอบวิทยานิพนธ์สุดท้าย</li>
+        <li onclick="showSection('topic3')">📝 ขั้นตอนการกรอกเอกสาร</li>
+        <li onclick="showSection('topic4')">🔍 วิธีเช็คสถานะเอกสาร</li>
+        <li onclick="showSection('topic5')">✍️ วิธีเปลี่ยนลายเซ็น</li>
+      </ul>
+    </aside>
+
+    <!-- Content -->
+    <section class="content">
+      <div id="topic1" class="guide-section">
+        <h2>📄 ขั้นตอนการยื่นสอบหัวข้อและเค้าโครง</h2>
+        <iframe src="/assets/pdf/ขั้นตอนยื่นสอบหัวข้อ.pdf" width="100%" height="500px"></iframe>
+        <a href="/assets/pdf/ขั้นตอนยื่นสอบหัวข้อ.pdf" class="btn-download" target="_blank">📥 ดาวน์โหลดเอกสาร</a>
+      </div>
+
+      <div id="topic2" class="guide-section" style="display: none;">
+        <h2>📘 ขั้นตอนสอบวิทยานิพนธ์ขั้นสุดท้าย</h2>
+        <iframe src="/assets/pdf/ขั้นตอนสอบวิทยานิพนธ์.pdf" width="100%" height="500px"></iframe>
+        <a href="/assets/pdf/ขั้นตอนสอบวิทยานิพนธ์.pdf" class="btn-download" target="_blank">📥 ดาวน์โหลดเอกสาร</a>
+      </div>
+
+      <div id="topic3" class="guide-section" style="display: none;">
+        <h2>📝 ขั้นตอนการกรอกแบบฟอร์ม</h2>
+        <ol>
+          <li>เข้าสู่ระบบผ่านอีเมล @kmitl.ac.th</li>
+          <li>คลิก “กรอกแบบฟอร์ม” แล้วเลือกแบบฟอร์มที่ต้องการ</li>
+          <li>ระบบจะดึงข้อมูลส่วนตัวมาให้โดยอัตโนมัติ</li>
+          <li>กรอกข้อมูลเฉพาะส่วนที่จำเป็น</li>
+          <li>กด “ส่งแบบฟอร์ม” เพื่อบันทึก</li>
+        </ol>
+      </div>
+
+      <div id="topic4" class="guide-section" style="display: none;">
+        <h2>🔍 วิธีเช็คสถานะเอกสาร</h2>
+        <ol>
+          <li>เข้าสู่ระบบ แล้วเลือก “สถานะเอกสาร”</li>
+          <li>ระบบแสดงสถานะ: รอดำเนินการ / อนุมัติ / ไม่อนุมัติ</li>
+          <li>คลิกที่ “ชื่อเอกสารที่ต้องการ” เพื่อดูสถานะและรายละเอียดของเอกสาร</li>
+        </ol>
+      </div>
+
+      <div id="topic5" class="guide-section" style="display: none;">
+        <h2>✍️ วิธีเปลี่ยนลายเซ็น</h2>
+        <ol>
+          <li>เข้าเมนู “โปรไฟล์”</li>
+          <li>คลิก “แก้ไขลายเซ็น”</li>
+          <li>เซ็นชื่อใหม่ แล้วกด “บันทึก”</li>
+          <li>ระบบจะอัปเดตลายเซ็นทุกเอกสารให้อัตโนมัติ</li>
+        </ol>
+      </div>
+    </section>
+  </div>
+
+  <script src="/User_Page/js_user/guide.js"></script>
+</body>
+</html>

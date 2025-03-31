@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ขออนุญาตเก็บข้อมูลวิจัย</title>
+  <link rel="stylesheet" href="/User_Page/css_user/form5.css" />
+</head>
+<body>
+  <!-- 🔹 Navbar -->
+  <nav>
+    <div class="logo">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <span>Graduate Tracker</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
+      <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+      <li class="dropdown">
+        <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+        <ul class="dropdown-menu">
+          <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
+          <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
+          <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
+          <li><a href="/User_Page/html_user/form4.html">เชิญผู้ทรงคุณวุฒิตรวจประเมิน</a></li>
+          <li><a href="/User_Page/html_user/form5.html" class="active">ขออนุญาตเก็บข้อมูล</a></li>
+        </ul>
+      </li>
+      <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
+      <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
+      <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
+      <li><a href="/User_Page/html_user/profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <div class="form-container">
+    <h2>📑 ขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</h2>
+    <form id="form5">
+      <fieldset>
+        <legend>📌 ข้อมูลนักศึกษา</legend>
+        <input type="text" id="prefix" placeholder="นาย" disabled />
+        <input type="text" id="fullname" placeholder="ภัทรพล พลกุล" disabled />
+        <input type="text" id="student-id" placeholder="65030179" disabled />
+        <input type="text" id="degree" placeholder="ปริญญาโท" disabled />
+        <input type="text" id="program" placeholder="ครุศาสตร์อุตสาหกรรมมหาบัณฑิต" disabled />
+        <input type="text" id="department" placeholder="ภาควิชาครุศาสตร์วิศวกรรม" disabled />
+      </fieldset>
+
+      <fieldset>
+        <legend>📖 ข้อมูลวิทยานิพนธ์</legend>
+        <input type="text" id="approved" placeholder="25 มีนาคม 2568" disabled />
+        <input type="text" id="thesis-title" placeholder="เว็บแอพพลิเคชันสำหรับระบบติดตามสถานะนักศึกษาระดับบัณฑิตศึกษา" disabled />
+      </fieldset>
+
+      <fieldset>
+        <legend>📋 รายละเอียดการเก็บข้อมูล*</legend>
+        <label><input type="checkbox" name="data-type" value="บทเรียน" /> บทเรียน</label><br />
+        <label><input type="checkbox" name="data-type" value="แบบประเมิน" /> แบบประเมิน</label><br />
+        <label><input type="checkbox" name="data-type" value="แบบทดสอบ" /> แบบทดสอบ</label><br />
+        <label><input type="checkbox" name="data-type" value="แบบสอบถาม" /> แบบสอบถาม</label><br />
+        <label><input type="checkbox" name="data-type" value="อื่นๆ" /> อื่นๆ: <input type="text" id="other-data" placeholder="ระบุเพิ่มเติม*" /></label><br />
+        <label>จำนวนหนังสือขออนุญาต*: <input type="number" id="num-docs" min="1" required /></label>
+      </fieldset>
+
+      <button type="submit">📤 ส่งแบบฟอร์ม</button>
+    </form>
+  </div>
+
+  <script src="/User_Page/js_user/form5.js"></script>
+</body>
+</html>

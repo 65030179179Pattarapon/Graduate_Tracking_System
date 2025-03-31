@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>สถานะเอกสาร | Graduate Tracker</title>
+  <link rel="stylesheet" href="/User_Page/css_user/status.css" />
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <span>Graduate Tracker</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
+      <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+      <li class="dropdown">
+        <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+        <ul class="dropdown-menu">
+          <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
+          <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
+          <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
+          <li><a href="/User_Page/html_user/form4.html" class="active">เชิญผู้ทรงคุณวุฒิ</a></li>
+          <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูล</a></li>
+        </ul>
+      </li>
+      <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
+      <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
+      <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
+      <li><a href="/User_Page/html_user/profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🔻 Status Dashboard -->
+  <div class="status-container">
+    <div class="status-box approved">
+      <h3>✔️ อนุมัติแล้ว</h3>
+      <ul>
+        <li><a href="/User_Page/html_user/status_approved_form2.html">ฟอร์มเสนอหัวข้อ (25 มี.ค. 2568)</a></li>
+        <li><a href="/User_Page/html_user/status_approved_form5.html">ขออนุญาตเก็บข้อมูล (28 มี.ค. 2568)</a></li>
+      </ul>
+    </div>
+    <div class="status-box pending">
+      <h3>⌛ กำลังดำเนินการ</h3>
+      <ul>
+        <li><a href="/User_Page/html_user/status_pending_form4.html">ฟอร์มขอเชิญผู้ทรงคุณวุฒิ</a></li>
+      </ul>
+    </div>
+    <div class="status-box rejected">
+      <h3>❌ ไม่อนุมัติ</h3>
+      <ul>
+        <li><a href="/User_Page/html_user/status_rejected_eng.html">ฟอร์มยื่นผลสอบภาษาอังกฤษ (แก้ไขคะแนน)</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="/User_Page/js_user/status.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+[
+    {
+      "name": "ฟอร์มขอรับรองอาจารย์ที่ปรึกษา",
+      "docx": "/assets/templates/form1.docx",
+      "pdf": "/assets/templates/form1.pdf"
+    },
+    {
+      "name": "ฟอร์มเสนอหัวข้อวิทยานิพนธ์",
+      "docx": "/assets/templates/form2.docx",
+      "pdf": "/assets/templates/form2.pdf"
+    },
+    {
+      "name": "ฟอร์มนำส่งเอกสารหัวข้อ",
+      "docx": "/assets/templates/form3.docx",
+      "pdf": "/assets/templates/form3.pdf"
+    },
+    {
+      "name": "ฟอร์มเชิญผู้ทรงคุณวุฒิประเมิน",
+      "docx": "/assets/templates/form4.docx",
+      "pdf": "/assets/templates/form4.pdf"
+    },
+    {
+      "name": "ฟอร์มขออนุญาตเก็บข้อมูลวิจัย",
+      "docx": "/assets/templates/form5.docx",
+      "pdf": "/assets/templates/form5.pdf"
+    }
+  ]
+  

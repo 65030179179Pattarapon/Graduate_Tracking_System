@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>โปรไฟล์</title>
+  <link rel="stylesheet" href="/User_Page/css_user/profile.css" />
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <span>Graduate Tracker</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
+      <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+      <li class="dropdown">
+        <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+        <ul class="dropdown-menu">
+          <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
+          <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
+          <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
+          <li><a href="/User_Page/html_user/form4.html">เชิญผู้ทรงคุณวุฒิ</a></li>
+          <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูล</a></li>
+        </ul>
+      </li>
+      <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
+      <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
+      <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
+      <li><a href="/User_Page/html_user/profile.html" class="active">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <div class="profile-container">
+    <div class="left-panel">
+      <div class="profile-card">
+        <img id="profile-img" src="/images/profile-placeholder.png" alt="รูปโปรไฟล์" />
+        <br>
+        <input type="file" id="upload-img" accept="image/*">
+        <button id="remove-img">🗑️ ลบรูปโปรไฟล์</button>
+        <h3 id="fullname" class="label">นายภัทรพล พลกุล</h3>
+        <p>รหัสนักศึกษา: <span id="student-id" class="label">65030179</span></p>
+        <p>เบอร์โทรศัพท์: <span id="phone" class="label">083-880-3421</span></p>
+        <p>อีเมล: <span id="email" class="label">65030179@kmitl.ac.th</span></p>
+      </div>
+
+      <div class="signature-block">
+        <h3>✒️ ลายเซ็นออนไลน์</h3>
+        <canvas id="signature-canvas" width="300" height="150"></canvas>
+        <br>
+        <button id="clear-signature">🧽 ล้าง</button>
+        <button id="submit-signature">📥 บันทึกลายเซ็น</button>
+        <p id="signature-status"></p>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="info-box">
+        <h3>📘 ข้อมูลการศึกษา</h3>
+        <p>ระดับ: <span id="degree" class="label">ปริญญาโท</span></p>
+        <p>หลักสูตร: <span id="program" class="label">ครุศาสตร์อุตสาหกรรมมหาบัณฑิต</span></p>
+        <p>ภาควิชา: <span id="department" class="label">ภาควิชาครุศาสตร์วิศวกรรม</span></p>
+        <p>คณะ: <span id="faculty" class="label">ครุศาสตร์อุตสาหกรรมและเทคโนโลยี</span></p>
+        <p>แผน: <span id="plan" class="label">แผน ก แบบ ก2</span></p>
+      </div>
+
+      <div class="info-box">
+        <h3>📖 วิทยานิพนธ์</h3>
+        <p>ชื่อหัวข้อ: <span id="thesistitle" class="label">เว็บแอพพลิเคชันสำหรับระบบติดตามสถานะนักศึกษาระดับบัณฑิตศึกษา</span></p>
+        <p>อ.ที่ปรึกษาหลัก: <span id="advisor-main" class="label">ผศ.สุระชัย พิมพ์สาลี</span></p>
+        <p>อ.ที่ปรึกษาร่วม 1: <span id="advisor-co1" class="label">ผศ.พงษ์เกียรติ จงไตรลักษณ์</span></p>
+        <p>อ.ที่ปรึกษาร่วม 2: <span id="advisor-co2" class="label">-</span></p>
+        <p>วันที่สอบหัวข้อ: <span id="proposal-date" class="label">18 มีนาคม 2568</span></p>
+        <p>สถานะสอบหัวข้อ: <span id="proposal-status" class="label">ผ่าน</span></p>
+        <p>วันที่สอบขั้นสุดท้าย: <span id="final-date" class="label">20 สิงหาคม 2568</span></p>
+        <p>สถานะสอบขั้นสุดท้าย: <span id="final-status" class="label">-</span></p>
+      </div>
+
+      <div class="info-box">
+        <h3>📝 ผลสอบภาษาอังกฤษ</h3>
+        <p>ประเภท: <span id="eng-type" class="label">KMITL-TEP</span></p>
+        <p>คะแนน: <span id="eng-score" class="label">41</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/User_Page/js_user/profile.js"></script>
+</body>
+</html>

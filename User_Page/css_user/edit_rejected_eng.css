@@ -1,0 +1,155 @@
+/* 🎨 Theme */
+:root {
+    --color-primary: #ed4988;
+    --color-secondary: #f1592b;
+    --approved: #d1f5d3;
+    --pending: #fff3cd;
+    --rejected: #f8d7da;
+    --text: #333;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #fef7ff;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  nav {
+    background: #ed4988;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    flex-wrap: wrap;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo img {
+    width: 300px;
+  }
+  .nav-links {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-links li {
+    margin: 0 10px;
+    position: relative;
+  }
+  .nav-links li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+  }
+  .nav-links li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  /* 📌 Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 10px;
+    list-style: none;
+    top: 100%;
+    left: 0;
+    width: 250px;
+    z-index: 1000;
+}
+
+.dropdown-menu li {
+    padding: 5px 10px;
+}
+
+.dropdown-menu li a {
+    color: #FE0066;
+    font-size: 14px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+  main {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #ed4988;
+  }
+  
+  /* Form Container */
+  .form-container {
+    background: white;
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+  
+  h2 {
+    color: var(--color-secondary);
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .note {
+    font-size: 14px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  input, select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  button {
+    padding: 12px;
+    background: var(--color-primary);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    transition: 0.3s;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background: #d03b74;
+  }
+  
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+    .form-container {
+      margin: 15px;
+      padding: 20px;
+    }
+  }
+  

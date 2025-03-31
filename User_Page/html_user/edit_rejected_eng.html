@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>แก้ไขฟอร์มยื่นผลสอบอังกฤษ</title>
+  <link rel="stylesheet" href="/User_Page/css_user/edit_rejected_eng.css" />
+</head>
+<body>
+    <nav>
+      <div class="logo">
+        <img src="/assets/images/logo.png" alt="KMITL Logo" />
+        <span>Graduate Tracker</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
+        <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+        <li class="dropdown">
+          <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+          <ul class="dropdown-menu">
+            <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
+            <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
+            <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
+            <li><a href="/User_Page/html_user/form4.html" class="active">เชิญผู้ทรงคุณวุฒิ</a></li>
+            <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูล</a></li>
+          </ul>
+        </li>
+        <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
+        <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
+        <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
+        <li><a href="/User_Page/html_user/profile.html">👤 โปรไฟล์</a></li>
+        <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+      </ul>
+    </nav>
+
+  <!-- ✅ Edit Form -->
+  <div class="form-container">
+    <h2>🔁 แก้ไขฟอร์มยื่นผลสอบภาษาอังกฤษ</h2>
+    <p class="note">📌 กรุณาแนบเอกสารฉบับจริงที่ออกโดยหน่วยงานจัดสอบเท่านั้น</p>
+
+    <form id="resubmit-form">
+      <label for="exam-type">ประเภทการสอบภาษาอังกฤษ:</label>
+      <select id="exam-type" required>
+        <option value="">-- กรุณาเลือก --</option>
+        <option value="TOEFL">TOEFL</option>
+        <option value="IELTS">IELTS</option>
+        <option value="CU-TEP">CU-TEP</option>
+        <option value="TU-GET">TU-GET</option>
+        <option value="TOEIC">TOEIC</option>
+        <option value="MU GRAD Test">MU GRAD Test</option>
+        <option value="KMITL-TEP">KMITL-TEP</option>
+      </select>
+
+      <label for="score">คะแนนที่ได้รับ:</label>
+      <input type="number" id="score" placeholder="เช่น 90" min="0" required />
+
+      <label for="new-file">แนบไฟล์ผลสอบ (PDF, JPG, PNG):</label>
+      <input type="file" id="new-file" accept=".pdf,.jpg,.png" required />
+
+      <button type="submit">📤 ส่งแบบฟอร์มอีกครั้ง</button>
+    </form>
+  </div>
+
+  <script src="/User_Page/js_user/edit_rejected_eng.js"></script>
+</body>
+</html>
