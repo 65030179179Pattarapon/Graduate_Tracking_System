@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>จัดการโครงสร้างหลักสูตร - Graduate Tracker</title>
+  <link rel="stylesheet" href="/Admin_Page/css_admin/manage_structure.css" />
+</head>
+<body>
+  <!-- 🔶 Navbar -->
+  <nav class="topnav">
+    <div class="logo-section">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <h1>Graduate Tracker</h1>
+    </div>
+    <ul class="menu-links">
+      <li><a href="/Admin_Page/html_admin/admin_home.html">🏠 หน้าหลัก</a></li>
+      <li><a href="#" class="active">🎓 จัดการภาค/หลักสูตร/แผน</a></li>
+      <li><a href="/Admin_Page/html_admin/manage_students.html">👨‍🎓 จัดการนักศึกษา</a></li>
+      <li><a href="/Admin_Page/html_admin/manage_advisors.html">👨‍🏫 จัดการอาจารย์</a></li>
+      <li><a href="/Admin_Page/html_admin/manage_professors.html">👥 จัดการผู้ทรงคุณวุฒิ</a></li>
+      <li><a href="/Admin_Page/html_admin/manage_guides.html">📖 คู่มือ</a></li>
+      <li><a href="/Admin_Page/html_admin/notifications.html">🔔 แจ้งเตือน</a></li>
+      <li><a href="/Admin_Page/html_admin/admin_profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🔷 Tabs -->
+  <div class="structure-tabs">
+    <button onclick="showTab('department')">🏫 ภาควิชา</button>
+    <button onclick="showTab('program')">📘 หลักสูตร</button>
+    <button onclick="showTab('plan')">🧾 แผนการเรียน</button>
+  </div>
+
+  <!-- 🔸 Main Content -->
+  <main class="content">
+    <section id="tab-department" class="structure-section">
+      <h2>🏫 ภาควิชา <button class="add-button" data-type="ภาควิชา">➕ เพิ่ม</button></h2>
+      <div class="table-container">
+        <table><thead><tr><th>ชื่อภาควิชา</th><th>วันที่เพิ่ม</th><th>Admin ID</th><th>การจัดการ</th></tr></thead><tbody id="department-table"></tbody></table>
+      </div>
+    </section>
+
+    <section id="tab-program" class="structure-section" style="display:none">
+      <h2>📘 หลักสูตร <button class="add-button" data-type="หลักสูตร">➕ เพิ่ม</button></h2>
+      <div class="table-container">
+        <table><thead><tr><th>ชื่อหลักสูตร</th><th>วันที่เพิ่ม</th><th>Admin ID</th><th>การจัดการ</th></tr></thead><tbody id="program-table"></tbody></table>
+      </div>
+    </section>
+
+    <section id="tab-plan" class="structure-section" style="display:none">
+      <h2>🧾 แผนการเรียน <button class="add-button" data-type="แผนการเรียน">➕ เพิ่ม</button></h2>
+      <div class="table-container">
+        <table><thead><tr><th>ชื่อแผน</th><th>วันที่เพิ่ม</th><th>Admin ID</th><th>การจัดการ</th></tr></thead><tbody id="plan-table"></tbody></table>
+      </div>
+    </section>
+  </main>
+
+  <!-- 🔧 Modal สำหรับเพิ่ม/แก้ไข -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeEditModal()">&times;</span>
+      <h3 id="modal-title">เพิ่มข้อมูล</h3>
+      <input type="hidden" id="edit-type">
+      <input type="hidden" id="edit-id">
+      <label>ชื่อ:</label>
+      <input type="text" id="edit-name" placeholder="กรอกชื่อ...">
+      <div class="modal-actions">
+        <button onclick="saveEdit()">💾 บันทึก</button>
+        <button onclick="closeEditModal()">❌ ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/Admin_Page/js_admin/manage_structure.js"></script>
+</body>
+</html>

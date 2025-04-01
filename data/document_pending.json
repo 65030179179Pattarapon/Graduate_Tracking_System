@@ -1,1 +1,21 @@
-[{'title': 'เสนอหัวข้อวิทยานิพนธ์', 'student': 'ภัทรพล พลกุล', 'status': 'รอตรวจ'}, {'title': 'ขออนุมัติที่ปรึกษา', 'student': 'ณัฐวุฒิ สมใจ', 'status': 'รอตรวจ'}]
+[
+    {
+      "title": "แบบฟอร์มขออนุมัติที่ปรึกษา",
+      "student": "น.ส.มนัญชยา ศรีแสง",
+      "status": "รอตรวจ",
+      "type": "ฟอร์ม 1",
+      "submitted_date": "2025-03-25",
+      "submit_type": "first",
+      "link": "/documents/pending/form1_001.pdf"
+    },
+    {
+      "title": "ฟอร์มเสนอหัวข้อวิทยานิพนธ์",
+      "student": "นายอานนท์ สุขเกษม",
+      "status": "แก้ไขแล้วส่งกลับ",
+      "type": "ฟอร์ม 2",
+      "submitted_date": "2025-03-23",
+      "submit_type": "resubmit",
+      "link": "/documents/pending/form2_003.pdf"
+    }
+  ]
+  

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Home - Graduate Tracker</title>
+  <link rel="stylesheet" href="/Admin_Page/css_admin/admin_home.css" />
+</head>
+<body>
+  <!-- 🔶 Top Navigation -->
+  <nav class="topnav">
+    <div class="logo-section">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <h1>Graduate Tracker</h1>
+    </div>
+    <ul class="menu-links">
+      <li><a href="admin_home.html" class="active">🏠 หน้าหลัก</a></li>
+      <li><a href="manage_structure.html">🎓 จัดการคณะ/ภาค/หลักสูตร/แผน</a></li>
+      <li><a href="manage_students.html">👨‍🎓 จัดการนักศึกษา</a></li>
+      <li><a href="manage_advisors.html">👨‍🏫 จัดการอาจารย์ที่ปรึกษา</a></li>
+      <li><a href="manage_professors.html">👥 จัดการผู้ทรงคุณวุฒิภายนอก</a></li>
+      <li><a href="manage_guides.html">📖 จัดการคู่มือ</a></li>
+      <li><a href="notifications.html">🔔 แจ้งเตือน</a></li>
+      <li><a href="admin_profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🔷 Sidebar Menu -->
+  <div class="sidebar">
+    <button onclick="showSection('pending')">📄 เอกสารรอตรวจ</button>
+    <button onclick="showSection('due')">⏰ เอกสารใกล้กำหนด</button>
+    <button onclick="showSection('students')">👨‍🎓 นักศึกษาทั้งหมด</button>
+    <button onclick="showSection('approved')">✅ เอกสารอนุมัติแล้ว</button>
+    <button onclick="showSection('rejected')">❌ เอกสารไม่อนุมัติ</button>
+  </div>
+
+  <!-- 🔸 Main Area -->
+  <main>
+
+    <!-- Section: Pending -->
+    <div class="section" id="section-pending">
+      <h2>📄 เอกสารรอตรวจ</h2>
+      <div class="stats">
+        <span id="total-docs">📄 ทั้งหมด: 0</span>
+        <span id="status-pending">⏳ รอตรวจ: 0</span>
+        <span id="status-revised">📝 แก้ไขแล้วส่งกลับ: 0</span>
+      </div>
+      <div class="filter-group">
+        <select id="filter-category-pending">
+          <option value="all">ทั้งหมด</option>
+          <option value="title">เรื่อง</option>
+          <option value="student">ผู้ส่ง</option>
+          <option value="status">สถานะ</option>
+          <option value="type">ประเภท</option>
+          <option value="date">วันที่ส่ง</option>
+        </select>
+        <input type="text" id="filter-pending" placeholder="🔍 ค้นหา..." oninput="filterTable('pending')">
+      </div>
+      <div class="table-container">
+        <table id="table-pending">
+          <thead>
+            <tr>
+              <th>เรื่อง</th>
+              <th>ผู้ส่ง</th>
+              <th>สถานะ</th>
+              <th>ประเภท</th>
+              <th>วันที่ส่ง</th>
+              <th>ลิงก์</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Due -->
+    <div class="section" id="section-due" style="display: none;">
+      <h2>⏰ เอกสารใกล้กำหนด</h2>
+      <div class="stats">
+        <span id="due-total">📄 ทั้งหมด: 0</span>
+        <span id="due-3days">⚠️ น้อยกว่า 3 วัน: 0</span>
+        <span id="due-7days">⏳ น้อยกว่า 7 วัน: 0</span>
+      </div>
+      <div class="filter-group">
+        <select id="filter-category-due">
+          <option value="all">ทั้งหมด</option>
+          <option value="title">เรื่อง</option>
+          <option value="student">ผู้ส่ง</option>
+          <option value="status">สถานะ</option>
+          <option value="type">ประเภท</option>
+          <option value="days">วันคงเหลือ</option>
+        </select>
+        <input type="text" id="filter-due" placeholder="🔍 ค้นหา..." oninput="filterTable('due')">
+      </div>
+      <div class="table-container">
+        <table id="table-due">
+          <thead>
+            <tr>
+              <th>เรื่อง</th>
+              <th>ผู้ส่ง</th>
+              <th>สถานะ</th>
+              <th>ประเภท</th>
+              <th>วันคงเหลือ</th>
+              <th>ลิงก์</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Students -->
+    <div class="section" id="section-students" style="display: none;">
+      <h2>👨‍🎓 นักศึกษาทั้งหมด</h2>
+      <div class="stats">
+        <span id="students-total">👥 ทั้งหมด: 0</span>
+        <span id="students-master">🎓 ป.โท: 0</span>
+        <span id="students-phd">🎓 ป.เอก: 0</span>
+        <span id="students-status-studying">✅ เรียนอยู่: 0</span>
+        <span id="students-status-drop">⛔ ดรอป: 0</span>
+        <span id="students-program">📘 หลักสูตร: 0</span>
+        <span id="students-department">🏫 ภาควิชา: 0</span>
+        <span id="students-plan">🧾 แผน: 0</span>
+      </div>
+      <div class="filter-group">
+        <select id="filter-category-students">
+          <option value="all">ทั้งหมด</option>
+          <option value="name">ชื่อ</option>
+          <option value="program">หลักสูตร</option>
+          <option value="degree">ระดับ</option>
+          <option value="department">ภาควิชา</option>
+          <option value="plan">แผน</option>
+          <option value="status">สถานะ</option>
+        </select>
+        <input type="text" id="filter-students" placeholder="🔍 ค้นหา..." oninput="filterTable('students')">
+      </div>
+      <div class="table-container">
+        <table id="table-students">
+          <thead>
+            <tr>
+              <th>ชื่อ</th>
+              <th>หลักสูตร</th>
+              <th>ระดับ</th>
+              <th>ภาควิชา</th>
+              <th>แผน</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Approved -->
+    <div class="section" id="section-approved" style="display: none;">
+      <h2>✅ เอกสารอนุมัติแล้ว</h2>
+      <div class="stats">
+        <span id="approved-total">📄 ทั้งหมด: 0</span>
+        <span id="approved-type-count">📁 ประเภท: 0</span>
+      </div>
+      <div class="filter-group">
+        <select id="filter-category-approved">
+          <option value="all">ทั้งหมด</option>
+          <option value="title">เรื่อง</option>
+          <option value="student">ผู้ส่ง</option>
+          <option value="type">ประเภท</option>
+          <option value="date">วันที่อนุมัติ</option>
+        </select>
+        <input type="text" id="filter-approved" placeholder="🔍 ค้นหา..." oninput="filterTable('approved')">
+      </div>
+      <div class="table-container">
+        <table id="table-approved">
+          <thead>
+            <tr>
+              <th>เรื่อง</th>
+              <th>ผู้ส่ง</th>
+              <th>ประเภท</th>
+              <th>วันที่อนุมัติ</th>
+              <th>ลิงก์</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section: Rejected -->
+    <div class="section" id="section-rejected" style="display: none;">
+      <h2>❌ เอกสารไม่อนุมัติ</h2>
+      <div class="stats">
+        <span id="rejected-total">📄 ทั้งหมด: 0</span>
+        <span id="rejected-form1">📝 ฟอร์ม 1: 0</span>
+        <span id="rejected-form2">📝 ฟอร์ม 2: 0</span>
+        <span id="rejected-form3">📝 ฟอร์ม 3: 0</span>
+        <span id="rejected-form4">📝 ฟอร์ม 4: 0</span>
+        <span id="rejected-form5">📝 ฟอร์ม 5: 0</span>
+      </div>
+      <div class="filter-group">
+        <select id="filter-category-rejected">
+          <option value="all">ทั้งหมด</option>
+          <option value="title">เรื่อง</option>
+          <option value="student">ผู้ส่ง</option>
+          <option value="comment">หมายเหตุ</option>
+          <option value="date">วันที่ส่งกลับ</option>
+        </select>
+        <input type="text" id="filter-rejected" placeholder="🔍 ค้นหา..." oninput="filterTable('rejected')">
+      </div>
+      <div class="table-container">
+        <table id="table-rejected">
+          <thead>
+            <tr>
+              <th>เรื่อง</th>
+              <th>ผู้ส่ง</th>
+              <th>วันที่ส่งกลับ</th>
+              <th>หมายเหตุ</th>
+              <th>ลิงก์เอกสาร</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/Admin_Page/js_admin/admin_home.js"></script>
+</body>
+</html>

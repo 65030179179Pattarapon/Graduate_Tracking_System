@@ -1,0 +1,222 @@
+/* 🎨 Theme Colors */
+:root {
+  --color-primary: #ed4988;
+  --color-secondary: #f1592b;
+  --bg: #fef7ff;
+  --text: #333;
+}
+
+/* 🌐 Base Styles */
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* 🔶 Top Navigation */
+.topnav {
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-section img {
+  width: 70px;
+  height: auto;
+}
+
+.logo-section h1 {
+  font-size: 16px;ฤ
+  margin: 0;
+  font-weight: 600;
+}
+
+.menu-links {
+  list-style: none;
+  display: flex;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap; /* ✅ ไม่ให้ตกบรรทัด */
+}
+
+.menu-links li a {
+  display: inline-block;
+  padding: 8px 14px;
+  background: rgba(0, 0, 0, 0.1);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-links li a:hover,
+.menu-links li a.active {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* 🔷 Sidebar */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 200px;
+  background: #eeeeee;
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px 10px;
+  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+  z-index: 999;
+}
+
+.sidebar button {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  text-align: left;
+}
+
+.sidebar button:hover {
+  background: #f5f5f5;
+}
+
+/* 🔸 Main Area */
+main {
+  margin-left: 220px;
+  padding: 70px 20px 40px 20px;
+}
+
+/* 🔹 Section Block */
+.section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.section h2 {
+  color: #333;
+  margin-top: 0;
+}
+
+/* 🔢 Stats */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+/* 🔍 Filter */
+.filter-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  flex: 1;
+  min-width: 250px;
+}
+
+/* 📋 ตาราง + Scroll */
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* ✅ ตาราง */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background: var(--color-primary);
+  color: white;
+  z-index: 1;
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background: #fff0f6;
+  cursor: pointer;
+}
+
+/* 🔄 Responsive */
+@media (max-width: 768px) {
+  .topnav {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .menu-links {
+    flex-wrap: wrap;
+    overflow-x: auto;
+  }
+
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    box-shadow: none;
+    margin-bottom: 15px;
+  }
+
+  main {
+    margin: 0;
+    padding: 20px;
+  }
+}
