@@ -1,0 +1,18 @@
+[
+  {
+    "title": "ฟอร์มขออนุมัติที่ปรึกษา",
+    "student": "นางสาวมนัญชยา ศรีแสง",
+    "rejected_date": "2025-03-22",
+    "comment": "ข้อมูลไม่ครบถ้วน",
+    "type": "ฟอร์ม 1",
+    "link": "/documents/rejected/form1_002.pdf"
+  },
+  {
+    "title": "ฟอร์มยื่นผลสอบภาษาอังกฤษ",
+    "student": "นายอานนท์ สุขเกษม",
+    "rejected_date": "2025-03-26",
+    "comment": "แนบผลคะแนนไม่ถูกต้อง",
+    "type": "ฟอร์ม 3",
+    "link": "/documents/rejected/form3_007.pdf"
+  }
+]

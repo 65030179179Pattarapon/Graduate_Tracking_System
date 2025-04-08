@@ -6,8 +6,7 @@
     --text: #333;
   }
   
-  /* 🌐 Base Styles */
-  body {
+body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
     background: var(--bg);
@@ -15,91 +14,95 @@
     overflow-x: hidden;
   }
   
-  /* 🔶 Top Navigation */
-  .topnav {
-    background: var(--color-primary);
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
+/* 🔶 Top Navigation */
+.topnav {
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-start; /* ✅ ทำให้ติดซ้าย */
+  gap: 10px;  /* ✅ เพิ่มช่องไฟนิดหน่อยระหว่างโลโก้กับเมนู */
+  align-items: center;
+  flex-wrap: nowrap;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-section img {
+  width: 100px;
+  height: auto;
+}
+
+.logo-section h1 {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.menu-links {
+  list-style: none;
+  display: flex;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap; /* ✅ ไม่ให้ตกบรรทัด */
+}
+
+.menu-links li a {
+  display: inline-block;
+  padding: 10px 10px;
+  background: rgba(0, 0, 0, 0.1);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-links li a:hover,
+.menu-links li a.active {
+background: rgba(0, 0, 0, 0.25);
+}
   
-  .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  
-  .logo-section img {
-    width: 70px;
-    height: auto;
-  }
-  
-  .logo-section h1 {
-    font-size: 16px;
-    margin: 0;
-    font-weight: 600;
-  }
-  
-  .menu-links {
-    list-style: none;
-    display: flex;
-    gap: 5px;
-    margin: 0;
-    padding: 0;
-    flex-wrap: nowrap;
-  }
-  
-  .menu-links li a {
-    display: inline-block;
-    padding: 8px 14px;
-    background: rgba(0, 0, 0, 0.1);
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .menu-links li a:hover,
-  .menu-links li a.active {
-    background: rgba(0, 0, 0, 0.25);
-  }
-  
-  /* 🔷 Tab Buttons */
-  .structure-tabs {
+  /* Tab Buttons */
+.structure-tabs {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 11px;
     margin: 90px 0 10px;
     flex-wrap: wrap;
   }
   
   .structure-tabs button {
-    background: var(--color-secondary);
+    background: #abaaaa;
     color: white;
     border: none;
-    padding: 10px 24px;
+    padding: 12px 28px;         /* ⬅️ ปรับขนาด padding (บนล่าง, ซ้ายขวา) */
+    font-size: 16px;            /* ⬅️ ขนาดตัวอักษร */
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s;
-    font-size: 15px;
+    width: auto;                /* ⬅️ ให้ขนาดตามเนื้อข้อความ */
+    min-width: 160px;           /* ⬅️ กำหนดความกว้างขั้นต่ำ */
+    text-align: center;
   }
   
   .structure-tabs button:hover {
-    background: #e64c26;
+    background: #979797;
   }
   
   /* 🔍 Filter */
@@ -116,19 +119,19 @@
     border-radius: 6px;
     border: 1px solid #ccc;
     font-size: 14px;
-    min-width: 240px;
+    min-width: 150px;
     flex: 1;
   }
   
   /* 🔸 Main Area */
   main {
     padding: 10px 20px;
-    margin-top: 130px;
-    max-width: 1400px;
+    margin-top: 10px;
+    max-width: 2000px;
     margin-inline: auto;
   }
   .structure-tabs button {
-    background: #abaaaa; /* 🔶 เปลี่ยนเป็นสีที่ต้องการ */
+    background: #abaaaa; /* เปลี่ยนเป็นสีที่ต้องการ */
     color: white;
     border: none;
     padding: 10px 24px;
@@ -138,7 +141,7 @@
     transition: background 0.2s;
     font-size: 15px;
     flex: 1;
-    width: 100%;
+    width: 80%;
     max-width: 100%;
   }
   
@@ -147,7 +150,7 @@
   }  
   
   /* ✅ พื้นหลังตารางให้เป็นสีขาว */
-.structure-section {
+  .structure-section {
     background: white;
     padding: 20px;
     border-radius: 12px;
@@ -172,7 +175,7 @@
   
   
   .structure-section h2 {
-    color: var(--color-primary);
+    color: #333;
     margin-top: 0;
     display: flex;
     justify-content: space-between;

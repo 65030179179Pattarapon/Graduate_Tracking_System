@@ -1,0 +1,23 @@
+[
+    {
+      "student_id": "64010001",
+      "prefix_th": "นาย",
+      "first_name_th": "ศักดิ์ชัย",
+      "last_name_th": "วิริยะกิจ",
+      "degree_level": "ป.โท",
+      "program": "เทคโนโลยีสารสนเทศ",
+      "major": "วิทยาการข้อมูล",
+      "admit_year": "2566"
+    },
+    {
+      "student_id": "64010002",
+      "prefix_th": "นางสาว",
+      "first_name_th": "กัญญารัตน์",
+      "last_name_th": "พิมพ์ใจ",
+      "degree_level": "ป.เอก",
+      "program": "เทคโนโลยีสารสนเทศ",
+      "major": "ปัญญาประดิษฐ์",
+      "admit_year": "2565"
+    }
+  ]
+  

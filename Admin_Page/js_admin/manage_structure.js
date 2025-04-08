@@ -1,3 +1,8 @@
+function logout() {
+  localStorage.clear();
+  window.location.href = "/login/index.html";
+}
+
 // 🔁 เปลี่ยน Tab ตามหมวด
 function showTab(tab) {
     document.querySelectorAll('.structure-section').forEach(sec => {

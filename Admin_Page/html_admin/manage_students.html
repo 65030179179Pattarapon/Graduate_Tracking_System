@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>รายละเอียดนักศึกษา - Graduate Tracker</title>
+  <link rel="stylesheet" href="/Admin_Page/css_admin/manage_students.css" />
+</head>
+<body>
+  <!-- 🔶 Top Navigation -->
+  <nav class="topnav">
+    <div class="logo-section">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <h1>Graduate Tracker</h1>
+    </div>
+    <ul class="menu-links">
+      <li><a href="admin_home.html" >🏠 หน้าหลัก</a></li>
+      <li><a href="manage_structure.html">🎓 จัดการภาค/หลักสูตร/แผน</a></li>
+      <li><a href="students.html" class="active">👨‍🎓 จัดการนักศึกษา</a></li>
+      <li><a href="manage_advisors.html">👨‍🏫 จัดการอาจารย์ที่ปรึกษา</a></li>
+      <li><a href="manage_professors.html">👥 จัดการผู้ทรงคุณวุฒิภายนอก</a></li>
+      <li><a href="manage_guides.html">📖 จัดการคู่มือ</a></li>
+      <li><a href="manage_documents.html">📂 จัดการเอกสาร</a></li>
+      <li><a href="admin_profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🔸 Main Area -->
+  <main>
+    <h2>👨‍🎓 รายละเอียดข้อมูลนักศึกษา</h2>
+
+    <!-- 🔙 Back Button -->
+    <div class="top-actions">
+      <button onclick="window.location.href='students.html'">⬅️ ย้อนกลับ</button>
+    </div>
+
+    <!-- SECTION 1: ข้อมูลทั่วไป -->
+    <section class="section-box" id="general-info">
+      <h2>🧾 ข้อมูลทั่วไป</h2>
+      <div class="form-grid">
+        <input type="text" id="student-id" name="student_id" placeholder="รหัสนักศึกษา *" readonly>
+        <select id="prefix-th" name="prefix_th">
+          <option value="">-- เลือกคำนำหน้าชื่อไทย --</option>
+          <option value="1"> นาย </option>
+          <option value="2"> นางสาว </option>
+          <option value="3"> นาง </option>
+        <input type="text" id="first-name-th" name="first_name_th" placeholder="ชื่อ (TH) *">
+        <input type="text" placeholder="ชื่อกลาง (TH)">
+        <input type="text" id="last-name-th" name="last-name-th" placeholder="นามสกุล (TH) *">
+        <select id="prefix-en" name="prefix_en">
+          <option value="">-- เลือกคำนำหน้าชื่ออังกฤษ --</option>
+          <option value="1"> Mr. </option>
+          <option value="2"> Ms. </option>
+          <option value="3"> Mrs. </option>
+        <input type="text" id="first-name-en" name="first_name_en" placeholder="ชื่อ (EN) *">
+        <input type="text" placeholder="ชื่อกลาง (EN)">
+        <input type="text" id="last-name-en" name="last-name-en" placeholder="นามสกุล (EN) *">
+        <input type="email" placeholder="อีเมล *">
+        <input type="tel" placeholder="เบอร์โทรศัพท์ *">
+        <div class="gender-group">
+          <label><input type="radio" name="gender"> ชาย</label>
+          <label><input type="radio" name="gender"> หญิง</label>
+          <label><input type="radio" name="gender"> ไม่ระบุ</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: ข้อมูลการศึกษา -->
+    <section class="section-box">
+      <h2>🎓 ข้อมูลการศึกษา</h2>
+      <div class="form-grid-3">
+        <div class="form-group">
+          <label>ปีการศึกษาปัจจุบัน *</label>
+          <select id="current-year">
+            <option value="">-- เลือกปี --</option>
+            <option>2575</option>
+            <option>2574</option>
+            <option>2573</option>
+            <option>2572</option>
+            <option>2571</option>
+            <option>2570</option>
+            <option>2569</option>
+            <option>2568</option>
+            <option>2567</option>
+            <option>2566</option>
+            <option>2565</option>
+            <option>2564</option>
+            <option>2563</option>
+            <option>2562</option>
+            <option>2561</option>
+            <option>2560</option>
+          </select>          
+        </div>
+        <div class="form-group">
+          <label>ภาคการศึกษาปัจจุบัน *</label>
+          <select id="current-semester">
+            <option value="">-- เลือกภาค --</option>
+            <option>1</option>
+            <option>2</option>
+            <option>ภาคพิเศษ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ระดับปริญญา *</label>
+          <select id="degree-level" onchange="updatePrograms()">
+            <option value="">-- เลือกระดับ --</option>
+            <option value="ป.โท">ปริญญาโท</option>
+            <option value="ป.เอก">ปริญญาเอก</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>หลักสูตร *</label>
+          <select id="program-list">
+            <option value="">-- เลือกหลักสูตร --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>สาขาวิชา *</label>
+          <input type="text" id="major" />
+        </div>
+        <div class="form-group">
+          <label>ปีการศึกษาที่รับเข้า *</label>
+          <select id="admit-year">
+            <option value="">-- เลือกปี --</option>
+            <option>2575</option>
+            <option>2574</option>
+            <option>2573</option>
+            <option>2572</option>
+            <option>2571</option>
+            <option>2570</option>
+            <option>2569</option>
+            <option>2568</option>
+            <option>2567</option>
+            <option>2566</option>
+            <option>2565</option>
+            <option>2564</option>
+            <option>2563</option>
+            <option>2562</option>
+            <option>2561</option>
+            <option>2560</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ภาคการศึกษาที่รับเข้า *</label>
+          <select id="admit-semester">
+            <option value="">-- เลือกภาค --</option>
+            <option>1</option>
+            <option>2</option>
+            <option>ภาคพิเศษ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ประเภทรับเข้า *</label>
+          <select id="admit-type">
+            <option value="">-- เลือกประเภท --</option>
+            <option>ปกติ</option>
+            <option>พิเศษ</option>
+            <option>สมทบ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>แผนการศึกษา *</label>
+          <input type="text" id="study-plan" />
+        </div>
+        <div class="form-group">
+          <label>สถานะการศึกษา</label>
+          <select id="study-status">
+            <option value="">-- เลือกสถานะ --</option>
+            <option>กำลังศึกษา</option>
+            <option>พักการศึกษา</option>
+            <option>สำเร็จการศึกษา</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ณ วันที่</label>
+          <input type="date" id="status-date" />
+        </div>
+      </div>
+    </section>    
+
+    <!-- SECTION 3: ข้อมูลวิทยานิพนธ์ -->
+    <section class="section-box">
+      <h2>📚 ข้อมูลวิทยานิพนธ์</h2>
+    
+      <!-- 🔹 รายละเอียดหัวข้อวิทยานิพนธ์ -->
+      <div class="subsection">
+        <h3>รายละเอียดหัวข้อวิทยานิพนธ์</h3>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>ชื่อเรื่องวิทยานิพนธ์ (ภาษาไทย)</label>
+            <input type="text" id="thesis-title-th" />
+          </div>
+          <div class="form-group">
+            <label>ชื่อเรื่องวิทยานิพนธ์ (ภาษาอังกฤษ)</label>
+            <input type="text" id="thesis-title-en" />
+          </div>
+          <div class="form-group">
+            <label>วันที่สอบหัวข้อวิทยานิพนธ์</label>
+            <input type="date" id="thesis-proposal-date" name="thesis_proposal_date" lang="th" class="thai-date">
+          </div>
+          <div class="form-group">
+            <label>วันที่ประกาศหัวข้อ ฯ</label>
+            <input type="date" id="thesis-approval-date" />
+          </div>
+        </div>
+      </div>
+    
+      <!-- 🔹 รายละเอียดสอบจบวิทยานิพนธ์ -->
+      <div class="subsection">
+        <h3>รายละเอียดสอบจบวิทยานิพนธ์</h3>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>ชื่อเรื่องวิทยานิพนธ์ (ภาษาไทย)</label>
+            <input type="text" id="final-thesis-title-th" />
+          </div>
+          <div class="form-group">
+            <label>ชื่อเรื่องวิทยานิพนธ์ (ภาษาอังกฤษ)</label>
+            <input type="text" id="final-thesis-title-en" />
+          </div>
+          <div class="form-group">
+            <label>วันที่สอบจบวิทยานิพนธ์</label>
+            <input type="date" id="final-defense-date" />
+          </div>
+        </div>
+      </div>
+    
+      <!-- 🔹 การสอบวัดคุณสมบัติ -->
+      <div class="subsection">
+        <h3>การสอบวัดคุณสมบัติ</h3>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>การสอบวัดคุณสมบัติ</label>
+            <select id="qualification-result">
+              <option value="">-- เลือกผลสอบ --</option>
+              <option>ผ่าน</option>
+              <option>ไม่ผ่าน</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>วันที่ผ่านการสอบวัดคุณสมบัติ</label>
+            <input type="date" id="qualification-date" />
+          </div>
+        </div>
+      </div>
+    
+      <!-- 🔹 การสอบภาษาอังกฤษ ป.โท -->
+      <div class="subsection">
+        <h3>การสอบภาษาอังกฤษ (ป.โท)</h3>
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>ผ่านเกณฑ์คะแนนรับเข้า</label>
+            <select id="eng-m-in">
+              <option value="">-- เลือกผล --</option>
+              <option>ผ่าน</option>
+              <option>ไม่ผ่าน</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ผ่านเกณฑ์คะแนนจบ</label>
+            <select id="eng-m-out">
+              <option value="">-- เลือกผล --</option>
+              <option>ผ่าน</option>
+              <option>ไม่ผ่าน</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>วันที่ผ่านเกณฑ์</label>
+            <input type="date" id="eng-m-date" />
+          </div>
+        </div>
+      </div>
+    
+      <!-- 🔹 การสอบภาษาอังกฤษ ป.เอก -->
+      <div class="subsection">
+        <h3>การสอบภาษาอังกฤษ (ป.เอก)</h3>
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label>ผ่านเกณฑ์คะแนนรับเข้า</label>
+            <select id="eng-d-in">
+              <option value="">-- เลือกผล --</option>
+              <option>ผ่าน</option>
+              <option>ไม่ผ่าน</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>ผ่านเกณฑ์คะแนนจบ</label>
+            <select id="eng-d-out">
+              <option value="">-- เลือกผล --</option>
+              <option>ผ่าน</option>
+              <option>ไม่ผ่าน</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>วันที่ผ่านเกณฑ์</label>
+            <input type="date" id="eng-d-date" />
+          </div>
+        </div>
+      </div>
+    </section>    
+
+    <!-- SECTION 4: อาจารย์ที่ปรึกษา -->
+    <section class="section-box">
+      <div class="table-header-right">
+        <h2>👨‍🏫 อาจารย์ที่ปรึกษาวิทยานิพนธ์</h2>
+        <button onclick="addAdvisorRow()">➕ เพิ่มอาจารย์ที่ปรึกษา</button>
+      </div>
+      <div class="advisor-table">
+        <table>
+          <thead>
+            <tr>
+              <th>อาจารย์ที่ปรึกษาวิทยานิพนธ์ *</th>
+              <th style="width: 200px;">บทบาท</th>
+              <th style="width: 60px;">ลบ</th>
+            </tr>
+          </thead>
+          <tbody id="advisor-container">
+            <tr class="advisor-row">
+              <td>
+                <select class="advisor-select" id="advisor-list">
+                  <option value="">-- เลือกอาจารย์ --</option>
+                  <!-- JS จะเพิ่ม <option> ที่นี่ -->
+                </select>                
+              </td>
+              <td>
+                <div class="radio-group">
+                  <label><input type="radio" name="advisor-role-0" value="main" class="advisor-main-radio"> หลัก</label>
+                  <label><input type="radio" name="advisor-role-0" value="co" class="advisor-co-radio"> ร่วม</label>
+                </div>
+              </td>
+              <td>
+                <button class="delete-advisor-btn" onclick="removeAdvisorRow(this)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section-box">
+      <div class="table-header">
+        <h2>🧑‍⚖️ กรรมการสอบวิทยานิพนธ์</h2>
+        <div class="table-header-right">
+          <button onclick="addExaminerRow()">➕ เพิ่มกรรมการสอบ</button>
+        </div>
+      </div>
+      <div class="examiner-table">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 60px;">ลำดับ</th>
+              <th>กรรมการสอบวิทยานิพนธ์ *</th>
+              <th style="width: 60px;">ลบ</th>
+            </tr>
+          </thead>
+          <tbody id="examiner-body">
+            <tr>
+              <td>1</td>
+              <td>
+                <select class="examiner-select">
+                  <option value="">-- เลือกกรรมการ --</option>
+                  <option value="1">รศ.ดร. สมชาย ทดสอบ</option>
+                  <option value="2">ผศ.ดร. สมหญิง ตัวอย่าง</option>
+                  <option value="3">อ. ตัวแทน พิจารณา</option>
+                </select>
+              </td>
+              <td><button class="delete-btn" onclick="removeExaminerRow(this)">🗑️</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>        
+
+    <section class="section-box">
+      <div class="table-header">
+        <h2>📄 ผลงานตีพิมพ์ของผู้สำเร็จการศึกษา</h2>
+        <div class="table-header-right">
+          <button onclick="addPublicationRow()">➕ เพิ่มผลงานตีพิมพ์</button>
+        </div>
+      </div>
+      <div class="publication-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ชื่อผลงาน *</th>
+              <th>ลักษณะการตีพิมพ์เผยแพร่</th>
+              <th>ไฟล์แนบ</th>
+              <th style="width: 60px;">ลบ</th>
+            </tr>
+          </thead>
+          <tbody id="publication-body">
+            <tr>
+              <td><input type="text" placeholder="ชื่อผลงาน"></td>
+              <td><input type="text" placeholder="ลักษณะการตีพิมพ์เผยแพร่"></td>
+              <td><input type="file" accept=".pdf,.doc,.docx" /></td>
+              <td><button class="delete-btn" onclick="removePublicationRow(this)">🗑️</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>        
+
+    <!-- SECTION 7: เอกสารที่เกี่ยวข้อง -->
+    <section class="section-box">
+      <div class="table-header">
+        <h2>📁 เอกสารที่เกี่ยวข้อง</h2>
+        <div class="table-header-right">
+          <button onclick="addAttachmentRow()">➕ เพิ่มเอกสารที่เกี่ยวข้อง</button>
+        </div>
+      </div>
+      <div class="attachment-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ชื่อเรื่อง *</th>
+              <th>ไฟล์แนบ</th>
+              <th style="width: 60px;">ลบ</th>
+            </tr>
+          </thead>
+          <tbody id="attachment-body">
+            <tr>
+              <td><input type="text" placeholder="ชื่อเรื่อง"></td>
+              <td><input type="file" accept=".pdf,.doc,.docx" /></td>
+              <td><button class="delete-btn" onclick="removeAttachmentRow(this)">🗑️</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>        
+
+    <!-- ปุ่มบันทึก -->
+    <div class="bottom-actions">
+      <button class="save-btn" onclick="confirmSave()">💾 บันทึก</button>
+      <button class="cancel-btn" onclick="window.location.href='admin_home.html'">❌ ยกเลิก</button>
+    </div>
+  </main>
+
+  <script src="/Admin_Page/js_admin/manage_students.js"></script>
+</body>
+</html>

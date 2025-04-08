@@ -6,7 +6,6 @@
   --text: #333;
 }
 
-/* 🌐 Base Styles */
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -21,7 +20,8 @@ body {
   color: white;
   padding: 10px 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* ✅ ทำให้ติดซ้าย */
+  gap: 10px;  /* ✅ เพิ่มช่องไฟนิดหน่อยระหว่างโลโก้กับเมนู */
   align-items: center;
   flex-wrap: nowrap;
   position: fixed;
@@ -34,16 +34,16 @@ body {
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .logo-section img {
-  width: 70px;
+  width: 100px;
   height: auto;
 }
 
 .logo-section h1 {
-  font-size: 16px;ฤ
+  font-size: 14px;
   margin: 0;
   font-weight: 600;
 }
@@ -59,7 +59,7 @@ body {
 
 .menu-links li a {
   display: inline-block;
-  padding: 8px 14px;
+  padding: 10px 10px;
   background: rgba(0, 0, 0, 0.1);
   color: white;
   text-decoration: none;
@@ -74,7 +74,7 @@ body {
 
 .menu-links li a:hover,
 .menu-links li a.active {
-  background: rgba(0, 0, 0, 0.25);
+background: rgba(0, 0, 0, 0.25);
 }
 
 /* 🔷 Sidebar */
@@ -136,6 +136,17 @@ main {
   margin-bottom: 15px;
   font-weight: bold;
   color: var(--color-primary);
+}
+
+.stats span {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.stats span:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* 🔍 Filter */

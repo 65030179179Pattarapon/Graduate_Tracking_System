@@ -15,12 +15,12 @@
     </div>
     <ul class="menu-links">
       <li><a href="admin_home.html" class="active">🏠 หน้าหลัก</a></li>
-      <li><a href="manage_structure.html">🎓 จัดการคณะ/ภาค/หลักสูตร/แผน</a></li>
-      <li><a href="manage_students.html">👨‍🎓 จัดการนักศึกษา</a></li>
+      <li><a href="manage_structure.html">🎓 จัดการภาค/หลักสูตร/แผน</a></li>
+      <li><a href="students.html">👨‍🎓 จัดการนักศึกษา</a></li>
       <li><a href="manage_advisors.html">👨‍🏫 จัดการอาจารย์ที่ปรึกษา</a></li>
       <li><a href="manage_professors.html">👥 จัดการผู้ทรงคุณวุฒิภายนอก</a></li>
       <li><a href="manage_guides.html">📖 จัดการคู่มือ</a></li>
-      <li><a href="notifications.html">🔔 แจ้งเตือน</a></li>
+      <li><a href="manage_documents.html">📂 จัดการเอกสาร</a></li>
       <li><a href="admin_profile.html">👤 โปรไฟล์</a></li>
       <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
     </ul>
@@ -42,10 +42,10 @@
     <div class="section" id="section-pending">
       <h2>📄 เอกสารรอตรวจ</h2>
       <div class="stats">
-        <span id="total-docs">📄 ทั้งหมด: 0</span>
-        <span id="status-pending">⏳ รอตรวจ: 0</span>
-        <span id="status-revised">📝 แก้ไขแล้วส่งกลับ: 0</span>
-      </div>
+        <span id="total-docs" onclick="filterByStatus('all')">📄 ทั้งหมด: 0</span>
+        <span id="status-pending" onclick="filterByStatus('รอตรวจ')">⏳ รอตรวจ: 0</span>
+        <span id="status-revised" onclick="filterByStatus('แก้ไขแล้วส่งกลับ')">📝 แก้ไขแล้วส่งกลับ: 0</span>
+      </div>      
       <div class="filter-group">
         <select id="filter-category-pending">
           <option value="all">ทั้งหมด</option>
@@ -119,9 +119,6 @@
         <span id="students-phd">🎓 ป.เอก: 0</span>
         <span id="students-status-studying">✅ เรียนอยู่: 0</span>
         <span id="students-status-drop">⛔ ดรอป: 0</span>
-        <span id="students-program">📘 หลักสูตร: 0</span>
-        <span id="students-department">🏫 ภาควิชา: 0</span>
-        <span id="students-plan">🧾 แผน: 0</span>
       </div>
       <div class="filter-group">
         <select id="filter-category-students">
@@ -157,7 +154,11 @@
       <h2>✅ เอกสารอนุมัติแล้ว</h2>
       <div class="stats">
         <span id="approved-total">📄 ทั้งหมด: 0</span>
-        <span id="approved-type-count">📁 ประเภท: 0</span>
+        <span id="approved-form1">📝 ฟอร์ม 1: 0</span>
+        <span id="approved-form2">📝 ฟอร์ม 2: 0</span>
+        <span id="approved-form3">📝 ฟอร์ม 3: 0</span>
+        <span id="approved-form4">📝 ฟอร์ม 4: 0</span>
+        <span id="approved-form5">📝 ฟอร์ม 5: 0</span>
       </div>
       <div class="filter-group">
         <select id="filter-category-approved">
@@ -202,7 +203,7 @@
           <option value="title">เรื่อง</option>
           <option value="student">ผู้ส่ง</option>
           <option value="comment">หมายเหตุ</option>
-          <option value="date">วันที่ส่งกลับ</option>
+          <option value="date">วันที่ส่งกลับ</option> <!-- ✅ ต้องใช้ "date" -->
         </select>
         <input type="text" id="filter-rejected" placeholder="🔍 ค้นหา..." oninput="filterTable('rejected')">
       </div>
