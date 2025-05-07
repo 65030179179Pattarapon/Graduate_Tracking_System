@@ -129,6 +129,33 @@ body {
     border-bottom: 1px solid #ddd;
   }
   
+  .student-table tbody tr:hover {
+    background-color: #ffe0eb; /* สีชมพูอ่อนเข้มขึ้นเล็กน้อย */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .table-header-right {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  
+  .add-student-btn {
+    background-color: #ed4988;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .add-student-btn:hover {
+    background-color: #c93d74;
+  }
+  
   @media screen and (max-width: 768px) {
     .filter-bar {
       flex-direction: column;

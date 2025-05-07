@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("/data/mn_students.json")
+    fetch("/data/student.json")
       .then((res) => res.json())
       .then((data) => {
         window.studentList = data;
@@ -20,10 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
       row.innerHTML = `
         <td>${stu.student_id}</td>
         <td>${stu.prefix_th}${stu.first_name_th} ${stu.last_name_th}</td>
-        <td>${stu.degree_level}</td>
-        <td>${stu.program}</td>
-        <td>${stu.major}</td>
-        <td>${stu.admit_year}</td>
+        <td>${stu.email || '-'}</td>
+        <td>${stu.phone || '-'}</td>
+        <td>${stu.thesis_advisor_main || '-'}</td>
       `;
       row.style.cursor = "pointer";
       row.addEventListener("click", () => {
@@ -31,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       tbody.appendChild(row);
     });
-  }
+  }  
   
   function filterStudents() {
     const nameKeyword = document.getElementById("search-name").value.toLowerCase();
@@ -40,11 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
   
     const filtered = window.studentList.filter((stu) => {
       const matchName = stu.first_name_th.toLowerCase().includes(nameKeyword) || stu.student_id.includes(nameKeyword);
-      const matchProgram = !program || stu.degree_level === program;
+      const matchProgram = !program || stu.degree === program;
       const matchYear = !year || stu.admit_year === year;
       return matchName && matchProgram && matchYear;
     });
   
     renderTable(filtered);
   }
+  
   

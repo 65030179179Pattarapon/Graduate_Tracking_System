@@ -234,11 +234,42 @@ table th {
   background-color: #ffe7ee;
 }
 
+.table-header-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.add-student-btn {
+  background-color: #ed4988;
+  color: #fff;
+  padding: 8px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-student-btn:hover {
+  background-color: #c93d74;
+}
 
 .radio-group {
   display: flex;
   gap: 15px;
   margin-top: 5px;
+}
+
+/* ✅ แถวช่องรหัสนักศึกษา (อยู่บรรทัดเดียว) */
+.form-row.single-line {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.form-row.single-line input#student-id {
+  flex: 0 1 278px; /* ขนาดพอเหมาะ */
+  max-width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -249,5 +280,11 @@ table th {
   .menu-links {
     flex-direction: column;
     gap: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-row.single-line input#student-id {
+    flex: 1 1 100%;
   }
 }

@@ -38,26 +38,37 @@
     <!-- SECTION 1: ข้อมูลทั่วไป -->
     <section class="section-box" id="general-info">
       <h2>🧾 ข้อมูลทั่วไป</h2>
+
+      <!-- ✅ บรรทัดที่ 1: รหัสนักศึกษา (แยกเดี่ยว) -->
+      <div class="form-row single-line">
+        <input type="text" id="student-id" name="student_id" placeholder="รหัสนักศึกษา *">
+      </div>
+
+      <!-- ✅ บรรทัดที่ 2-4: ข้อมูลทั่วไป -->
       <div class="form-grid">
-        <input type="text" id="student-id" name="student_id" placeholder="รหัสนักศึกษา *" readonly>
         <select id="prefix-th" name="prefix_th">
           <option value="">-- เลือกคำนำหน้าชื่อไทย --</option>
           <option value="1"> นาย </option>
           <option value="2"> นางสาว </option>
           <option value="3"> นาง </option>
+        </select>
         <input type="text" id="first-name-th" name="first_name_th" placeholder="ชื่อ (TH) *">
         <input type="text" placeholder="ชื่อกลาง (TH)">
         <input type="text" id="last-name-th" name="last-name-th" placeholder="นามสกุล (TH) *">
+
         <select id="prefix-en" name="prefix_en">
           <option value="">-- เลือกคำนำหน้าชื่ออังกฤษ --</option>
           <option value="1"> Mr. </option>
           <option value="2"> Ms. </option>
           <option value="3"> Mrs. </option>
+        </select>
         <input type="text" id="first-name-en" name="first_name_en" placeholder="ชื่อ (EN) *">
         <input type="text" placeholder="ชื่อกลาง (EN)">
         <input type="text" id="last-name-en" name="last-name-en" placeholder="นามสกุล (EN) *">
+
         <input type="email" placeholder="อีเมล *">
         <input type="tel" placeholder="เบอร์โทรศัพท์ *">
+
         <div class="gender-group">
           <label><input type="radio" name="gender"> ชาย</label>
           <label><input type="radio" name="gender"> หญิง</label>
@@ -301,9 +312,11 @@
 
     <!-- SECTION 4: อาจารย์ที่ปรึกษา -->
     <section class="section-box">
-      <div class="table-header-right">
+      <div class="table-header">
         <h2>👨‍🏫 อาจารย์ที่ปรึกษาวิทยานิพนธ์</h2>
-        <button onclick="addAdvisorRow()">➕ เพิ่มอาจารย์ที่ปรึกษา</button>
+        <div class="table-header-right">
+          <button onclick="addAdvisorRow()">➕ เพิ่มอาจารย์ที่ปรึกษา</button>
+        </div>
       </div>
       <div class="advisor-table">
         <table>
@@ -431,7 +444,7 @@
     <!-- ปุ่มบันทึก -->
     <div class="bottom-actions">
       <button class="save-btn" onclick="confirmSave()">💾 บันทึก</button>
-      <button class="cancel-btn" onclick="window.location.href='admin_home.html'">❌ ยกเลิก</button>
+      <button class="cancel-btn" onclick="window.location.href='students.html'">❌ ยกเลิก</button>
     </div>
   </main>
 

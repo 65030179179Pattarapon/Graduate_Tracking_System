@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>จัดการโครงสร้างหลักสูตร - Graduate Tracker</title>
+  <title>จัดการภาควิชาและหลักสูตร - Graduate Tracker</title>
   <link rel="stylesheet" href="/Admin_Page/css_admin/manage_structure.css" />
 </head>
 <body>
@@ -26,53 +26,98 @@
     </ul>
   </nav>
 
-  <!-- 🔷 Tabs -->
+  <!-- 🔹 Tab Buttons -->
   <div class="structure-tabs">
-    <button onclick="showTab('department')">🏫 ภาควิชา</button>
-    <button onclick="showTab('program')">📘 หลักสูตร</button>
-    <button onclick="showTab('plan')">🧾 แผนการเรียน</button>
+    <button onclick="showTab('departments')">ภาควิชา</button>
+    <button onclick="showTab('programs')">หลักสูตร</button>
   </div>
 
-  <!-- 🔸 Main Content -->
-  <main class="content">
-    <section id="tab-department" class="structure-section">
-      <h2>🏫 ภาควิชา <button class="add-button" data-type="ภาควิชา">➕ เพิ่ม</button></h2>
+  <main>
+    <!-- ✅ Department Section -->
+    <section id="departments" class="structure-section">
+      <h2>
+        รายชื่อภาควิชา
+        <button class="add-button" onclick="openModal('department')">+ เพิ่มภาควิชา</button>
+      </h2>
       <div class="table-container">
-        <table><thead><tr><th>ชื่อภาควิชา</th><th>วันที่เพิ่ม</th><th>Admin ID</th><th>การจัดการ</th></tr></thead><tbody id="department-table"></tbody></table>
+        <table id="departments-table">
+          <thead>
+            <tr>
+              <th>รหัสภาควิชา</th>
+              <th>ชื่อภาควิชา</th>
+              <th>การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </section>
 
-    <section id="tab-program" class="structure-section" style="display:none">
-      <h2>📘 หลักสูตร <button class="add-button" data-type="หลักสูตร">➕ เพิ่ม</button></h2>
+    <!-- ✅ Programs Section -->
+    <section id="programs" class="structure-section" style="display:none;">
+      <h2>
+        หลักสูตรระดับปริญญาโท
+        <button class="add-button" onclick="openModal('program', 'ปริญญาโท')">+ เพิ่มหลักสูตร</button>
+      </h2>
       <div class="table-container">
-        <table><thead><tr><th>ชื่อหลักสูตร</th><th>วันที่เพิ่ม</th><th>Admin ID</th><th>การจัดการ</th></tr></thead><tbody id="program-table"></tbody></table>
+        <table id="programs-master-table">
+          <thead>
+            <tr>
+              <th>รหัสหลักสูตร</th>
+              <th>ชื่อหลักสูตร</th>
+              <th>ภาควิชา</th>
+              <th>การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </section>
 
-    <section id="tab-plan" class="structure-section" style="display:none">
-      <h2>🧾 แผนการเรียน <button class="add-button" data-type="แผนการเรียน">➕ เพิ่ม</button></h2>
+      <h2>
+        หลักสูตรระดับปริญญาเอก
+        <button class="add-button" onclick="openModal('program', 'ปริญญาเอก')">+ เพิ่มหลักสูตร</button>
+      </h2>
       <div class="table-container">
-        <table><thead><tr><th>ชื่อแผน</th><th>วันที่เพิ่ม</th><th>Admin ID</th><th>การจัดการ</th></tr></thead><tbody id="plan-table"></tbody></table>
+        <table id="programs-doctor-table">
+          <thead>
+            <tr>
+              <th>รหัสหลักสูตร</th>
+              <th>ชื่อหลักสูตร</th>
+              <th>ภาควิชา</th>
+              <th>การจัดการ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </section>
   </main>
 
-  <!-- 🔧 Modal สำหรับเพิ่ม/แก้ไข -->
-  <div id="editModal" class="modal">
+  <!-- 🔧 Modal -->
+  <div id="modal" class="modal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeEditModal()">&times;</span>
-      <h3 id="modal-title">เพิ่มข้อมูล</h3>
-      <input type="hidden" id="edit-type">
-      <input type="hidden" id="edit-id">
-      <label>ชื่อ:</label>
-      <input type="text" id="edit-name" placeholder="กรอกชื่อ...">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h3 id="modal-title"></h3>
+      <input type="text" id="input-id" placeholder="รหัส">
+      <input type="text" id="input-name" placeholder="ชื่อ">
+
+      <select id="select-degree" style="display: none;">
+        <option value="">เลือกระดับปริญญา</option>
+        <option value="ปริญญาโท">ปริญญาโท</option>
+        <option value="ปริญญาเอก">ปริญญาเอก</option>
+      </select>
+
+      <select id="select-department" style="display: none;">
+        <option value="">เลือกภาควิชา</option>
+      </select>
+
       <div class="modal-actions">
-        <button onclick="saveEdit()">💾 บันทึก</button>
-        <button onclick="closeEditModal()">❌ ยกเลิก</button>
+        <button onclick="saveData()">บันทึก</button>
+        <button onclick="closeModal()">ยกเลิก</button>
       </div>
     </div>
   </div>
 
-  <script src="/Admin_Page/js_admin/manage_structure.js"></script>
+  <script src="manage_structure.js"></script>
 </body>
 </html>

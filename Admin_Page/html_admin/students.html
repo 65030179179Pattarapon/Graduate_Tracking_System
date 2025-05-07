@@ -58,7 +58,12 @@
         <option>2560</option>
       </select>
     </div>
-
+    
+    <!-- Add Student Button -->
+    <div class="table-header-right">
+        <button class="add-student-btn" onclick="window.location.href='manage_students.html'">➕ เพิ่มนักศึกษา</button>
+    </div>
+  
     <!-- Student Table -->
     <div class="student-table">
       <table>
@@ -66,12 +71,11 @@
           <tr>
             <th>รหัสนักศึกษา</th>
             <th>ชื่อ-สกุล</th>
-            <th>ระดับ</th>
-            <th>หลักสูตร</th>
-            <th>สาขา</th>
-            <th>ปีที่เข้า</th>
+            <th>อีเมล</th>
+            <th>เบอร์โทรศัพท์</th>
+            <th>อาจารย์ที่ปรึกษาวิทยานิพนธ์</th>
           </tr>
-        </thead>
+        </thead>        
         <tbody id="student-table-body">
           <!-- JS will populate rows -->
         </tbody>

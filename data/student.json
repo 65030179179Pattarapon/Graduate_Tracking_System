@@ -1,28 +1,56 @@
 [
-  {
-    "email": "65030179@kmitl.ac.th",
-    "password": "123456",
-    "prefix": "นาย",
-    "fullname": "ภัทรพล พลกุล",
-    "student-id": "65030179",
-    "phone": "083-880-3421",
-    "degree": "ปริญญาโท",
-    "program": "ครุศาสตร์อุตสาหกรรมมหาบัณฑิต",
-    "department": "ครุศาสตร์วิศวกรรม",
-    "faculty": "ครุศาสตร์อุตสาหกรรมและเทคโนโลยี",
-    "plan": "แผน ก แบบ ก2",
-    "status": "กำลังศึกษา",
-    "thesis-title": "เว็บแอพพลิเคชันสำหรับระบบติดตามสถานะนักศึกษาระดับบัณฑิตศึกษา",
-    "advisor-main": "ผศ.สุระชัย พิมพ์สาลี",
-    "advisor-co1": "ผศ.พงษ์เกียรติ จงไตรลักษณ์",
-    "advisor-co2": "-",
-    "proposal-date": "18 มีนาคม 2568",
-    "proposal-status": "ผ่าน",
-    "final-date": "20 สิงหาคม 2568",
-    "final-status": "-",
-    "englishTest": {
-      "type": "KMITL-TEP",
-      "score": 41
+    {
+      "email": "65030130@kmitl.ac.th",
+      "password": "123456",
+      "prefix_th": "นาย",
+      "first_name_th": "นิติภูมิ",
+      "last_name_th": "จันทร์อ่ำ",
+      "student_id": "65030130",
+      "phone": "099-340-5748",
+      "degree": "ปริญญาโท",
+      "program": "ครุศาสตร์อุตสาหกรรมมหาบัณฑิต",
+      "department": "ครุศาสตร์ออกแบบ",
+      "faculty": "ครุศาสตร์อุตสาหกรรมและเทคโนโลยี",
+      "plan": "แผน ก แบบ ก2",
+      "status": "กำลังศึกษา",
+      "thesis-title": "แอพพลิเคชันสำหรับระบบติดตามสถานะนักศึกษาระดับบัณฑิตศึกษา",
+      "thesis_advisor_main": "ผศ.สุระชัย พิมพ์สาลี",
+      "advisor-co1": "ผศ.พงษ์เกียรติ จงไตรลักษณ์",
+      "advisor-co2": "-",
+      "proposal-date": "18 มีนาคม 2568",
+      "proposal-status": "ผ่าน",
+      "final-date": "20 สิงหาคม 2568",
+      "final-status": "-",
+      "englishTest": {
+        "type": "KMITL-TEP",
+        "score": 41
+      }
+    },
+    {
+      "email": "65030179@kmitl.ac.th",
+      "password": "123456",
+      "prefix_th": "นาย",
+      "first_name_th": "ภัทรพล",
+      "last_name_th": "พลกุล",
+      "student_id": "65030179",
+      "phone": "083-880-3421",
+      "degree": "ปริญญาเอก",
+      "program": "ครุศาสตร์อุตสาหกรรมมหาบัณฑิต",
+      "department": "ครุศาสตร์วิศวกรรม",
+      "faculty": "ครุศาสตร์อุตสาหกรรมและเทคโนโลยี",
+      "plan": "แบบ 1.1",
+      "status": "กำลังศึกษา",
+      "thesis-title": "เว็บแอพพลิเคชันสำหรับระบบติดตามสถานะนักศึกษาระดับบัณฑิตศึกษา",
+      "thesis_advisor_main": "ผศ.พงษ์เกียรติ จงไตรลักษณ์",
+      "advisor-co1": "ผศ.สุระชัย พิมพ์สาลี",
+      "advisor-co2": "-",
+      "proposal-date": "18 มีนาคม 2568",
+      "proposal-status": "ผ่าน",
+      "final-date": "20 สิงหาคม 2568",
+      "final-status": "-",
+      "englishTest": {
+        "type": "KMITL-TEP",
+        "score": 35
+      }
     }
-  }
-]
+  ]
