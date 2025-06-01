@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="/Admin_Page/css_admin/admin_home.css" />
 </head>
 <body>
-  <!-- 🔶 Top Navigation -->
   <nav class="topnav">
     <div class="logo-section">
       <img src="/assets/images/logo.png" alt="KMITL Logo" />
@@ -26,205 +25,220 @@
     </ul>
   </nav>
 
-  <!-- 🔷 Sidebar Menu -->
   <div class="sidebar">
     <button onclick="showSection('pending')">📄 เอกสารรอตรวจ</button>
     <button onclick="showSection('due')">⏰ เอกสารใกล้กำหนด</button>
-    <button onclick="showSection('students')">👨‍🎓 นักศึกษาทั้งหมด</button>
+    <button onclick="showSection('all-documents')">📚 จัดการเอกสารทั้งหมด</button>
     <button onclick="showSection('approved')">✅ เอกสารอนุมัติแล้ว</button>
     <button onclick="showSection('rejected')">❌ เอกสารไม่อนุมัติ</button>
+    <button onclick="showSection('students')">👨‍🎓 นักศึกษา (ภาพรวม)</button>
   </div>
 
-  <!-- 🔸 Main Area -->
   <main>
 
-    <!-- Section: Pending -->
-    <div class="section" id="section-pending">
+    <div class="section" id="section-pending" style="display:none;">
       <h2>📄 เอกสารรอตรวจ</h2>
       <div class="stats">
-        <span id="total-docs" onclick="filterByStatus('all')">📄 ทั้งหมด: 0</span>
-        <span id="status-pending" onclick="filterByStatus('รอตรวจ')">⏳ รอตรวจ: 0</span>
-        <span id="status-revised" onclick="filterByStatus('แก้ไขแล้วส่งกลับ')">📝 แก้ไขแล้วส่งกลับ: 0</span>
-      </div>      
+        <span id="total-docs" onclick="applyTableFilterAndPaginate('pending', 'all-status')">📄 ทั้งหมด: 0</span>
+        <span id="status-pending" onclick="applyTableFilterAndPaginate('pending', 'status', 'รอตรวจ')">⏳ รอตรวจ: 0</span>
+        <span id="status-revised" onclick="applyTableFilterAndPaginate('pending', 'status', 'แก้ไขแล้วส่งกลับ')">📝 แก้ไขแล้วส่งกลับ: 0</span>
+      </div>
       <div class="filter-group">
-        <select id="filter-category-pending">
+        <select id="filter-category-pending" onchange="applyTableFilterAndPaginate('pending')">
           <option value="all">ทั้งหมด</option>
           <option value="title">เรื่อง</option>
           <option value="student">ผู้ส่ง</option>
           <option value="status">สถานะ</option>
           <option value="type">ประเภท</option>
-          <option value="date">วันที่ส่ง</option>
+          <option value="submitted_date">วันที่ส่ง</option>
         </select>
-        <input type="text" id="filter-pending" placeholder="🔍 ค้นหา..." oninput="filterTable('pending')">
+        <input type="text" id="filter-input-pending" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('pending')">
       </div>
       <div class="table-container">
         <table id="table-pending">
           <thead>
             <tr>
-              <th>เรื่อง</th>
-              <th>ผู้ส่ง</th>
-              <th>สถานะ</th>
-              <th>ประเภท</th>
-              <th>วันที่ส่ง</th>
-              <th>ลิงก์</th>
+              <th>เรื่อง</th> <th>ผู้ส่ง</th> <th>สถานะ</th> <th>ประเภท</th> <th>วันที่ส่ง</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-controls" id="pagination-controls-pending"></div>
     </div>
 
-    <!-- Section: Due -->
     <div class="section" id="section-due" style="display: none;">
       <h2>⏰ เอกสารใกล้กำหนด</h2>
       <div class="stats">
-        <span id="due-total">📄 ทั้งหมด: 0</span>
-        <span id="due-3days">⚠️ น้อยกว่า 3 วัน: 0</span>
-        <span id="due-7days">⏳ น้อยกว่า 7 วัน: 0</span>
+        <span id="due-total" onclick="applyTableFilterAndPaginate('due', 'all-days')">📄 ทั้งหมด: 0</span>
+        <span id="due-3days" onclick="applyTableFilterAndPaginate('due', 'days', '3')">⚠️ น้อยกว่า 3 วัน: 0</span>
+        <span id="due-7days" onclick="applyTableFilterAndPaginate('due', 'days', '7')">⏳ น้อยกว่า 7 วัน: 0</span>
       </div>
       <div class="filter-group">
-        <select id="filter-category-due">
+        <select id="filter-category-due" onchange="applyTableFilterAndPaginate('due')">
           <option value="all">ทั้งหมด</option>
-          <option value="title">เรื่อง</option>
-          <option value="student">ผู้ส่ง</option>
-          <option value="status">สถานะ</option>
-          <option value="type">ประเภท</option>
-          <option value="days">วันคงเหลือ</option>
+          <option value="title">เรื่อง</option> <option value="student">ผู้ส่ง</option>
+          <option value="status">สถานะ</option> <option value="type">ประเภท</option>
+          <option value="days_left">วันคงเหลือ</option>
         </select>
-        <input type="text" id="filter-due" placeholder="🔍 ค้นหา..." oninput="filterTable('due')">
+        <input type="text" id="filter-input-due" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('due')">
       </div>
       <div class="table-container">
         <table id="table-due">
           <thead>
             <tr>
-              <th>เรื่อง</th>
-              <th>ผู้ส่ง</th>
-              <th>สถานะ</th>
-              <th>ประเภท</th>
-              <th>วันคงเหลือ</th>
-              <th>ลิงก์</th>
+              <th>เรื่อง</th> <th>ผู้ส่ง</th> <th>สถานะ</th> <th>ประเภท</th> <th>วันคงเหลือ</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-controls" id="pagination-controls-due"></div>
     </div>
 
-    <!-- Section: Students -->
-    <div class="section" id="section-students" style="display: none;">
-      <h2>👨‍🎓 นักศึกษาทั้งหมด</h2>
-      <div class="stats">
-        <span id="students-total">👥 ทั้งหมด: 0</span>
-        <span id="students-master">🎓 ป.โท: 0</span>
-        <span id="students-phd">🎓 ป.เอก: 0</span>
-        <span id="students-status-studying">✅ เรียนอยู่: 0</span>
-        <span id="students-status-drop">⛔ ดรอป: 0</span>
+    <div class="section" id="section-all-documents" style="display: none;">
+      <h2>📚 จัดการเอกสารทั้งหมด</h2>
+      <div class="stats" id="stats-all-documents">
+        <span id="alldocs-total-count">📄 เอกสารในระบบ: 0</span>
       </div>
-      <div class="filter-group">
-        <select id="filter-category-students">
-          <option value="all">ทั้งหมด</option>
-          <option value="name">ชื่อ</option>
-          <option value="program">หลักสูตร</option>
-          <option value="degree">ระดับ</option>
-          <option value="department">ภาควิชา</option>
-          <option value="plan">แผน</option>
-          <option value="status">สถานะ</option>
-        </select>
-        <input type="text" id="filter-students" placeholder="🔍 ค้นหา..." oninput="filterTable('students')">
+      <div class="filter-group" id="filter-group-all-documents">
+        <div class="filter-row">
+          <label for="alldocs-search-general">🔍 ค้นหาทั่วไป:</label>
+          <input type="text" id="alldocs-search-general" placeholder="ชื่อเอกสาร, ชื่อนศ., อื่นๆ...">
+        </div>
+        <div class="filter-row">
+          <label for="alldocs-filter-status">สถานะเอกสาร:</label>
+          <select id="alldocs-filter-status">
+            <option value="">-- ทุกสถานะ --</option> <option value="รอตรวจ">รอตรวจ</option>
+            <option value="แก้ไขแล้วส่งกลับ">แก้ไขแล้วส่งกลับ</option> <option value="อนุมัติแล้ว">อนุมัติแล้ว</option>
+            <option value="ไม่อนุมัติ">ไม่อนุมัติ</option> <option value="ใกล้กำหนด">ใกล้กำหนด</option>
+          </select>
+          <label for="alldocs-filter-doctype">ประเภทเอกสาร:</label>
+          <select id="alldocs-filter-doctype">
+            <option value="">-- ทุกประเภท --</option> <option value="ฟอร์ม 1">ฟอร์ม 1</option>
+            <option value="ฟอร์ม 2">ฟอร์ม 2</option><option value="ฟอร์ม 3">ฟอร์ม 3</option>
+            <option value="ฟอร์ม 4">ฟอร์ม 4</option><option value="ฟอร์ม 5">ฟอร์ม 5</option>
+            <option value="รายงานความก้าวหน้า">รายงานความก้าวหน้า</option>
+          </select>
+        </div>
+        <div class="filter-row">
+          <label for="alldocs-filter-degree">ระดับปริญญา:</label>
+          <select id="alldocs-filter-degree">
+            <option value="">-- ทุกระดับ --</option> <option value="ปริญญาโท">ปริญญาโท</option>
+            <option value="ปริญญาเอก">ปริญญาเอก</option>
+          </select>
+          <label for="alldocs-filter-program">หลักสูตร:</label>
+          <select id="alldocs-filter-program"><option value="">-- ทุกหลักสูตร --</option></select>
+          <label for="alldocs-filter-department">ภาควิชา:</label>
+          <select id="alldocs-filter-department"><option value="">-- ทุกภาควิชา --</option></select>
+        </div>
+        <div class="filter-row">
+          <label for="alldocs-filter-date-start">วันที่ส่ง/ดำเนินการ (ตั้งแต่):</label>
+          <input type="date" id="alldocs-filter-date-start" class="filter-date">
+          <label for="alldocs-filter-date-end">วันที่ส่ง/ดำเนินการ (ถึง):</label>
+          <input type="date" id="alldocs-filter-date-end" class="filter-date">
+        </div>
+        <div class="filter-row actions-row">
+            <button type="button" id="alldocs-apply-filters-btn">🔍 ใช้ตัวกรอง</button>
+            <button type="button" id="alldocs-reset-filters-btn">ล้างตัวกรอง</button>
+        </div>
       </div>
       <div class="table-container">
-        <table id="table-students">
+        <table id="table-all-documents">
           <thead>
             <tr>
-              <th>ชื่อ</th>
-              <th>หลักสูตร</th>
-              <th>ระดับ</th>
-              <th>ภาควิชา</th>
-              <th>แผน</th>
-              <th>สถานะ</th>
+              <th>ชื่อเอกสาร</th><th>ประเภทเอกสาร</th><th>ชื่อผู้ส่ง (นักศึกษา)</th>
+              <th>สถานะปัจจุบัน</th><th>วันที่ส่ง/ดำเนินการ</th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-controls" id="pagination-controls-all-documents"></div>
     </div>
 
-    <!-- Section: Approved -->
     <div class="section" id="section-approved" style="display: none;">
       <h2>✅ เอกสารอนุมัติแล้ว</h2>
       <div class="stats">
-        <span id="approved-total">📄 ทั้งหมด: 0</span>
-        <span id="approved-form1">📝 ฟอร์ม 1: 0</span>
-        <span id="approved-form2">📝 ฟอร์ม 2: 0</span>
-        <span id="approved-form3">📝 ฟอร์ม 3: 0</span>
-        <span id="approved-form4">📝 ฟอร์ม 4: 0</span>
-        <span id="approved-form5">📝 ฟอร์ม 5: 0</span>
+        <span id="approved-total" onclick="applyTableFilterAndPaginate('approved', 'all-type')">📄 ทั้งหมด: 0</span>
+        <span id="approved-form1" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 1')">📝 ฟอร์ม 1: 0</span>
+        <span id="approved-form2" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 2')">📝 ฟอร์ม 2: 0</span>
+        <span id="approved-form3" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 3')">📝 ฟอร์ม 3: 0</span>
+        <span id="approved-form4" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 4')">📝 ฟอร์ม 4: 0</span>
+        <span id="approved-form5" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 5')">📝 ฟอร์ม 5: 0</span>
       </div>
       <div class="filter-group">
-        <select id="filter-category-approved">
-          <option value="all">ทั้งหมด</option>
-          <option value="title">เรื่อง</option>
-          <option value="student">ผู้ส่ง</option>
-          <option value="type">ประเภท</option>
-          <option value="date">วันที่อนุมัติ</option>
+        <select id="filter-category-approved" onchange="applyTableFilterAndPaginate('approved')">
+          <option value="all">ทั้งหมด</option> <option value="title">เรื่อง</option>
+          <option value="student">ผู้ส่ง</option> <option value="type">ประเภท</option>
+          <option value="submitted_date">วันที่อนุมัติ</option>
         </select>
-        <input type="text" id="filter-approved" placeholder="🔍 ค้นหา..." oninput="filterTable('approved')">
+        <input type="text" id="filter-input-approved" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('approved')">
       </div>
       <div class="table-container">
         <table id="table-approved">
-          <thead>
-            <tr>
-              <th>เรื่อง</th>
-              <th>ผู้ส่ง</th>
-              <th>ประเภท</th>
-              <th>วันที่อนุมัติ</th>
-              <th>ลิงก์</th>
-            </tr>
-          </thead>
+          <thead><tr><th>เรื่อง</th><th>ผู้ส่ง</th><th>ประเภท</th><th>วันที่อนุมัติ</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-controls" id="pagination-controls-approved"></div>
     </div>
 
-    <!-- Section: Rejected -->
     <div class="section" id="section-rejected" style="display: none;">
       <h2>❌ เอกสารไม่อนุมัติ</h2>
       <div class="stats">
-        <span id="rejected-total">📄 ทั้งหมด: 0</span>
-        <span id="rejected-form1">📝 ฟอร์ม 1: 0</span>
-        <span id="rejected-form2">📝 ฟอร์ม 2: 0</span>
-        <span id="rejected-form3">📝 ฟอร์ม 3: 0</span>
-        <span id="rejected-form4">📝 ฟอร์ม 4: 0</span>
-        <span id="rejected-form5">📝 ฟอร์ม 5: 0</span>
+        <span id="rejected-total" onclick="applyTableFilterAndPaginate('rejected', 'all-type')">📄 ทั้งหมด: 0</span>
+        <span id="rejected-form1" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 1')">📝 ฟอร์ม 1: 0</span>
+        <span id="rejected-form2" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 2')">📝 ฟอร์ม 2: 0</span>
+        <span id="rejected-form3" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 3')">📝 ฟอร์ม 3: 0</span>
+        <span id="rejected-form4" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 4')">📝 ฟอร์ม 4: 0</span>
+        <span id="rejected-form5" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 5')">📝 ฟอร์ม 5: 0</span>
       </div>
       <div class="filter-group">
-        <select id="filter-category-rejected">
-          <option value="all">ทั้งหมด</option>
-          <option value="title">เรื่อง</option>
-          <option value="student">ผู้ส่ง</option>
-          <option value="comment">หมายเหตุ</option>
-          <option value="date">วันที่ส่งกลับ</option> <!-- ✅ ต้องใช้ "date" -->
+        <select id="filter-category-rejected" onchange="applyTableFilterAndPaginate('rejected')">
+          <option value="all">ทั้งหมด</option> <option value="title">เรื่อง</option>
+          <option value="student">ผู้ส่ง</option> <option value="type">ประเภท</option>
+          <option value="comment">หมายเหตุ</option> <option value="rejected_date">วันที่ส่งกลับ</option>
         </select>
-        <input type="text" id="filter-rejected" placeholder="🔍 ค้นหา..." oninput="filterTable('rejected')">
+        <input type="text" id="filter-input-rejected" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('rejected')">
       </div>
       <div class="table-container">
         <table id="table-rejected">
-          <thead>
-            <tr>
-              <th>เรื่อง</th>
-              <th>ผู้ส่ง</th>
-              <th>วันที่ส่งกลับ</th>
-              <th>หมายเหตุ</th>
-              <th>ลิงก์เอกสาร</th>
-            </tr>
-          </thead>
+          <thead><tr><th>เรื่อง</th><th>ผู้ส่ง</th><th>ประเภท</th><th>วันที่ส่งกลับ</th><th>หมายเหตุ</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
+      <div class="pagination-controls" id="pagination-controls-rejected"></div>
+    </div>
+
+    <div class="section" id="section-students" style="display: none;">
+      <h2>👨‍🎓 นักศึกษา (ภาพรวม)</h2>
+      <div class="stats">
+        <span id="students-total" onclick="applyTableFilterAndPaginate('students', 'all-criteria')">👥 ทั้งหมด: 0</span>
+        <span id="students-master" onclick="applyTableFilterAndPaginate('students', 'degree', 'ปริญญาโท')">🎓 ปริญญาโท: 0</span>
+        <span id="students-phd" onclick="applyTableFilterAndPaginate('students', 'degree', 'ปริญญาเอก')">🎓 ปริญญาเอก: 0</span>
+        <span id="students-status-studying" onclick="applyTableFilterAndPaginate('students', 'status', 'กำลังศึกษา')">✅ กำลังศึกษา: 0</span>
+        <span id="students-status-drop" onclick="applyTableFilterAndPaginate('students', 'status', 'พักการเรียน')">⛔ พักการเรียน: 0</span>
+      </div>
+      <div class="filter-group">
+        <select id="filter-category-students" onchange="applyTableFilterAndPaginate('students')">
+          <option value="all">ทั้งหมด</option> <option value="fullName">ชื่อ-นามสกุล</option>
+          <option value="program">หลักสูตร</option> <option value="degree">ระดับ</option>
+          <option value="department">ภาควิชา</option> <option value="plan">แผน</option>
+          <option value="status">สถานะ</option>
+        </select>
+        <input type="text" id="filter-input-students" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('students')">
+      </div>
+      <div class="table-container">
+        <table id="table-students">
+          <thead><tr><th>คำนำหน้า</th><th>ชื่อจริง</th><th>นามสกุล</th><th>หลักสูตร</th><th>ระดับ</th><th>ภาควิชา</th><th>แผน</th><th>สถานะ</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="pagination-controls" id="pagination-controls-students"></div>
     </div>
 
   </main>
-
   <script src="/Admin_Page/js_admin/admin_home.js"></script>
 </body>
 </html>

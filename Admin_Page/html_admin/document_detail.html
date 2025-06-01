@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>รายละเอียดเอกสาร - Graduate Tracker</title>
+  <link rel="stylesheet" href="/Admin_Page/css_admin/admin_home.css" /> <link rel="stylesheet" href="/Admin_Page/css_admin/document_detail.css" />
+</head>
+<body>
+  <nav class="topnav">
+    <div class="logo-section">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <h1>Graduate Tracker</h1>
+    </div>
+    <ul class="menu-links">
+      <li><a href="admin_home.html">🏠 หน้าหลัก</a></li>
+      <li><a href="#" onclick="logoutFromDetail()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <div class="detail-container">
+    <div class="detail-header">
+      <h2 id="doc-main-title">กำลังโหลดรายละเอียดเอกสาร...</h2>
+      <button onclick="goBack()" class="back-button">ᐸ ย้อนกลับ</button>
+    </div>
+
+    <div class="detail-section" id="document-info">
+      <h3>ข้อมูลเอกสารทั่วไป</h3>
+      <div class="info-grid">
+        <div><label>ประเภทเอกสาร:</label><span id="doc-type"></span></div>
+        <div><label>สถานะปัจจุบัน:</label><span id="doc-status"></span></div>
+        <div><label>วันที่ยื่น/ส่ง:</label><span id="doc-submission-date"></span></div>
+        <div><label>ชื่อเรื่อง (ถ้ามี):</label><span id="doc-title-detail"></span></div>
+      </div>
+    </div>
+
+    <div class="detail-section" id="student-info">
+      <h3>ข้อมูลนักศึกษาผู้ยื่น</h3>
+      <div class="info-grid">
+        <div><label>ชื่อ-นามสกุล:</label><span id="student-fullname"></span></div>
+        <div><label>รหัสนักศึกษา:</label><span id="student-id-detail"></span></div>
+        <div><label>ระดับการศึกษา:</label><span id="student-degree"></span></div>
+        <div><label>หลักสูตร:</label><span id="student-program"></span></div>
+        <div><label>ภาควิชา:</label><span id="student-department"></span></div>
+        <div><label>คณะ:</label><span id="student-faculty"></span></div>
+      </div>
+    </div>
+
+    <div id="form-specific-details">
+      </div>
+
+    <div class="detail-section" id="admin-notes-section">
+        <h3>บันทึกภายในสำหรับ Admin</h3>
+        <textarea id="admin-internal-notes" placeholder="เพิ่มบันทึกภายใน (จะไม่แสดงให้ผู้ใช้อื่นเห็น)..."></textarea>
+        <button id="save-admin-note-btn">บันทึกโน้ต</button>
+    </div>
+
+    <div class="detail-section" id="admin-actions">
+      <h3>การดำเนินการของ Admin</h3>
+      <div id="action-buttons-container">
+        </div>
+      <div id="action-feedback" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="detail-section" id="action-history">
+      <h3>ประวัติการดำเนินการ</h3>
+      <ul id="history-log">
+        <li>ยังไม่มีประวัติการดำเนินการ</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="/Admin_Page/js_admin/document_detail.js"></script>
+</body>
+</html>

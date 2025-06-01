@@ -1,0 +1,206 @@
+/* document_detail.css */
+body {
+  /* font-family: 'Poppins', sans-serif; (Assume inherited from admin_home.css if linked) */
+  /* background-color: #fef7ff; (Assume inherited) */
+  margin: 0;
+  padding-top: 70px; /* For fixed topnav */
+}
+
+.detail-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.detail-header h2 {
+  color: var(--color-primary, #ed4988); /* Use theme color */
+  margin: 0;
+  font-size: 1.8em;
+}
+
+.back-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+.back-button:hover {
+  background-color: #5a6268;
+}
+
+.detail-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+}
+
+.detail-section h3 {
+  font-size: 1.2em;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ddd;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 10px 20px;
+}
+
+.info-grid div {
+  padding: 5px 0;
+}
+
+.info-grid label {
+  font-weight: 600;
+  color: #555;
+  margin-right: 8px;
+}
+
+.info-grid span, 
+#form-specific-details span, 
+#form-specific-details p {
+  color: #333;
+}
+
+#form-specific-details .form-field-group {
+    margin-bottom: 10px;
+}
+#form-specific-details .form-field-group label {
+    display: block;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 3px;
+}
+#form-specific-details .form-field-group span,
+#form-specific-details .form-field-group p {
+    padding: 5px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    display: block; /* Make span take full width for background */
+    border: 1px solid #eee;
+}
+#form-specific-details ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+#admin-notes-section textarea {
+    width: calc(100% - 20px); /* Full width with padding */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-height: 80px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+#admin-notes-section button,
+#action-buttons-container button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-right: 10px;
+    margin-bottom: 10px; /* For wrapping */
+}
+
+#action-buttons-container .approve-btn {
+    background-color: #28a745; /* Green */
+    color: white;
+}
+#action-buttons-container .approve-btn:hover {
+    background-color: #218838;
+}
+#action-buttons-container .reject-btn {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+#action-buttons-container .reject-btn:hover {
+    background-color: #c82333;
+}
+#action-buttons-container .revise-btn {
+    background-color: #ffc107; /* Yellow */
+    color: #212529;
+}
+#action-buttons-container .revise-btn:hover {
+    background-color: #e0a800;
+}
+#save-admin-note-btn {
+    background-color: var(--color-primary, #ed4988);
+    color: white;
+}
+#save-admin-note-btn:hover {
+    background-color: #d43772;
+}
+
+
+#action-feedback {
+    font-style: italic;
+    color: green;
+}
+#action-feedback.error {
+    color: red;
+}
+
+#history-log {
+  list-style-type: none;
+  padding-left: 0;
+}
+#history-log li {
+  padding: 8px 0;
+  border-bottom: 1px dotted #eee;
+  font-size: 13px;
+  color: #666;
+}
+#history-log li:last-child {
+  border-bottom: none;
+}
+#history-log .log-date {
+  font-weight: 500;
+  color: #333;
+  margin-right: 10px;
+}
+
+/* File link styles */
+.file-link {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 6px 12px;
+    background-color: var(--color-secondary, #f1592b);
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.file-link:hover {
+    background-color: #d9481a;
+}
+.file-list-item {
+    margin-bottom: 8px;
+}
+.file-list-item strong {
+    display: block;
+    margin-bottom: 3px;
+}
