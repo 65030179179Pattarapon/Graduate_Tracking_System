@@ -1,0 +1,143 @@
+/* /User_Page/css_user/student_document_detail.css */
+
+/* 🎨 Theme Variables (อาจจะ import จากไฟล์ common.css) */
+:root {
+  --color-primary: #ed4988;
+  --color-secondary: #f1592b;
+  --text-primary: #1e2022;
+  --text-secondary: #52575d;
+  --bg-main: #f4f7f6;
+  --bg-card: #ffffff;
+  --border-color: #e9ecef;
+  --approved-color: #28a745;
+  --pending-color: #ffc107;
+  --rejected-color: #dc3545;
+}
+
+body {
+  /* ควรจะดึงสไตล์พื้นฐานมาจาก common.css หรือ home.css */
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg-main);
+  padding-top: 65px; /* For fixed navbar */
+}
+
+.detail-page-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.detail-header h1 {
+  font-size: 24px;
+  color: var(--text-primary);
+  margin: 0;
+}
+.back-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.back-link:hover {
+  color: var(--color-primary);
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+}
+.status-card .status-icon .fas {
+  font-size: 32px;
+}
+.status-card .status-text p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.status-card .status-text h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Status Colors */
+.status-card.approved { background: var(--approved-color); }
+.status-card.pending { background: var(--pending-color); color: #333; }
+.status-card.rejected { background: var(--rejected-color); }
+
+.detail-card {
+  background: var(--bg-card);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.04);
+  border: 1px solid var(--border-color);
+}
+.detail-card h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#comment-card p {
+  margin: 0;
+  padding: 15px;
+  background-color: var(--rejected-bg, #fff1f0);
+  border-radius: 6px;
+  color: var(--rejected-text, #d4380d);
+  line-height: 1.6;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+.info-grid div label {
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: block;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+.info-grid div span {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 15px;
+}
+.form-specific-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px dashed var(--border-color);
+}
+
+#student-action-section .action-button {
+  display: inline-block;
+  background-color: var(--color-secondary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+#student-action-section .action-button:hover {
+  background-color: #d9481a;
+}

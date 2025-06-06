@@ -1,7 +1,7 @@
 [
   {
     "email": "65030130@kmitl.ac.th",
-    "password": "password123",
+    "password": "123456",
     "student_id": "65030130",
     "prefix_th": "นาย",
     "first_name_th": "นิติภูมิ",
@@ -49,7 +49,7 @@
     "last_name_th": "พลกุล",
     "prefix_en": "Mr.",
     "first_name_en": "Pattarapon",
-    "last_name_en": "Polakul",
+    "last_name_en": "Ponkul",
     "gender": "ชาย",
     "birth_date": "1998-11-22",
     "nationality": "ไทย",

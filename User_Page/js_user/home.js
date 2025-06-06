@@ -1,9 +1,221 @@
+// /User_Page/js_user/home.js
+
 function logout() {
-  localStorage.clear();
-  window.location.href = "/login/index.html";
+  const modal = document.getElementById('logout-confirm-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+        modal.classList.add('show');
+    });
+  }
 }
 
-// ตัวอย่างสถานะ (Mock)
-document.getElementById("submitted-count").textContent = 3;
-document.getElementById("approved-count").textContent = 2;
-document.getElementById("rejected-count").textContent = 1;
+function closeModal() {
+  const modal = document.getElementById('logout-confirm-modal');
+  if (modal) {
+    modal.classList.remove('show');
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+  }
+}
+
+function getUserDocuments(docArrays, studentId, studentFullName) {
+    if (!studentId && !studentFullName) return [];
+    
+    const allUserDocs = [];
+    docArrays.forEach(docArray => {
+        const filtered = docArray.filter(doc => {
+            if (doc.student_id) {
+                return doc.student_id === studentId;
+            }
+            if (doc.student && studentFullName) {
+                return doc.student.trim() === studentFullName.trim();
+            }
+            return false;
+        });
+        allUserDocs.push(...filtered);
+    });
+    return allUserDocs;
+}
+
+function determineNextStep(studentData, userApprovedDocs) {
+    const nextStepContainer = document.getElementById('next-step-content');
+    if (!nextStepContainer) return;
+
+    const hasApproved = (formType) => userApprovedDocs.some(doc => doc.type === formType);
+    const state = JSON.parse(localStorage.getItem('userDashboardState') || '{}');
+
+    if (state.rejectedCount > 0) {
+        nextStepContainer.className = 'next-step-body alert';
+        nextStepContainer.innerHTML = `
+            <span class="action-title">⚠️ มีเอกสารที่ต้องแก้ไข</span>
+            <p>ระบบพบว่าคุณมีเอกสารที่ถูกส่งกลับหรือไม่อนุมัติ กรุณาตรวจสอบและดำเนินการแก้ไข</p>
+            <a href="/User_Page/html_user/status.html" class="action-button">ไปที่หน้าสถานะเอกสาร</a>
+        `;
+        return;
+    }
+
+    if (!hasApproved('ฟอร์ม 1')) {
+        nextStepContainer.innerHTML = `<span class="action-title">เลือกอาจารย์ที่ปรึกษา</span><p>ขั้นตอนแรกคือการยื่นแบบฟอร์มเพื่อขอรับรองอาจารย์ที่ปรึกษาวิทยานิพนธ์</p><a href="/User_Page/html_user/form1.html" class="action-button">ไปที่ฟอร์ม 1</a>`;
+        return;
+    }
+    if (!hasApproved('ฟอร์ม 2')) {
+        nextStepContainer.innerHTML = `<span class="action-title">เสนอหัวข้อวิทยานิพนธ์</span><p>ขั้นตอนต่อไปคือการเสนอหัวข้อและเค้าโครงวิทยานิพนธ์เพื่อขออนุมัติ</p><a href="/User_Page/html_user/form2.html" class="action-button">ไปที่ฟอร์ม 2</a>`;
+        return;
+    }
+    if (!hasApproved('ฟอร์ม 3')) {
+        nextStepContainer.innerHTML = `<span class="action-title">นำส่งเอกสารเค้าโครง</span><p>เมื่อหัวข้ออนุมัติแล้ว ขั้นตอนต่อไปคือนำส่งเอกสารเค้าโครงฉบับสมบูรณ์</p><a href="/User_Page/html_user/form3.html" class="action-button">ไปที่ฟอร์ม 3</a>`;
+        return;
+    }
+    if (studentData.english_test_status !== 'ผ่านเกณฑ์') {
+        const statusText = studentData.english_test_status ? `(สถานะปัจจุบัน: ${studentData.english_test_status})` : '';
+        nextStepContainer.innerHTML = `<span class="action-title">ยื่นผลสอบภาษาอังกฤษ</span><p>คุณยังไม่ได้ยื่นผลสอบภาษาอังกฤษ หรือผลสอบยังไม่ผ่านเกณฑ์ ${statusText}</p><a href="/User_Page/html_user/eng.html" class="action-button">ไปที่หน้ายื่นผลสอบ</a>`;
+        return;
+    }
+    if (!hasApproved('ฟอร์ม 4')) {
+        nextStepContainer.innerHTML = `<span class="action-title">เชิญผู้ทรงคุณวุฒิ</span><p>ขั้นตอนต่อไปคือการยื่นเรื่องขอเชิญผู้ทรงคุณวุฒิเพื่อประเมินเครื่องมือวิจัย</p><a href="/User_Page/html_user/form4.html" class="action-button">ไปที่ฟอร์ม 4</a>`;
+        return;
+    }
+    if (!hasApproved('ฟอร์ม 5')) {
+        nextStepContainer.innerHTML = `<span class="action-title">ขออนุญาตเก็บข้อมูล</span><p>ขั้นตอนต่อไปคือการยื่นเรื่องขออนุญาตเก็บรวบรวมข้อมูลเพื่อการวิจัย</p><a href="/User_Page/html_user/form5.html" class="action-button">ไปที่ฟอร์ม 5</a>`;
+        return;
+    }
+
+    nextStepContainer.className = 'next-step-body done';
+    nextStepContainer.innerHTML = `
+        <span class="action-title">👍 ยอดเยี่ยม!</span>
+        <p>คุณได้ดำเนินการในขั้นตอนสำคัญๆ ของการศึกษาแล้ว กรุณาติดตามประกาศอื่นๆ ต่อไป</p>
+        <a href="/User_Page/html_user/status.html" class="action-button">ดูสถานะเอกสารทั้งหมด</a>
+    `;
+}
+
+async function loadDashboard() {
+    const userEmail = localStorage.getItem("current_user");
+    if (!userEmail) {
+        window.location.href = "/login/index.html";
+        return;
+    }
+
+    try {
+        const [students, pendingDocs, approvedDocs, rejectedDocs] = await Promise.all([
+            fetch("/data/student.json").then(res => res.json()),
+            fetch("/data/document_pending.json").then(res => res.json()),
+            fetch("/data/document_approved.json").then(res => res.json()),
+            fetch("/data/document_rejected.json").then(res => res.json())
+        ]);
+        
+        const currentUser = students.find(s => s.email === userEmail);
+        if (!currentUser) {
+            alert("ไม่พบข้อมูลนักศึกษา, กำลังออกจากระบบ");
+            logout();
+            return;
+        }
+        
+        const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
+        const studentId = currentUser.student_id;
+
+        // --- จุดแก้ไข ---
+        document.getElementById('nav-username').textContent = userEmail;
+        document.getElementById('welcome-name').textContent = `${currentUser.first_name_th} ${currentUser.last_name_th}`;
+        // --- สิ้นสุดจุดแก้ไข ---
+        
+        const userPendingDocs = getUserDocuments([pendingDocs], studentId, userFullname);
+        const userApprovedDocs = getUserDocuments([approvedDocs], studentId, userFullname);
+        const userRejectedDocs = getUserDocuments([rejectedDocs], studentId, userFullname);
+        const userAllDocuments = [...userPendingDocs, ...userApprovedDocs, ...userRejectedDocs];
+        
+        localStorage.setItem('userDashboardState', JSON.stringify({ rejectedCount: userRejectedDocs.length }));
+
+        document.getElementById("submitted-count").textContent = userAllDocuments.length;
+        document.getElementById("approved-count").textContent = userApprovedDocs.length;
+        document.getElementById("rejected-count").textContent = userRejectedDocs.length;
+
+        const recentDocsList = document.getElementById('recent-docs-list');
+        recentDocsList.innerHTML = '';
+        if (userAllDocuments.length > 0) {
+            userAllDocuments.sort((a, b) => new Date(b.submitted_date || b.rejected_date || 0) - new Date(a.submitted_date || a.rejected_date || 0));
+            const recentThree = userAllDocuments.slice(0, 3);
+            
+            recentThree.forEach(doc => {
+                const li = document.createElement('li');
+                let detailLink = `/User_Page/html_user/status.html`;
+                if (doc.status && doc.type) {
+                    const status_en = doc.status.includes('อนุมัติ') ? 'approved' : (doc.status.includes('รอ') ? 'pending' : 'rejected');
+                    const form_num = (doc.type.match(/\d+/) || [''])[0];
+                    if (form_num) {
+                        detailLink = `/User_Page/html_user/status_${status_en}_form${form_num}.html`;
+                    }
+                }
+                const statusClass = `status-${(doc.status || 'default').replace(/\s+/g, '-')}`;
+                li.innerHTML = `<a href="${detailLink}" class="doc-title">${doc.title} (${doc.type || ''})</a><span class="doc-status ${statusClass}">${doc.status}</span>`;
+                recentDocsList.appendChild(li);
+            });
+        } else {
+            recentDocsList.innerHTML = '<li class="no-docs">ยังไม่มีประวัติการยื่นเอกสาร</li>';
+        }
+
+        determineNextStep(currentUser, userApprovedDocs);
+
+    } catch (error) {
+        console.error("Failed to load dashboard data:", error);
+        const mainContainer = document.querySelector('main.dashboard-container');
+        if (mainContainer) mainContainer.innerHTML = `<p style="color: red; text-align: center;">เกิดข้อผิดพลาดในการโหลดข้อมูลแดชบอร์ด</p>`;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Dropdown Menu Logic
+    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', function(event) {
+        event.preventDefault();
+        const dropdownMenu = this.nextElementSibling;
+        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+          if (menu !== dropdownMenu) menu.classList.remove('show');
+        });
+        if (dropdownMenu) dropdownMenu.classList.toggle('show');
+      });
+    });
+  
+    window.addEventListener('click', function(event) {
+      if (!event.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+          menu.classList.remove('show');
+        });
+      }
+    });
+
+    // Logout Confirmation Modal Logic
+    const logoutButton = document.getElementById("logout-button");
+    const modal = document.getElementById('logout-confirm-modal');
+    const cancelBtn = document.getElementById('modal-cancel-btn');
+    const confirmBtn = document.getElementById('modal-confirm-btn');
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (modal) {
+                modal.style.display = 'flex';
+                requestAnimationFrame(() => modal.classList.add('show'));
+            }
+        });
+    }
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = "/login/index.html";
+        });
+    }
+    if(modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    }
+    
+    // Dashboard Logic
+    if (document.querySelector('main.dashboard-container')) {
+        loadDashboard();
+    }
+});
