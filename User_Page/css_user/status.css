@@ -10,7 +10,7 @@
   --approved-bg: #e6f7ec;
   --approved-text: #0b802c;
   --pending-bg: #fffbe6;
-  --pending-text: #b58105;
+  --pending-text: #e1a417;
   --rejected-bg: #fff1f0;
   --rejected-text: #d4380d;
 }
@@ -73,9 +73,9 @@ nav .dropdown-menu li a { text-decoration: none; }
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   border-top: 4px solid;
 }
-.status-box.approved { border-color: var(--color-primary); }
-.status-box.pending { border-color: var(--color-primary); }
-.status-box.rejected { border-color: var(--color-primary); }
+.status-box.approved { border-color: var(--approved-text); }
+.status-box.pending { border-color: var(--pending-text); }
+.status-box.rejected { border-color: var(--rejected-text); }
 
 .status-box h3 {
   margin: 0 0 15px 0;
