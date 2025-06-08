@@ -3,61 +3,99 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>นำส่งเอกสารหัวข้อ</title>
+  <title>นำส่งเอกสารหัวข้อและเค้าโครง</title>
   <link rel="stylesheet" href="/User_Page/css_user/form3.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="icon" href="/assets/images/logo.png">
 </head>
 <body>
-  <!-- 🔹 Navbar -->
   <nav>
-    <div class="logo">
-      <img src="/assets/images/logo.png" alt="KMITL Logo" />
-      <span>Graduate Tracker</span>
-    </div>
+    <a href="/User_Page/html_user/home.html" class="logo-link">
+      <div class="logo">
+        <img src="/assets/images/logo.png" alt="KMITL Logo" />
+        <span>Graduate Tracker</span>
+      </div>
+    </a>
     <ul class="nav-links">
-      <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
-      <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
+      <li><a href="/User_Page/html_user/home.html"><i class="fas fa-home"></i> หน้าหลัก</a></li>
+      <li><a href="/User_Page/html_user/status.html"><i class="fas fa-file-alt"></i> สถานะเอกสาร</a></li>
       <li class="dropdown">
-        <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
+        <a href="#" class="nav-dropdown-toggle"><i class="fas fa-edit"></i> กรอกแบบฟอร์ม <i class="fas fa-caret-down"></i></a>
         <ul class="dropdown-menu">
-          <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
-          <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
-          <li><a href="/User_Page/html_user/form3.html" class="active">นำส่งเอกสารหัวข้อ</a></li>
-          <li><a href="/User_Page/html_user/form4.html">เชิญผู้ทรงคุณวุฒิ</a></li>
-          <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูล</a></li>
+            <li><a href="/User_Page/html_user/form1.html">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</a></li>
+            <li><a href="/User_Page/html_user/form2.html">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</a></li>
+            <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
+            <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
+            <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
         </ul>
       </li>
-      <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
-      <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
-      <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
-      <li><a href="/User_Page/html_user/profile.html">👤 โปรไฟล์</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+      <li><a href="/User_Page/html_user/eng.html"><i class="fas fa-language"></i> ยื่นผลสอบอังกฤษ</a></li>
+      <li><a href="/User_Page/html_user/templates.html"><i class="fas fa-download"></i> ดาวน์โหลดเอกสาร</a></li>
+      <li><a href="/User_Page/html_user/guide.html"><i class="fas fa-book-open"></i> คู่มือการใช้งาน</a></li>
     </ul>
+    <div class="user-menu dropdown">
+      <a href="#" class="nav-dropdown-toggle" id="user-profile-link">
+        <span id="nav-username"></span>
+        <i class="fas fa-user-circle"></i>
+        <i class="fas fa-caret-down"></i>
+      </a>
+      <ul class="dropdown-menu user-dropdown-menu">
+        <li><a href="/User_Page/html_user/profile.html"><i class="fas fa-user-edit"></i> จัดการโปรไฟล์</a></li>
+        <li><a href="#" id="logout-button"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+      </ul>
+    </div>
   </nav>
 
-  <!-- 🔹 Form -->
   <div class="form-container">
-    <h2>📑 นำส่งเอกสารหัวข้อ</h2>
+    <h2>📑 แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ (ฟอร์ม 3)</h2>
     <form id="form3">
       <fieldset>
-        <legend>📌 ข้อมูลนักศึกษา</legend>
-        <input type="text" id="prefix" placeholder="นาย" disabled>
-        <input type="text" id="fullname" placeholder="ภัทรพล พลกุล" disabled>
-        <input type="text" id="student-id" placeholder="65030179" disabled>
-        <input type="text" id="program" placeholder="ครุศาสตร์อุตสาหกรรมมหาบัณฑิต" disabled>
+        <legend>📌 ข้อมูลนักศึกษา (ข้อมูลอัตโนมัติ)</legend>
+        <div class="info-grid">
+          <div><label>ชื่อ-นามสกุล:</label><input type="text" id="fullname" disabled></div>
+          <div><label>รหัสนักศึกษา:</label><input type="text" id="student-id" disabled></div>
+          <div class="full-width"><label>หลักสูตร:</label><input type="text" id="program" disabled></div>
+        </div>
       </fieldset>
 
       <fieldset>
-        <legend>📅 วันที่เสนอหัวข้อ</legend>
-        <input type="text" id="proposal-date" placeholder="18 มีนาคม 2568" disabled />
+        <legend>📖 ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</legend>
+        <div class="form-group">
+            <label>วันที่อนุมัติหัวข้อ:</label>
+            <input type="text" id="proposal-date" disabled />
+        </div>
+        <div class="form-group">
+            <label>ชื่อเรื่องวิทยานิพนธ์ (ภาษาไทย):</label>
+            <textarea id="thesis-title-th" rows="2" disabled></textarea>
+        </div>
+        <div class="form-group">
+            <label>ชื่อเรื่องวิทยานิพนธ์ (ภาษาอังกฤษ):</label>
+            <textarea id="thesis-title-en" rows="2" disabled></textarea>
+        </div>
       </fieldset>
 
       <fieldset>
-        <legend>📖 หัวข้อวิทยานิพนธ์*</legend>
-        <textarea id="thesis-title" placeholder="ระบุชื่อเรื่องวิทยานิพนธ์ที่ได้รับอนุมัติ*" required></textarea>
+        <legend>📎 แนบไฟล์เค้าโครงวิทยานิพนธ์</legend>
+        <div class="form-group">
+          <label for="outline-file">ไฟล์เค้าโครงวิทยานิพนธ์ฉบับสมบูรณ์* (.pdf, .docx ไม่เกิน 10MB)</label>
+          <input type="file" id="outline-file" class="file-input" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+          <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
+        </div>
       </fieldset>
 
-      <button type="submit">📤 ส่งแบบฟอร์ม</button>
+      <button type="submit">📤 ยืนยันและส่งแบบฟอร์ม</button>
     </form>
+  </div>
+  
+  <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-box">
+      <h3>ยืนยันการออกจากระบบ</h3>
+      <p>คุณต้องการออกจากระบบใช่หรือไม่?</p>
+      <div class="modal-actions">
+        <button id="modal-cancel-btn" class="btn-secondary">ยกเลิก</button>
+        <button id="modal-confirm-btn" class="btn-danger">ยืนยัน</button>
+      </div>
+    </div>
   </div>
 
   <script src="/User_Page/js_user/form3.js"></script>

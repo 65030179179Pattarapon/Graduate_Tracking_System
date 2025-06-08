@@ -10,7 +10,7 @@
   --approved-bg: #e6f7ec;
   --approved-text: #0b802c;
   --pending-bg: #fffbe6;
-  --pending-text: #e1a417;
+  --pending-text: #b58105;
   --rejected-bg: #fff1f0;
   --rejected-text: #d4380d;
 }
@@ -35,7 +35,7 @@ nav { background: var(--bg-card); display: flex; justify-content: space-between;
 .nav-links li a:hover, .nav-links li a.active { background-color: var(--color-primary); color: white; }
 .nav-links li a .fa-caret-down { font-size: 12px; margin-left: 4px; }
 .dropdown { position: relative; }
-.dropdown-menu { display: none; position: absolute; background: var(--bg-card); box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 8px 0; list-style: none; top: 110%; left: 0; width: 220px; z-index: 1001; border: 1px solid var(--border-color); }
+.dropdown-menu { display: none; position: absolute; background: var(--bg-card); box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 8px 0; list-style: none; top: 110%; left: 0; min-width: 220px; white-space: nowrap; z-index: 1001; border: 1px solid var(--border-color); }
 .dropdown-menu.show { display: block; }
 nav .dropdown-menu li a { text-decoration: none; }
 .dropdown-menu li a { color: var(--text-primary); font-size: 14px; padding: 10px 15px; width: auto; display: flex; align-items: center; gap: 10px; }
@@ -107,7 +107,7 @@ nav .dropdown-menu li a { text-decoration: none; }
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .status-box ul li a:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   transform: translateY(-2px);
 }
 .status-box .doc-title {
@@ -133,9 +133,36 @@ nav .dropdown-menu li a { text-decoration: none; }
 .modal-overlay.show .modal-box { transform: scale(1); }
 .modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
 .modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
-.modal-actions { display: flex; justify-content: center; gap: 15px; }
-.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
-.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
-.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
-.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
-.modal-actions .btn-danger:hover { background-color: #c82333; }
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modal-actions button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease; /* เพิ่ม transition */
+}
+
+/* ปุ่ม "ยกเลิก" */
+.modal-actions .btn-secondary {
+  background-color: #e9ecef;
+  color: var(--text-secondary);
+  border: 1px solid #dee2e6;
+}
+.modal-actions .btn-secondary:hover {
+  background-color: #dee2e6;
+}
+
+/* ปุ่ม "ยืนยัน" (สีแดง) - จุดสำคัญ */
+.modal-actions .btn-danger {
+  background-color: var(--rejected-color, #dc3545); /* << **ต้องมีบรรทัดนี้** */
+  color: white;
+}
+.modal-actions .btn-danger:hover {
+  background-color: #c82333; /* สีตอน hover */
+}

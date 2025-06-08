@@ -1,114 +1,127 @@
+/* /assets/signature/signature.css (New Version for Upload Only) */
 :root {
   --primary: #ed4988;
   --secondary: #f1592b;
-  --bg: #fdfbff;
+  --bg: #f4f7f6;
   --text: #333;
-  --border-color: #ddd; /* เพิ่มตัวแปรสีขอบ */
-  --canvas-bg: #fff; /* สีพื้นหลัง canvas ที่ชัดเจนขึ้น */
+  --border-color: #dee2e6;
 }
 
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
   background: var(--bg);
+  color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh; /* ใช้ min-height เพื่อให้เต็มจอเสมอ */
-  padding: 15px; /* เพิ่ม padding เผื่อหน้าจอเล็ก */
+  min-height: 100vh;
+  padding: 20px;
   box-sizing: border-box;
 }
 
-.container {
-  width: 100%; /* ปรับให้ยืดหยุ่น */
-  max-width: 500px;
-  background: white;
-  padding: 25px; /* ปรับ padding */
-  border-radius: 12px; /* ลดความโค้งเล็กน้อย */
-  box-shadow: 0 5px 25px rgba(0,0,0,0.1);
-  animation: fadeIn 0.6s ease-out; /* ปรับ timing */
-}
-
-.card h2 {
-  color: var(--primary);
-  margin-top: 0; /* เอา margin-top ออกถ้าไม่จำเป็น */
-  margin-bottom: 15px; /* เพิ่มระยะห่าง */
-  text-align: center; /* จัดกลาง */
-}
-
-.card p {
-  color: #555; /* สีเทาเข้มขึ้นเล็กน้อย */
-  font-size: 14px; /* ปรับขนาด font */
-  margin-bottom: 20px;
-  line-height: 1.6; /* เพิ่ม line-height */
-  text-align: center; /* จัดกลาง */
-}
-
-canvas#signature-pad {
+.signature-container {
   width: 100%;
-  height: 200px;
-  border: 1px solid var(--border-color); /* เปลี่ยนเป็น solid และใช้ตัวแปร */
-  border-radius: 8px; /* ลดความโค้ง */
-  background: var(--canvas-bg);
-  cursor: crosshair; /* เปลี่ยน cursor ตอนวาด */
-  touch-action: none; /* ป้องกันการ scroll ขณะวาดบน mobile */
-}
-
-.actions {
-  margin-top: 25px; /* เพิ่มระยะห่าง */
   display: flex;
-  flex-wrap: wrap; /* ให้ปุ่มขึ้นบรรทัดใหม่ได้บนจอเล็ก */
-  justify-content: space-between; /* จัดวางปุ่ม */
-  gap: 10px; /* เพิ่ม gap ระหว่างปุ่ม */
+  justify-content: center;
 }
 
-.actions button {
-  padding: 10px 15px;
-  background: var(--secondary);
-  color: white;
-  border: none;
-  border-radius: 6px; /* ลดความโค้ง */
-  font-weight: 500; /* ปรับ font-weight */
-  font-size: 14px; /* ปรับขนาด font */
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease; /* เพิ่ม transition */
-  flex-grow: 1; /* ให้ปุ่มขยายเท่ากันในแถว (ถ้ามีหลายปุ่ม) */
-  min-width: 120px; /* กำหนดความกว้างขั้นต่ำ */
+.signature-card {
+  width: 100%;
+  max-width: 450px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+  text-align: center;
+  animation: fadeIn 0.5s ease;
 }
-
-.actions button:hover {
-  background: #d44b1a; /* สี hover */
-}
-.actions button:active {
-  transform: scale(0.98); /* เอฟเฟกต์ตอนกด */
-}
-
-/* สไตล์เฉพาะปุ่ม "ล้างลายเซ็น" อาจจะใช้สีที่ต่างออกไป */
-#clear-signature-btn {
-  background-color: #6c757d; /* สีเทา */
-}
-#clear-signature-btn:hover {
-  background-color: #5a6268;
-}
-
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(15px); } /* ปรับ transform */
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 480px) {
-  .container {
-    padding: 20px;
-  }
-  .actions {
-    flex-direction: column; /* ปุ่มเรียงแนวตั้งบนจอเล็กมาก */
-  }
-  .actions button {
-    width: 100%; /* ปุ่มเต็มความกว้าง */
-    margin-bottom: 10px;
-  }
-  .actions button:last-child {
-    margin-bottom: 0;
-  }
+.card-logo {
+  width: 150px;
+  margin-bottom: 15px;
+}
+
+.signature-card h2 {
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.signature-card p {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.image-preview-container {
+  width: 100%;
+  height: 200px;
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+  position: relative;
+  background-color: #fafafa;
+}
+
+#signature-preview {
+  max-width: 100%;
+  max-height: 100%;
+  display: none; /* ซ่อนไว้ในตอนแรก */
+}
+
+#preview-text {
+  color: #aaa;
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ซ่อน input file เดิม */
+input[type="file"] {
+  display: none;
+}
+
+/* สร้างปุ่มอัปโหลดที่สวยงามจาก label */
+.upload-btn-wrapper {
+  display: inline-block;
+  padding: 12px 20px;
+  background-color: #17a2b8;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+.upload-btn-wrapper:hover {
+  background-color: #138496;
+}
+
+#submit-signature-btn {
+  padding: 12px 20px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#submit-signature-btn:hover {
+  background: #e24a1e;
 }

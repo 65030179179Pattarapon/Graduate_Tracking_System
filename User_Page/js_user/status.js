@@ -1,23 +1,5 @@
 // /User_Page/js_user/status.js
 
-function logout() {
-  const modal = document.getElementById('logout-confirm-modal');
-  if (modal) {
-    modal.style.display = 'flex';
-    requestAnimationFrame(() => modal.classList.add('show'));
-  }
-}
-
-function closeModal() {
-  const modal = document.getElementById('logout-confirm-modal');
-  if (modal) {
-    modal.classList.remove('show');
-    setTimeout(() => {
-        modal.style.display = 'none';
-    }, 300);
-  }
-}
-
 // --- Main Function to Load and Render Status Page ---
 async function loadStatusData() {
     const userEmail = localStorage.getItem("current_user");
@@ -27,7 +9,6 @@ async function loadStatusData() {
     }
 
     try {
-        // Fetch all necessary data concurrently
         const [students, pendingDocs, approvedDocs, rejectedDocs] = await Promise.all([
             fetch("/data/student.json").then(res => res.json()),
             fetch("/data/document_pending.json").then(res => res.json()),
@@ -35,25 +16,32 @@ async function loadStatusData() {
             fetch("/data/document_rejected.json").then(res => res.json())
         ]);
 
+        const localStoragePending = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+        const localStorageApproved = JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]');
+        const localStorageRejected = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
+
+        const combinedPending = [...pendingDocs, ...localStoragePending];
+        const combinedApproved = [...approvedDocs, ...localStorageApproved];
+        const combinedRejected = [...rejectedDocs, ...localStorageRejected];
+
         const currentUser = students.find(s => s.email === userEmail);
         if (!currentUser) {
             alert("ไม่พบข้อมูลนักศึกษา, กำลังออกจากระบบ");
-            logout(); // Original logout without confirm for critical errors
+            localStorage.clear();
+            window.location.href = "/login/index.html";
             return;
         }
 
-        // Populate navbar username
-        document.getElementById('nav-username').textContent = userEmail;
+        const navUsername = document.getElementById('nav-username');
+        if (navUsername) navUsername.textContent = currentUser.email;
 
-        // Filter documents for the current user
-        // This assumes 'student' field is a full name. A more robust system would use student_id.
         const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
+        const studentId = currentUser.student_id;
         
-        const userPending = pendingDocs.filter(doc => doc.student === userFullname);
-        const userApproved = approvedDocs.filter(doc => doc.student === userFullname);
-        const userRejected = rejectedDocs.filter(doc => doc.student === userFullname);
+        const userPending = combinedPending.filter(doc => doc.student_id === studentId || doc.student === userFullname);
+        const userApproved = combinedApproved.filter(doc => doc.student_id === studentId || doc.student === userFullname);
+        const userRejected = combinedRejected.filter(doc => doc.student_id === studentId || doc.student === userFullname);
         
-        // Render each list
         renderDocumentList('approved-list', userApproved, 'อนุมัติ');
         renderDocumentList('pending-list', userPending, 'ดำเนินการ');
         renderDocumentList('rejected-list', userRejected, 'ไม่อนุมัติ/แก้ไข');
@@ -64,40 +52,52 @@ async function loadStatusData() {
     }
 }
 
-// Function to render a list of documents into a specific <ul>
+function formatDate(isoString) {
+    if (!isoString) return 'N/A';
+    try {
+        const date = new Date(isoString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    } catch (error) {
+        return 'Invalid Date';
+    }
+}
+
 function renderDocumentList(listId, documents, statusType) {
     const listElement = document.getElementById(listId);
     if (!listElement) return;
 
-    listElement.innerHTML = ''; // Clear loading/previous content
-
+    listElement.innerHTML = '';
     if (documents.length === 0) {
         listElement.innerHTML = `<li class="empty-message">ยังไม่มีเอกสารในสถานะนี้</li>`;
         return;
     }
     
-    // Sort documents by date, most recent first
     documents.sort((a, b) => {
-        const dateA = new Date(a.submitted_date || a.rejected_date || 0);
-        const dateB = new Date(b.submitted_date || b.rejected_date || 0);
+        const dateA = new Date(a.submitted_date || a.rejected_date || a.approved_date || 0).getTime();
+        const dateB = new Date(b.submitted_date || b.rejected_date || b.approved_date || 0).getTime();
         return dateB - dateA;
     });
 
     documents.forEach(doc => {
         const li = document.createElement('li');
-        // Construct detail link using a unique ID if available, otherwise fallback.
-        const docId = doc.id || doc.request_id || `${doc.type}_${doc.student}`; // A unique ID from JSON is best
-        const docType = doc.type || statusType;
-        const detailPageUrl = `/Admin_Page/html_admin/document_detail.html?id=${encodeURIComponent(docId)}&type=${encodeURIComponent(docType)}`;
-
-        // Date logic
+        const docId = doc.id || doc.doc_id || `${doc.type}_${doc.student_email || localStorage.getItem("current_user")}`;
+        const detailPageUrl = `/User_Page/html_user/student_document_detail.html?id=${encodeURIComponent(docId)}&type=${encodeURIComponent(doc.type)}`;
+        
         let dateToShow = '';
+        let dateValue = null;
+
         if (statusType === 'อนุมัติ') {
-            dateToShow = `วันที่อนุมัติ: ${doc.submitted_date || 'N/A'}`; // Assuming submitted_date is approval date for this list
+            dateValue = doc.approved_date || doc.submitted_date;
+            dateToShow = `วันที่อนุมัติ: ${formatDate(dateValue)}`;
         } else if (statusType === 'ไม่อนุมัติ/แก้ไข') {
-            dateToShow = `วันที่ส่งกลับ: ${doc.rejected_date || 'N/A'}`;
+            dateValue = doc.rejected_date;
+            dateToShow = `วันที่ส่งกลับ: ${formatDate(dateValue)}`;
         } else {
-            dateToShow = `วันที่ส่ง: ${doc.submitted_date || 'N/A'}`;
+            dateValue = doc.submitted_date;
+            dateToShow = `วันที่ส่ง: ${formatDate(dateValue)}`;
         }
 
         li.innerHTML = `
@@ -110,10 +110,32 @@ function renderDocumentList(listId, documents, statusType) {
     });
 }
 
-
 // --- Main Event Listener for all page interactions ---
 document.addEventListener('DOMContentLoaded', function() {
-    // Dropdown Menu Logic
+    
+    // --- Standard Navbar & Logout Logic ---
+    function showLogoutModal() {
+        const modal = document.getElementById('logout-confirm-modal');
+        if (modal) {
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => modal.classList.add('show'));
+        } else {
+            // Fallback if modal is not in HTML
+            if (confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
+                localStorage.clear();
+                window.location.href = "/login/index.html";
+            }
+        }
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('logout-confirm-modal');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+    }
+
     const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
     dropdownToggles.forEach(toggle => {
       toggle.addEventListener('click', function(event) {
@@ -134,21 +156,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Logout Confirmation Modal Logic
     const logoutButton = document.getElementById("logout-button");
     const modal = document.getElementById('logout-confirm-modal');
     const cancelBtn = document.getElementById('modal-cancel-btn');
     const confirmBtn = document.getElementById('modal-confirm-btn');
 
-    if (logoutButton) {
-        logoutButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (modal) {
-                modal.style.display = 'flex';
-                requestAnimationFrame(() => modal.classList.add('show'));
-            }
-        });
-    }
+    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); showLogoutModal(); });
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
     if (confirmBtn) {
         confirmBtn.addEventListener('click', () => {
@@ -161,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target === this) closeModal();
         });
     }
+    // --- End Navbar Logic ---
+    
     
     // Load data for the status page
     loadStatusData();

@@ -39,6 +39,30 @@ function getUserDocuments(docArrays, studentId, studentFullName) {
     return allUserDocs;
 }
 
+function formatDateTime(isoString) {
+     if (!isoString) return 'N/A';
+     
+     // สร้าง Date object จาก ISO string โดยตรง
+     // JavaScript จะจัดการแปลงจาก UTC มาเป็นเวลาท้องถิ่นของเบราว์เซอร์ให้โดยอัตโนมัติ
+     const date = new Date(isoString);
+
+     // ตรวจสอบว่าเป็นวันที่ถูกต้องหรือไม่
+     if (isNaN(date.getTime())) {
+         return 'Invalid Date';
+     }
+
+     // ใช้ toLocaleString เพื่อแสดงผลตามภาษาและ Time Zone ของผู้ใช้
+     return date.toLocaleString('th-TH', {
+         year: 'numeric',
+         month: 'short',
+         day: 'numeric',
+         hour: '2-digit',
+         minute: '2-digit',
+         second: '2-digit',
+         hour12: false // แสดงผลแบบ 24 ชั่วโมง
+     }) + ' น.';
+ }
+ 
 function determineNextStep(studentData, userApprovedDocs) {
     const nextStepContainer = document.getElementById('next-step-content');
     if (!nextStepContainer) return;
@@ -57,7 +81,7 @@ function determineNextStep(studentData, userApprovedDocs) {
     }
 
     if (!hasApproved('ฟอร์ม 1')) {
-        nextStepContainer.innerHTML = `<span class="action-title">เลือกอาจารย์ที่ปรึกษา</span><p>ขั้นตอนแรกคือการยื่นแบบฟอร์มเพื่อขอรับรองอาจารย์ที่ปรึกษาวิทยานิพนธ์</p><a href="/User_Page/html_user/form1.html" class="action-button">ไปที่ฟอร์ม 1</a>`;
+        nextStepContainer.innerHTML = `<span class="action-title">เลือกอาจารย์ที่ปรึกษา</span><p>ขั้นตอนแรกคือการยื่นแบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</p><a href="/User_Page/html_user/form1.html" class="action-button">ไปที่ฟอร์ม 1</a>`;
         return;
     }
     if (!hasApproved('ฟอร์ม 2')) {
@@ -108,21 +132,23 @@ async function loadDashboard() {
         const currentUser = students.find(s => s.email === userEmail);
         if (!currentUser) {
             alert("ไม่พบข้อมูลนักศึกษา, กำลังออกจากระบบ");
-            logout();
+            logout(); // Original logout without confirm for critical errors
             return;
         }
         
         const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
         const studentId = currentUser.student_id;
-
-        // --- จุดแก้ไข ---
-        document.getElementById('nav-username').textContent = userEmail;
-        document.getElementById('welcome-name').textContent = `${currentUser.first_name_th} ${currentUser.last_name_th}`;
-        // --- สิ้นสุดจุดแก้ไข ---
         
-        const userPendingDocs = getUserDocuments([pendingDocs], studentId, userFullname);
-        const userApprovedDocs = getUserDocuments([approvedDocs], studentId, userFullname);
-        const userRejectedDocs = getUserDocuments([rejectedDocs], studentId, userFullname);
+        document.getElementById('nav-username').textContent = currentUser.email;
+        document.getElementById('welcome-name').textContent = `${currentUser.first_name_th} ${currentUser.last_name_th}`;
+        
+        const localStoragePending = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+        const localStorageApproved = JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]');
+        const localStorageRejected = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
+
+        const userPendingDocs = getUserDocuments([pendingDocs, localStoragePending], studentId, userFullname);
+        const userApprovedDocs = getUserDocuments([approvedDocs, localStorageApproved], studentId, userFullname);
+        const userRejectedDocs = getUserDocuments([rejectedDocs, localStorageRejected], studentId, userFullname);
         const userAllDocuments = [...userPendingDocs, ...userApprovedDocs, ...userRejectedDocs];
         
         localStorage.setItem('userDashboardState', JSON.stringify({ rejectedCount: userRejectedDocs.length }));
@@ -139,14 +165,9 @@ async function loadDashboard() {
             
             recentThree.forEach(doc => {
                 const li = document.createElement('li');
-                let detailLink = `/User_Page/html_user/status.html`;
-                if (doc.status && doc.type) {
-                    const status_en = doc.status.includes('อนุมัติ') ? 'approved' : (doc.status.includes('รอ') ? 'pending' : 'rejected');
-                    const form_num = (doc.type.match(/\d+/) || [''])[0];
-                    if (form_num) {
-                        detailLink = `/User_Page/html_user/status_${status_en}_form${form_num}.html`;
-                    }
-                }
+                const docId = doc.id || doc.doc_id || `${doc.type}_${doc.student_email || userEmail}`;
+                const detailLink = `/User_Page/html_user/student_document_detail.html?id=${encodeURIComponent(docId)}&type=${encodeURIComponent(doc.type)}`;
+                
                 const statusClass = `status-${(doc.status || 'default').replace(/\s+/g, '-')}`;
                 li.innerHTML = `<a href="${detailLink}" class="doc-title">${doc.title} (${doc.type || ''})</a><span class="doc-status ${statusClass}">${doc.status}</span>`;
                 recentDocsList.appendChild(li);
@@ -165,7 +186,6 @@ async function loadDashboard() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Dropdown Menu Logic
     const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
     dropdownToggles.forEach(toggle => {
       toggle.addEventListener('click', function(event) {
@@ -186,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Logout Confirmation Modal Logic
     const logoutButton = document.getElementById("logout-button");
     const modal = document.getElementById('logout-confirm-modal');
     const cancelBtn = document.getElementById('modal-cancel-btn');
@@ -195,10 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutButton) {
         logoutButton.addEventListener('click', (e) => {
             e.preventDefault();
-            if (modal) {
-                modal.style.display = 'flex';
-                requestAnimationFrame(() => modal.classList.add('show'));
-            }
+            logout();
         });
     }
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
@@ -214,7 +230,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Dashboard Logic
     if (document.querySelector('main.dashboard-container')) {
         loadDashboard();
     }

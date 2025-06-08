@@ -3,22 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ลงลายเซ็นออนไลน์</title>
+  <title>อัปโหลดลายเซ็นออนไลน์</title>
   <link rel="stylesheet" href="/assets/signature/signature.css" />
+  <link rel="icon" href="/assets/images/logo.png">
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h2>✍️ ลงลายเซ็นออนไลน์</h2>
-      <p>กรุณาเซ็นชื่อของคุณในกล่องด้านล่าง หรืออัปโหลดรูปภาพลายเซ็น ระบบจะบันทึกลายเซ็นของคุณเพื่อใช้ในการยื่นเอกสารทุกฉบับ</p>
 
-      <canvas id="signature-pad"></canvas>
+  <div class="signature-container">
+    <div class="signature-card">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" class="card-logo" />
 
+      <h2>✍️ ตั้งค่าลายเซ็นออนไลน์</h2>
+      <p>กรุณาอัปโหลดไฟล์รูปภาพลายเซ็นของคุณ (.png, .jpg) เพื่อใช้ในการยื่นเอกสารต่างๆ ในระบบ</p>
+      
+      <div class="image-preview-container" id="image-preview-container">
+        <img src="" alt="ตัวอย่างลายเซ็น" id="signature-preview" class="signature-image-preview">
+        <span id="preview-text">ยังไม่มีรูปภาพ</span>
+      </div>
+      
       <div class="actions">
-        <button id="clear-signature-btn" type="button">🧹 ล้างลายเซ็น</button>
-        <button id="upload-signature-btn" type="button">🖼️ อัปโหลดรูปภาพ</button>
-        <input type="file" id="signature-file-input" accept="image/png, image/jpeg" style="display: none;" />
-        <button id="submit-signature-btn" type="button">✅ บันทึกลายเซ็น</button>
+        <label for="signature-file-input" class="upload-btn-wrapper">
+          🖼️ เลือกรูปภาพ
+        </label>
+        <input type="file" id="signature-file-input" accept="image/png, image/jpeg" />
+
+        <button id="submit-signature-btn" type="button">✅ บันทึกและดำเนินการต่อ</button>
       </div>
     </div>
   </div>
