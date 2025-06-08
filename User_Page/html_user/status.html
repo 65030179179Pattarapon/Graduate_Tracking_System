@@ -6,6 +6,7 @@
   <title>สถานะเอกสาร | Graduate Tracker</title>
   <link rel="stylesheet" href="/User_Page/css_user/status.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="icon" href="/assets/images/logo.png">
 </head>
 <body>
   <nav>
@@ -53,18 +54,21 @@
         <ul id="approved-list">
           <li class="loading-text">กำลังโหลดข้อมูล...</li>
         </ul>
+        <div class="pagination-controls" id="pagination-approved"></div>
       </div>
       <div class="status-box pending">
         <h3>⌛ กำลังดำเนินการ</h3>
         <ul id="pending-list">
           <li class="loading-text">กำลังโหลดข้อมูล...</li>
         </ul>
+        <div class="pagination-controls" id="pagination-pending"></div>
       </div>
       <div class="status-box rejected">
         <h3>❌ ไม่อนุมัติ / ต้องแก้ไข</h3>
         <ul id="rejected-list">
           <li class="loading-text">กำลังโหลดข้อมูล...</li>
         </ul>
+        <div class="pagination-controls" id="pagination-rejected"></div>
       </div>
     </div>
   </main>

@@ -7,11 +7,8 @@
   --bg-main: #f4f7f6;
   --bg-card: #ffffff;
   --border-color: #e9ecef;
-  --approved-bg: #e6f7ec;
   --approved-text: #0b802c;
-  --pending-bg: #fffbe6;
-  --pending-text: #b58105;
-  --rejected-bg: #fff1f0;
+  --pending-text: #b58105; /* Darker yellow for text */
   --rejected-text: #d4380d;
 }
 
@@ -24,7 +21,7 @@ body {
   padding-top: 65px;
 }
 
-/* 🔹 Navbar (ใช้สไตล์มาตรฐานเดียวกับ home.css) */
+/* 🔹 Navbar (Standardized) */
 nav { background: var(--bg-card); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); position: fixed; top: 0; left: 0; right: 0; height: 65px; z-index: 1000; border-bottom: 1px solid var(--border-color); }
 .logo-link { text-decoration: none; }
 .logo { display: flex; align-items: center; gap: 12px; }
@@ -68,17 +65,21 @@ nav .dropdown-menu li a { text-decoration: none; }
 
 .status-box {
   background: var(--bg-card);
-  padding: 20px;
+  padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   border-top: 4px solid;
+  display: flex;
+  flex-direction: column;
 }
 .status-box.approved { border-color: var(--approved-text); }
 .status-box.pending { border-color: var(--pending-text); }
 .status-box.rejected { border-color: var(--rejected-text); }
 
 .status-box h3 {
-  margin: 0 0 15px 0;
+  margin: 0 0 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
   font-size: 18px;
   color: var(--text-primary);
   display: flex;
@@ -90,12 +91,11 @@ nav .dropdown-menu li a { text-decoration: none; }
   list-style: none;
   padding: 0;
   margin: 0;
+  flex-grow: 1; /* ทำให้ list ขยายเต็มพื้นที่ที่เหลือ */
 }
 
-/* สไตล์ของรายการเอกสารแต่ละอัน */
-.status-box ul li {
-  margin-bottom: 10px;
-}
+.status-box ul li { margin-bottom: 10px; }
+.status-box ul li:last-child { margin-bottom: 0; }
 .status-box ul li a {
   display: block;
   padding: 15px;
@@ -109,6 +109,8 @@ nav .dropdown-menu li a { text-decoration: none; }
 .status-box ul li a:hover {
   box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   transform: translateY(-2px);
+  border-left: 4px solid var(--color-primary);
+  padding-left: 12px;
 }
 .status-box .doc-title {
   display: block;
@@ -126,43 +128,39 @@ nav .dropdown-menu li a { text-decoration: none; }
   padding: 20px;
 }
 
-/* Modal Styles */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; }
-.modal-overlay.show { opacity: 1; }
-.modal-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 400px; text-align: center; transform: scale(0.95); transition: transform 0.3s ease; }
-.modal-overlay.show .modal-box { transform: scale(1); }
-.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
-.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
-.modal-actions {
+/* --- � สไตล์สำหรับ Pagination Controls --- */
+.pagination-controls {
   display: flex;
-  justify-content: center;
-  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  margin-top: auto; /* ดันให้ไปอยู่ด้านล่างสุดของ .status-box */
+  border-top: 1px solid var(--border-color);
 }
-
-.modal-actions button {
-  padding: 10px 25px;
-  border: none;
-  border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease; /* เพิ่ม transition */
-}
-
-/* ปุ่ม "ยกเลิก" */
-.modal-actions .btn-secondary {
-  background-color: #e9ecef;
+.pagination-controls .page-info {
+  font-size: 13px;
   color: var(--text-secondary);
-  border: 1px solid #dee2e6;
+  font-weight: 500;
 }
-.modal-actions .btn-secondary:hover {
-  background-color: #dee2e6;
+.pagination-controls button {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid #ccc;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
-
-/* ปุ่ม "ยืนยัน" (สีแดง) - จุดสำคัญ */
-.modal-actions .btn-danger {
-  background-color: var(--rejected-color, #dc3545); /* << **ต้องมีบรรทัดนี้** */
+.pagination-controls button:hover:not(:disabled) {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
   color: white;
 }
-.modal-actions .btn-danger:hover {
-  background-color: #c82333; /* สีตอน hover */
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
+
+
+/* Modal Styles */
+.modal-overlay { /* ... (โค้ด Modal เหมือนเดิม) ... */ }

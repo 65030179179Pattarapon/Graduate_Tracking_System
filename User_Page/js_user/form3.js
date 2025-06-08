@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const submissionData = {
             doc_id: `form3_${userEmail}_${Date.now()}`,
             type: "ฟอร์ม 3",
-            title: "นำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์",
+            title: "แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม",
             student_email: userEmail,
             student_id: document.getElementById('student-id').value,
             student: document.getElementById('fullname').value,

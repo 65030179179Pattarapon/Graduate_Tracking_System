@@ -6,9 +6,9 @@
   <title>หน้าหลัก | Graduate Tracker</title>
   <link rel="stylesheet" href="/User_Page/css_user/home.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="icon" href="/assets/images/logo.png">
 </head>
 <body>
-  <!-- 🔹 Navbar ที่ปรับปรุงแล้ว -->
   <nav>
     <a href="/User_Page/html_user/home.html" class="logo-link">
       <div class="logo">
@@ -22,11 +22,11 @@
       <li class="dropdown">
         <a href="#" class="nav-dropdown-toggle"><i class="fas fa-edit"></i> กรอกแบบฟอร์ม <i class="fas fa-caret-down"></i></a>
         <ul class="dropdown-menu">
-            <li><a href="/User_Page/html_user/form1.html">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</a></li>
-            <li><a href="/User_Page/html_user/form2.html">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</a></li>
-            <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
-            <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
-            <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
+          <li><a href="/User_Page/html_user/form1.html">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</a></li>
+          <li><a href="/User_Page/html_user/form2.html">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</a></li>
+          <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
+          <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
+          <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
         </ul>
       </li>
       <li><a href="/User_Page/html_user/eng.html"><i class="fas fa-language"></i> ยื่นผลสอบอังกฤษ</a></li>
@@ -46,7 +46,6 @@
     </div>
   </nav>
 
-  <!-- 🔹 Dashboard หลัก (ใช้โครงสร้างเดิมที่ปรับปรุงแล้ว) -->
   <main class="dashboard-container">
     <div class="dashboard-header">
       <h1>ยินดีต้อนรับ, <span id="welcome-name"></span>!</h1>
@@ -54,9 +53,7 @@
     </div>
 
     <div class="dashboard-layout">
-      <!-- คอลัมน์หลัก (ซ้าย) -->
       <div class="main-column">
-        <!-- การ์ด: ขั้นตอนต่อไป -->
         <div class="dashboard-card next-step-card">
           <h3><i class="fas fa-step-forward"></i> ขั้นตอนต่อไปของคุณ (Next Step)</h3>
           <div id="next-step-content" class="next-step-body">
@@ -64,38 +61,26 @@
           </div>
         </div>
 
-        <!-- การ์ด: สถานะเอกสารล่าสุด -->
         <div class="dashboard-card recent-docs-card">
             <h3><i class="fas fa-history"></i> รายการล่าสุด (Recent Activities)</h3>
             <ul id="recent-docs-list">
                 <li class="loading">กำลังโหลดข้อมูล...</li>
             </ul>
+            <div class="pagination-controls" id="recent-docs-pagination"></div>
         </div>
       </div>
 
-      <!-- คอลัมน์รอง (ขวา) -->
       <div class="side-column">
-        <!-- การ์ด: สรุปสถานะเอกสาร -->
         <div class="dashboard-card status-summary-card">
           <h3><i class="fas fa-chart-pie"></i> ภาพรวมเอกสาร</h3>
           <div class="status-boxes">
-              <div class="box submitted">
-                <span>ส่งแล้ว</span>
-                <strong id="submitted-count">0</strong>
-              </div>
-              <div class="box approved">
-                <span>อนุมัติ</span>
-                <strong id="approved-count">0</strong>
-              </div>
-              <div class="box rejected">
-                <span>ตีกลับ</span>
-                <strong id="rejected-count">0</strong>
-              </div>
+              <div class="box submitted"><span>ส่งแล้ว</span><strong id="submitted-count">0</strong></div>
+              <div class="box approved"><span>อนุมัติ</span><strong id="approved-count">0</strong></div>
+              <div class="box rejected"><span>ตีกลับ</span><strong id="rejected-count">0</strong></div>
           </div>
           <a href="/User_Page/html_user/status.html" class="view-all-link">ดูสถานะเอกสารทั้งหมด →</a>
         </div>
         
-        <!-- การ์ด: ทางลัด -->
         <div class="dashboard-card quick-links-card">
             <h3><i class="fas fa-bolt"></i> ทางลัด (Quick Links)</h3>
             <div class="quick-links">
@@ -109,7 +94,6 @@
     </div>
   </main>
   
-  <!-- โครงสร้าง Modal สำหรับยืนยันการ Logout -->
   <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
     <div class="modal-box">
       <h3>ยืนยันการออกจากระบบ</h3>
@@ -120,7 +104,6 @@
       </div>
     </div>
   </div>
-
 
   <script src="/User_Page/js_user/home.js"></script>
 </body>

@@ -96,7 +96,15 @@ main.dashboard-container { max-width: 1400px; margin: 30px auto; padding: 0 30px
 .status-summary-card .rejected strong { color: var(--text-primary); }
 .status-summary-card .view-all-link { display: block; margin-top: 20px; text-align: right; font-size: 14px; font-weight: 500; color: var(--color-primary); text-decoration: none; }
 .status-summary-card .view-all-link:hover { text-decoration: underline; }
-.recent-docs-card ul { list-style: none; padding: 0; margin: 0; }
+.recent-docs-card {
+    justify-content: space-between; /* จัดให้ pagination อยู่ด้านล่างสุดของการ์ด */
+}
+.recent-docs-card ul { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    flex-grow: 1; /* ทำให้ list ขยายเต็มพื้นที่ที่เหลือ */
+}
 .recent-docs-card li { display: flex; justify-content: space-between; align-items: center; padding: 14px 5px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
 .recent-docs-card li:last-child { border-bottom: none; }
 .recent-docs-card .doc-title { color: var(--text-primary); font-weight: 500; text-decoration: none;}
@@ -106,6 +114,41 @@ main.dashboard-container { max-width: 1400px; margin: 30px auto; padding: 0 30px
 .recent-docs-card .status-อนุมัติแล้ว { background-color: #e6f7ec; color: #0b802c; }
 .recent-docs-card .status-ไม่อนุมัติ { background-color: #fff1f0; color: #d4380d; }
 .recent-docs-card .no-docs, .recent-docs-card .loading { text-align: center; color: var(--text-secondary); padding: 20px 0; }
+
+/* --- 🆕 สไตล์สำหรับ Pagination ในการ์ด Recent Activities --- */
+.recent-docs-card .pagination-controls {
+    display: flex;
+    justify-content: flex-end; /* จัดชิดขวา */
+    align-items: center;
+    gap: 8px;
+    padding-top: 15px;
+    margin-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+.recent-docs-card .pagination-controls .page-info {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+.recent-docs-card .pagination-controls button {
+    background-color: var(--bg-card);
+    color: var(--text-secondary);
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+.recent-docs-card .pagination-controls button:hover:not(:disabled) {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+.recent-docs-card .pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .quick-links-card .quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .quick-links-card .quick-link-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 15px; background-color: #f8f9fa; border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; color: var(--text-primary); font-weight: 500; text-align: center; transition: all 0.2s; }
 .quick-links-card .quick-link-btn:hover { border-color: var(--color-primary); color: var(--color-primary); transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }

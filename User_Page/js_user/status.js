@@ -1,57 +1,35 @@
 // /User_Page/js_user/status.js
 
-// --- Main Function to Load and Render Status Page ---
-async function loadStatusData() {
-    const userEmail = localStorage.getItem("current_user");
-    if (!userEmail) {
-        window.location.href = "/login/index.html";
-        return;
-    }
+// --- Pagination State & Configuration ---
+const paginationState = {
+    approved: { currentPage: 1, data: [] },
+    pending: { currentPage: 1, data: [] },
+    rejected: { currentPage: 1, data: [] }
+};
+const ROWS_PER_PAGE = 5;
 
-    try {
-        const [students, pendingDocs, approvedDocs, rejectedDocs] = await Promise.all([
-            fetch("/data/student.json").then(res => res.json()),
-            fetch("/data/document_pending.json").then(res => res.json()),
-            fetch("/data/document_approved.json").then(res => res.json()),
-            fetch("/data/document_rejected.json").then(res => res.json())
-        ]);
-
-        const localStoragePending = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
-        const localStorageApproved = JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]');
-        const localStorageRejected = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
-
-        const combinedPending = [...pendingDocs, ...localStoragePending];
-        const combinedApproved = [...approvedDocs, ...localStorageApproved];
-        const combinedRejected = [...rejectedDocs, ...localStorageRejected];
-
-        const currentUser = students.find(s => s.email === userEmail);
-        if (!currentUser) {
-            alert("ไม่พบข้อมูลนักศึกษา, กำลังออกจากระบบ");
+// --- Standard Navbar & Logout Logic ---
+function showLogoutModal() {
+    const modal = document.getElementById('logout-confirm-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => modal.classList.add('show'));
+    } else {
+        if (confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
             localStorage.clear();
             window.location.href = "/login/index.html";
-            return;
         }
-
-        const navUsername = document.getElementById('nav-username');
-        if (navUsername) navUsername.textContent = currentUser.email;
-
-        const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
-        const studentId = currentUser.student_id;
-        
-        const userPending = combinedPending.filter(doc => doc.student_id === studentId || doc.student === userFullname);
-        const userApproved = combinedApproved.filter(doc => doc.student_id === studentId || doc.student === userFullname);
-        const userRejected = combinedRejected.filter(doc => doc.student_id === studentId || doc.student === userFullname);
-        
-        renderDocumentList('approved-list', userApproved, 'อนุมัติ');
-        renderDocumentList('pending-list', userPending, 'ดำเนินการ');
-        renderDocumentList('rejected-list', userRejected, 'ไม่อนุมัติ/แก้ไข');
-
-    } catch (error) {
-        console.error("Failed to load status data:", error);
-        document.querySelector('.status-grid').innerHTML = `<p style="color: red; text-align: center;">เกิดข้อผิดพลาดในการโหลดข้อมูลสถานะ</p>`;
+    }
+}
+function closeModal() {
+    const modal = document.getElementById('logout-confirm-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
     }
 }
 
+// --- Helper Functions ---
 function formatDate(isoString) {
     if (!isoString) return 'N/A';
     try {
@@ -65,8 +43,99 @@ function formatDate(isoString) {
     }
 }
 
-function renderDocumentList(listId, documents, statusType) {
-    const listElement = document.getElementById(listId);
+// --- Main Function to Load and Render Status Page ---
+async function loadStatusData() {
+    const userEmail = localStorage.getItem("current_user");
+    if (!userEmail) {
+        window.location.href = "/login/index.html";
+        return;
+    }
+
+    try {
+        const [students, pendingDocs, approvedDocs, rejectedDocs, localStoragePending, localStorageApproved, localStorageRejected] = await Promise.all([
+            fetch("/data/student.json").then(res => res.json()),
+            fetch("/data/document_pending.json").then(res => res.json()),
+            fetch("/data/document_approved.json").then(res => res.json()),
+            fetch("/data/document_rejected.json").then(res => res.json()),
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]')),
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]')),
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]'))
+        ]);
+        
+        const combinedPending = [...pendingDocs, ...localStoragePending];
+        const combinedApproved = [...approvedDocs, ...localStorageApproved];
+        const combinedRejected = [...rejectedDocs, ...localStorageRejected];
+
+        const currentUser = students.find(s => s.email === userEmail);
+        if (!currentUser) {
+            alert("ไม่พบข้อมูลนักศึกษา");
+            return;
+        }
+
+        const navUsername = document.getElementById('nav-username');
+        if (navUsername) navUsername.textContent = currentUser.email;
+
+        const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
+        const studentId = currentUser.student_id;
+        
+        // Store full filtered data in our state object
+        paginationState.approved.data = combinedApproved.filter(doc => doc.student_id === studentId || doc.student === userFullname);
+        paginationState.pending.data = combinedPending.filter(doc => doc.student_id === studentId || doc.student === userFullname);
+        paginationState.rejected.data = combinedRejected.filter(doc => doc.student_id === studentId || doc.student === userFullname);
+
+        // Display the first page for each category
+        displayPageForStatus('approved', 1);
+        displayPageForStatus('pending', 1);
+        displayPageForStatus('rejected', 1);
+
+    } catch (error) {
+        console.error("Failed to load status data:", error);
+        document.querySelector('.status-grid').innerHTML = `<p style="color: red; text-align: center;">เกิดข้อผิดพลาดในการโหลดข้อมูลสถานะ</p>`;
+    }
+}
+
+function displayPageForStatus(statusKey, page) {
+    const state = paginationState[statusKey];
+    if (!state) return;
+
+    state.currentPage = page;
+    const listElement = document.getElementById(`${statusKey}-list`);
+    
+    const start = (page - 1) * ROWS_PER_PAGE;
+    const end = start + ROWS_PER_PAGE;
+    const paginatedItems = state.data.slice(start, end);
+
+    renderDocumentList(listElement, paginatedItems, statusKey);
+    updatePaginationControlsForStatus(statusKey);
+}
+
+function updatePaginationControlsForStatus(statusKey) {
+    const state = paginationState[statusKey];
+    const controlsContainer = document.getElementById(`pagination-${statusKey}`);
+    if (!state || !controlsContainer) return;
+
+    const totalPages = Math.ceil(state.data.length / ROWS_PER_PAGE) || 1;
+    
+    if (state.data.length <= ROWS_PER_PAGE) {
+        controlsContainer.innerHTML = ''; // Hide controls if only one page is needed
+        return;
+    }
+
+    controlsContainer.innerHTML = `
+        <button class="prev-btn" ${state.currentPage === 1 ? 'disabled' : ''}>ᐸ ก่อนหน้า</button>
+        <span class="page-info">หน้า ${state.currentPage} / ${totalPages}</span>
+        <button class="next-btn" ${state.currentPage >= totalPages ? 'disabled' : ''}>ถัดไป ᐳ</button>
+    `;
+
+    controlsContainer.querySelector('.prev-btn').addEventListener('click', () => {
+        if (state.currentPage > 1) displayPageForStatus(statusKey, state.currentPage - 1);
+    });
+    controlsContainer.querySelector('.next-btn').addEventListener('click', () => {
+        if (state.currentPage < totalPages) displayPageForStatus(statusKey, state.currentPage + 1);
+    });
+}
+
+function renderDocumentList(listElement, documents, statusType) {
     if (!listElement) return;
 
     listElement.innerHTML = '';
@@ -75,11 +144,7 @@ function renderDocumentList(listId, documents, statusType) {
         return;
     }
     
-    documents.sort((a, b) => {
-        const dateA = new Date(a.submitted_date || a.rejected_date || a.approved_date || 0).getTime();
-        const dateB = new Date(b.submitted_date || b.rejected_date || b.approved_date || 0).getTime();
-        return dateB - dateA;
-    });
+    documents.sort((a, b) => new Date(b.submitted_date || b.rejected_date || b.approved_date || 0) - new Date(a.submitted_date || a.rejected_date || a.approved_date || 0));
 
     documents.forEach(doc => {
         const li = document.createElement('li');
@@ -87,18 +152,18 @@ function renderDocumentList(listId, documents, statusType) {
         const detailPageUrl = `/User_Page/html_user/student_document_detail.html?id=${encodeURIComponent(docId)}&type=${encodeURIComponent(doc.type)}`;
         
         let dateToShow = '';
-        let dateValue = null;
+        let dateKey = 'submitted_date';
+        let dateLabel = 'วันที่ส่ง';
 
-        if (statusType === 'อนุมัติ') {
-            dateValue = doc.approved_date || doc.submitted_date;
-            dateToShow = `วันที่อนุมัติ: ${formatDate(dateValue)}`;
-        } else if (statusType === 'ไม่อนุมัติ/แก้ไข') {
-            dateValue = doc.rejected_date;
-            dateToShow = `วันที่ส่งกลับ: ${formatDate(dateValue)}`;
-        } else {
-            dateValue = doc.submitted_date;
-            dateToShow = `วันที่ส่ง: ${formatDate(dateValue)}`;
+        if (statusType === 'approved') {
+            dateKey = doc.approved_date ? 'approved_date' : 'submitted_date';
+            dateLabel = 'วันที่อนุมัติ';
+        } else if (statusType === 'rejected') {
+            dateKey = 'rejected_date';
+            dateLabel = 'วันที่ส่งกลับ';
         }
+
+        dateToShow = `${dateLabel}: ${formatDate(doc[dateKey])}`;
 
         li.innerHTML = `
             <a href="${detailPageUrl}">
@@ -112,30 +177,7 @@ function renderDocumentList(listId, documents, statusType) {
 
 // --- Main Event Listener for all page interactions ---
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // --- Standard Navbar & Logout Logic ---
-    function showLogoutModal() {
-        const modal = document.getElementById('logout-confirm-modal');
-        if (modal) {
-            modal.style.display = 'flex';
-            requestAnimationFrame(() => modal.classList.add('show'));
-        } else {
-            // Fallback if modal is not in HTML
-            if (confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
-                localStorage.clear();
-                window.location.href = "/login/index.html";
-            }
-        }
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('logout-confirm-modal');
-        if (modal) {
-            modal.classList.remove('show');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
-        }
-    }
-
+    // Standard Navbar & Logout Logic
     const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
     dropdownToggles.forEach(toggle => {
       toggle.addEventListener('click', function(event) {
@@ -174,8 +216,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target === this) closeModal();
         });
     }
-    // --- End Navbar Logic ---
-    
     
     // Load data for the status page
     loadStatusData();
