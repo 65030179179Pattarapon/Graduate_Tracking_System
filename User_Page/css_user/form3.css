@@ -34,6 +34,21 @@ nav { background: var(--bg-card); display: flex; justify-content: space-between;
 nav .dropdown-menu li a { text-decoration: none; }
 .dropdown-menu li a { color: var(--text-primary); font-size: 14px; padding: 10px 15px; width: auto; display: flex; align-items: center; gap: 10px; }
 .dropdown-menu li a:hover { background-color: #f8f9fa; color: var(--color-primary); }
+/* --- 🆕 สไตล์สำหรับ Dropdown Header และ Divider --- */
+.dropdown-menu .dropdown-header {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dropdown-menu .dropdown-divider {
+    height: 1px;
+    margin: 8px 0;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
 .user-menu { position: relative; }
 .user-menu > a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; transition: background-color 0.2s, color 0.2s; cursor: pointer; }
 .user-menu > a:hover { background-color: #f8f9fa; color: var(--color-primary); }
@@ -61,6 +76,25 @@ legend { padding: 0 10px; font-weight: 600; color: var(--color-primary); }
 }
 .form-group { margin-bottom: 20px; }
 .form-group textarea { resize: vertical; min-height: 60px; }
+/* --- เพิ่มสไตล์สำหรับ Textarea และ Character Counter --- */
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    resize: vertical; /* อนุญาตให้ผู้ใช้ปรับขนาดแนวตั้งได้ */
+    min-height: 80px;
+}
+.char-counter {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    padding-right: 2px;
+}
 
 /* File Input Styling */
 .file-input {

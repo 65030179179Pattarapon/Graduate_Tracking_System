@@ -1,7 +1,7 @@
 // --- Global state for recent documents pagination ---
 let recentDocsState = {
     currentPage: 1,
-    rowsPerPage: 5, // แสดง 3 รายการต่อหน้า
+    rowsPerPage: 5, // แสดง 5 รายการต่อหน้า
     fullData: []
 };
 

@@ -1,58 +1,104 @@
-/* 🎨 Theme */
+/* /User_Page/css_user/form4.css (Standard Form Styles) */
+
+/* 🎨 Theme Variables */
 :root {
     --color-primary: #ed4988;
     --color-secondary: #f1592b;
-    --approved: #d1f5d3;
-    --pending: #fff3cd;
-    --rejected: #f8d7da;
-    --text: #333;
-  }
-  
-  body {
+    --text-primary: #1e2022;
+    --text-secondary: #52575d;
+    --bg-main: #f4f7f6;
+    --bg-card: #ffffff;
+    --border-color: #e9ecef;
+    --rejected-color: #dc3545;
+}
+
+/* 🖌️ General Body Styles */
+body {
     font-family: 'Poppins', sans-serif;
-    background: #fef7ff;
-    margin: 0;
+    background: var(--bg-main);
+    margin: 0; 
     padding: 0;
-    color: #333;
-  }
-  
-  nav {
-    background: #ed4988;
+    color: var(--text-primary);
+    padding-top: 65px; /* Space for fixed navbar */
+}
+
+/* มาตรฐาน: Navbar Styles */
+nav {
+    background: var(--bg-card);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    flex-wrap: wrap;
-  }
-  .logo {
+    padding: 0 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-link {
+    text-decoration: none;
+}
+
+.logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-  .logo img {
-    width: 300px;
-  }
-  .nav-links {
+    gap: 12px;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.logo span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-primary);
+}
+
+.nav-links {
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
     margin: 0;
     padding: 0;
-  }
-  .nav-links li {
-    margin: 0 10px;
-    position: relative;
-  }
-  .nav-links li a {
-    color: white;
+}
+
+.nav-links li a {
+    color: var(--text-secondary);
     text-decoration: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 6px;
-  }
-  .nav-links li a:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-  /* 📌 Dropdown */
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-links li a.active {
+    background-color: transparent;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.nav-links li a:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.nav-links li a .fa-caret-down {
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+/* มาตรฐาน: Dropdown Styles */
 .dropdown {
     position: relative;
 }
@@ -60,95 +106,338 @@
 .dropdown-menu {
     display: none;
     position: absolute;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 10px;
+    background: var(--bg-card);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
     list-style: none;
-    top: 100%;
+    top: 110%;
     left: 0;
-    width: 250px;
-    z-index: 1000;
+    min-width: 220px;
+    white-space: nowrap;
+    z-index: 1001;
+    border: 1px solid var(--border-color);
 }
 
-.dropdown-menu li {
-    padding: 5px 10px;
+.dropdown-menu.show {
+    display: block;
 }
 
 .dropdown-menu li a {
-    color: #FE0066;
+    color: var(--text-primary);
     font-size: 14px;
+    padding: 10px 15px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
+}
+
+.dropdown-menu li a:hover {
+    background-color: #f8f9fa;
+    color: var(--color-primary);
+}
+
+.dropdown-menu .active-item {
+    background-color: var(--color-primary);
+    color: white !important;
+}
+
+.dropdown-menu .active-item:hover {
+    background-color: #c93870 !important;
+}
+
+.dropdown-menu .dropdown-header {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-menu .dropdown-divider {
+    height: 1px;
+    margin: 8px 0;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-menu > a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.user-menu > a:hover {
+    background-color: #f8f9fa;
+    color: var(--color-primary);
+}
+
+#nav-username {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-menu .fas {
+    font-size: 18px;
+}
+
+.user-menu .dropdown-menu {
+    right: 0;
+    left: auto;
+    width: 180px;
+}
+
+/* มาตรฐาน: Form Container */
+.form-container {
+    max-width: 1050px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    text-align: center;
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+legend {
+    padding: 0 10px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* มาตรฐาน: Form Elements */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.info-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.info-grid label, .form-group label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
     display: block;
 }
 
-.dropdown:hover .dropdown-menu {
-    display: block;
-}
-  main {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #ed4988;
-  }
-  
-  .form-container {
-    max-width: 800px;
-    margin: 40px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
-    animation: fadeIn 0.6s ease-in-out;
-  }
-  h2 {
-    color: var(--text);
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  fieldset {
-    border: 1px solid var(--color-primary);
-    border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-  }
-  input, textarea {
-    width: 97%;
+.info-grid input, .form-group input, .form-group textarea, .form-group select {
+    width: 100%;
     padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 16px;
-  }
-  textarea {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+}
+
+.info-grid input[disabled], .form-group input[disabled], .form-group textarea[disabled] { 
+    background-color: #e9ecef;
+    color: #495057;
+    opacity: 1;
+    cursor: not-allowed; 
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group textarea {
     resize: vertical;
-  }
-  button {
+    min-height: 60px;
+}
+/* --- เพิ่มสไตล์สำหรับ Textarea และ Character Counter --- */
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    resize: vertical; /* อนุญาตให้ผู้ใช้ปรับขนาดแนวตั้งได้ */
+    min-height: 80px;
+}
+.char-counter {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    padding-right: 2px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    height: 1.2em;
+    width: 1.2em;
+}
+
+.checkbox-group .other-label {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group .other-label input[type="text"] {
+    margin-left: 5px;
+    flex-grow: 1;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.checkbox-group .other-label input[type="text"]:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+/* มาตรฐาน: Submit Button */
+button[type="submit"] {
     width: 100%;
     background: var(--color-secondary);
     color: white;
-    padding: 14px;
-    font-size: 16px;
-    border-radius: 8px;
     border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
-  }
-  button:hover {
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+button[type="submit"]:hover {
     background: #e24a1e;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @media screen and (max-width: 768px) {
-    .form-container {
-      padding: 20px;
-      margin: 20px;
-    }
-  }
-  
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* มาตรฐาน: Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
+
+.modal-box h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+
+.modal-box p {
+    margin-bottom: 25px;
+    color: var(--text-secondary);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-actions button {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.modal-actions .btn-secondary {
+    background-color: #e9ecef;
+    color: var(--text-secondary);
+    border: 1px solid #dee2e6;
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: #dee2e6;
+}
+
+.modal-actions .btn-danger {
+    background-color: var(--rejected-color);
+    color: white;
+}
+
+.modal-actions .btn-danger:hover {
+    background-color: #c82333;
+}

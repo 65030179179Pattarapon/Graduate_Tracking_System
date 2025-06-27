@@ -2,31 +2,45 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>อัปโหลดลายเซ็นออนไลน์</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ตั้งค่าลายเซ็นออนไลน์ | Graduate Tracker</title>
   <link rel="stylesheet" href="/assets/signature/signature.css" />
   <link rel="icon" href="/assets/images/logo.png">
 </head>
 <body>
-
   <div class="signature-container">
     <div class="signature-card">
-      <img src="/assets/images/logo.png" alt="KMITL Logo" class="card-logo" />
+      <img src="/assets/images/logo.png" alt="โลโก้สถาบันฯ" class="card-logo" />
 
       <h2>✍️ ตั้งค่าลายเซ็นออนไลน์</h2>
-      <p>กรุณาอัปโหลดไฟล์รูปภาพลายเซ็นของคุณ (.png, .jpg) เพื่อใช้ในการยื่นเอกสารต่างๆ ในระบบ</p>
+      <p>กรุณาตั้งค่าลายเซ็นเพื่อใช้ในการยื่นเอกสารต่างๆ ในระบบ</p>
       
-      <div class="image-preview-container" id="image-preview-container">
-        <img src="" alt="ตัวอย่างลายเซ็น" id="signature-preview" class="signature-image-preview">
-        <span id="preview-text">ยังไม่มีรูปภาพ</span>
+      <div class="tabs-container">
+        <button id="tab-draw" class="tab-btn active">✍️ วาดลายเซ็น</button>
+        <button id="tab-upload" class="tab-btn">🖼️ อัปโหลดรูปภาพ</button>
+      </div>
+
+      <div id="draw-content" class="tab-content active">
+        <p class="tab-description">ใช้นิ้วหรือเมาส์วาดลายเซ็นในกรอบด้านล่าง</p>
+        <div class="canvas-container">
+            <canvas id="signature-canvas"></canvas>
+        </div>
+        <button id="clear-canvas-btn" type="button" class="clear-btn">ล้าง</button>
       </div>
       
-      <div class="actions">
+      <div id="upload-content" class="tab-content">
+        <p class="tab-description">อัปโหลดไฟล์รูปภาพลายเซ็นของคุณ (.png, .jpg)</p>
+        <div class="image-preview-container" id="image-preview-container">
+          <img src="" alt="ตัวอย่างลายเซ็น" id="signature-preview" class="signature-image-preview">
+          <span id="preview-text">ยังไม่มีรูปภาพ</span>
+        </div>
         <label for="signature-file-input" class="upload-btn-wrapper">
-          🖼️ เลือกรูปภาพ
+          เลือกรูปภาพ
         </label>
         <input type="file" id="signature-file-input" accept="image/png, image/jpeg" />
+      </div>
 
+      <div class="actions">
         <button id="submit-signature-btn" type="button">✅ บันทึกและดำเนินการต่อ</button>
       </div>
     </div>

@@ -113,6 +113,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Character Counter Logic for Comment Box
+    const commentBox = document.getElementById('student-comment');
+    const charCounter = document.getElementById('char-counter');
+    if(commentBox && charCounter){
+        commentBox.addEventListener('input', () => {
+            const currentLength = commentBox.value.length;
+            charCounter.textContent = `${currentLength} / 250`;
+        });
+    }
+
     // Form Submission Logic
     const thesisForm = document.getElementById("thesis-form");
     if(thesisForm){

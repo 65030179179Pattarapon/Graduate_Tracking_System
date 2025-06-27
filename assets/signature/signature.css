@@ -1,10 +1,12 @@
-/* /assets/signature/signature.css (New Version for Upload Only) */
+/* /assets/signature/signature.css */
 :root {
   --primary: #ed4988;
   --secondary: #f1592b;
   --bg: #f4f7f6;
   --text: #333;
   --border-color: #dee2e6;
+  --info-color: #17a2b8;
+  --light-grey: #f8f9fa;
 }
 
 body {
@@ -28,7 +30,7 @@ body {
 
 .signature-card {
   width: 100%;
-  max-width: 450px;
+  max-width: 480px;
   background: white;
   padding: 30px;
   border-radius: 12px;
@@ -54,13 +56,66 @@ body {
   font-size: 22px;
 }
 
-.signature-card p {
+.signature-card > p {
   color: #555;
   font-size: 14px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   line-height: 1.6;
 }
 
+/* Tabs Styling */
+.tabs-container {
+  display: flex;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 10px;
+  border: none;
+  background-color: var(--light-grey);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+  border-left: 1px solid var(--border-color);
+}
+
+.tab-btn:first-child {
+    border-left: none;
+}
+
+.tab-btn.active {
+  background-color: var(--info-color);
+  color: white;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+  animation: tabFadeIn 0.4s ease;
+}
+
+@keyframes tabFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.tab-description {
+    font-size: 13px;
+    color: #777;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+/* Upload Content Styling */
 .image-preview-container {
   width: 100%;
   height: 200px;
@@ -69,15 +124,16 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   position: relative;
   background-color: #fafafa;
+  box-sizing: border-box;
 }
 
 #signature-preview {
   max-width: 100%;
   max-height: 100%;
-  display: none; /* ซ่อนไว้ในตอนแรก */
+  display: none;
 }
 
 #preview-text {
@@ -85,22 +141,53 @@ body {
   font-weight: 500;
 }
 
+/* Canvas Content Styling */
+.canvas-container {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    height: 200px; /* Same as preview */
+    touch-action: none; /* Important for touch devices */
+}
+
+#signature-canvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+
+.clear-btn {
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.clear-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Actions styling */
 .actions {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  margin-top: 25px; /* Add margin to separate from content */
 }
 
-/* ซ่อน input file เดิม */
 input[type="file"] {
   display: none;
 }
 
-/* สร้างปุ่มอัปโหลดที่สวยงามจาก label */
 .upload-btn-wrapper {
   display: inline-block;
   padding: 12px 20px;
-  background-color: #17a2b8;
+  background-color: #007bff;
   color: white;
   border-radius: 6px;
   cursor: pointer;
@@ -108,7 +195,7 @@ input[type="file"] {
   transition: background-color 0.2s;
 }
 .upload-btn-wrapper:hover {
-  background-color: #138496;
+  background-color: #0069d9;
 }
 
 #submit-signature-btn {

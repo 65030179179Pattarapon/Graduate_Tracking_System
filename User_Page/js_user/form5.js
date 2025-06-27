@@ -1,43 +1,179 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const email = localStorage.getItem("current_user");
-  
-    fetch("/data/student.json")
-      .then((res) => res.json())
-      .then((students) => {
-        const student = students.find((s) => s.email === email);
-        if (!student) {
-          alert("ไม่พบข้อมูลนักศึกษา");
-          return;
+// /User_Page/js_user/form5.js
+
+// =================================================================
+// ภาค 1: Standard Reusable Logic (ส่วนที่ควรย้ายไป common.js)
+// =================================================================
+function logout() {
+    const modal = document.getElementById('logout-confirm-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => modal.classList.add('show'));
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('logout-confirm-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => { modal.style.display = 'none'; }, 300);
+    }
+}
+
+function blockForm(message) {
+    alert(message);
+    const form = document.querySelector('form');
+    if (form) {
+        Array.from(form.elements).forEach(element => element.disabled = true);
+        const submitButton = form.querySelector('button[type="submit"]');
+        if (submitButton) {
+            submitButton.textContent = 'ไม่สามารถใช้งานได้';
+            submitButton.style.backgroundColor = '#ccc';
+            submitButton.style.cursor = 'not-allowed';
         }
-  
-        document.getElementById("prefix").value = student.prefix;
-        document.getElementById("fullname").value = student.fullname;
-        document.getElementById("student-id").value = student.student_id;
-        document.getElementById("degree").value = student.degree;
-  
-        if (student.thesis) {
-          document.getElementById("approval-date").value = student.thesis.approval_date || "-";
-          document.getElementById("thesis-title").value = student.thesis.title || "-";
+    }
+}
+
+// =================================================================
+// ภาค 2: Form 5 Specific Logic (Logic เฉพาะของหน้านี้)
+// =================================================================
+async function populateForm5() {
+    const userEmail = localStorage.getItem("current_user");
+    if (!userEmail) {
+        alert("ไม่พบข้อมูลผู้ใช้, กรุณาเข้าสู่ระบบใหม่");
+        window.location.href = "/login/index.html";
+        return;
+    }
+
+    try {
+        const [students, programs] = await Promise.all([
+            fetch("/data/student.json").then(res => res.json()),
+            fetch("/data/structures/programs.json").then(res => res.json())
+        ]);
+
+        const currentUser = students.find(s => s.email === userEmail);
+        if (!currentUser) {
+            alert("ไม่พบข้อมูลนักศึกษา");
+            blockForm("เกิดข้อผิดพลาด: ไม่พบข้อมูลนักศึกษาของคุณ");
+            return;
         }
-      })
-      .catch((err) => {
-        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", err);
-      });
-  
-    document.getElementById("form5").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const types = Array.from(document.querySelectorAll('input[name="data-type"]:checked'))
-                      .map(el => el.value);
-      const other = document.getElementById("other-data").value;
-      const numDocs = document.getElementById("num-docs").value;
-  
-      console.log("📥 เก็บข้อมูลวิจัย", { types, other, numDocs });
-      alert("📤 ส่งฟอร์มขออนุญาตเก็บข้อมูลเรียบร้อยแล้ว!");
+        
+        // --- Workflow Condition Check ---
+        // ตรวจสอบว่าหัวข้อวิทยานิพนธ์ได้รับการอนุมัติแล้วหรือยัง
+        if (currentUser.proposal_status !== 'ผ่าน') {
+            blockForm("คุณต้องได้รับการอนุมัติหัวข้อวิทยานิพนธ์ (ฟอร์ม 2) ก่อน จึงจะดำเนินการในขั้นตอนนี้ได้");
+            return;
+        }
+
+        // --- Populate Form Fields ---
+        // 1. Navbar Username
+        document.getElementById('nav-username').textContent = userEmail;
+        
+        // 2. Student Info
+        document.getElementById('fullname').value = `${currentUser.prefix_th} ${currentUser.first_name_th} ${currentUser.last_name_th}`.trim();
+        document.getElementById('student-id').value = currentUser.student_id;
+        const programName = programs.find(p => p.id === currentUser.program_id)?.name || 'N/A';
+        document.getElementById('program').value = programName;
+
+        // 3. Approved Thesis Info
+        document.getElementById('thesis-title-th').value = currentUser.thesis_title_th || 'N/A';
+        
+    } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลสำหรับฟอร์ม 5:", error);
+        blockForm("เกิดข้อผิดพลาดในการโหลดข้อมูล โปรดลองอีกครั้ง");
+    }
+}
+
+// =================================================================
+// ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมดในหน้า)
+// =================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Standard Navbar Logic ---
+    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault();
+            const dropdownMenu = this.nextElementSibling;
+            // Close other open dropdowns
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                if (menu !== dropdownMenu) menu.classList.remove('show');
+            });
+            if (dropdownMenu) dropdownMenu.classList.toggle('show');
+        });
     });
-  });
-  
-  function logout() {
-    localStorage.clear();
-    window.location.href = "/login/index.html";
-  }
-  
+    // Close dropdown when clicking outside
+    window.addEventListener('click', function(event) {
+        if (!event.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
+    });
+
+    // --- Standard Logout Modal Logic ---
+    const logoutButton = document.getElementById("logout-button");
+    const modal = document.getElementById('logout-confirm-modal');
+    const cancelBtn = document.getElementById('modal-cancel-btn');
+    const confirmBtn = document.getElementById('modal-confirm-btn');
+    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
+    if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+    // Character Counter Logic for Comment Box
+    const commentBox = document.getElementById('student-comment');
+    const charCounter = document.getElementById('char-counter');
+    if(commentBox && charCounter){
+        commentBox.addEventListener('input', () => {
+            const currentLength = commentBox.value.length;
+            charCounter.textContent = `${currentLength} / 250`;
+        });
+    }
+
+    // --- Form 5 Submission Logic ---
+    const form5 = document.getElementById("form5");
+    if (form5) {
+        form5.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const userEmail = localStorage.getItem("current_user");
+            
+            // --- Collect form data ---
+            const targetGroup = document.getElementById('target-group').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const numDocs = document.getElementById('num-docs').value;
+            
+            // --- Validation ---
+            if (!targetGroup || !location || !numDocs) {
+                alert("กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบถ้วน");
+                return;
+            }
+
+            // --- Construct submission object ---
+            const submissionData = {
+                doc_id: `form5_${userEmail}_${Date.now()}`,
+                type: "ฟอร์ม 5",
+                title: "แบบขอหนังสืออนุญาตเพื่อเก็บรวบรวมข้อมูลฯ",
+                student_email: userEmail,
+                student_id: document.getElementById('student-id').value,
+                details: {
+                    target_group: targetGroup,
+                    location: location,
+                    num_letters: parseInt(numDocs, 10)
+                },
+                submitted_date: new Date().toISOString(),
+                status: "รอตรวจ"
+            };
+            
+            // --- Simulate sending data ---
+            const existingPendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+            existingPendingDocs.push(submissionData);
+            localStorage.setItem('localStorage_pendingDocs', JSON.stringify(existingPendingDocs));
+            
+            console.log("Form 5 Submission Data:", submissionData);
+            alert("✅ ยืนยันและส่งแบบฟอร์มเรียบร้อยแล้ว!");
+            window.location.href = "/User_Page/html_user/status.html";
+        });
+    }
+
+    // --- Initial data population ---
+    populateForm5();
+});
