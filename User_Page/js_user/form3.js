@@ -24,9 +24,10 @@ async function populateForm3() {
     }
 
     try {
-        const [students, programs] = await Promise.all([
+        const [students, programs, departments] = await Promise.all([
             fetch("/data/student.json").then(res => res.json()),
-            fetch("/data/structures/programs.json").then(res => res.json())
+            fetch("/data/structures/programs.json").then(res => res.json()),
+            fetch("/data/structures/departments.json").then(res => res.json())
         ]);
 
         const currentUser = students.find(s => s.email === userEmail);
@@ -39,9 +40,11 @@ async function populateForm3() {
         document.getElementById('nav-username').textContent = userEmail;
         document.getElementById('fullname').value = `${currentUser.prefix_th || ''} ${currentUser.first_name_th || ''} ${currentUser.last_name_th || ''}`.trim();
         document.getElementById('student-id').value = currentUser.student_id || '';
-        
+        document.getElementById('degree').value = currentUser.degree || 'N/A';
         const programName = programs.find(p => p.id === currentUser.program_id)?.name || `ID: ${currentUser.program_id}`;
         document.getElementById('program').value = programName;
+        const departmentName = departments.find(d => d.id === currentUser.department_id)?.name || 'N/A';
+        document.getElementById('department').value = departmentName;
 
         // --- Populate Approved Thesis Info ---
         // (This data comes from the student record, assuming it was updated after Form 2 approval)

@@ -1,5 +1,3 @@
-/* /User_Page/css_user/form4.css (Standard Form Styles) */
-
 /* 🎨 Theme Variables */
 :root {
     --color-primary: #ed4988;
@@ -202,7 +200,7 @@ nav {
 
 /* มาตรฐาน: Form Container */
 .form-container {
-    max-width: 1050px;
+    max-width: 800px;
     margin: 40px auto;
     padding: 30px;
     background: white;
@@ -221,6 +219,7 @@ h2 {
     color: var(--text-primary);
     margin-top: 0;
     margin-bottom: 25px;
+    font-size: 22px;
 }
 
 fieldset {
@@ -236,11 +235,20 @@ legend {
     color: var(--color-primary);
 }
 
-/* มาตรฐาน: Form Elements */
+/* มาตรฐาน: Form Elements & Layout */
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 15px;
+    margin-bottom: 15px;
+}
+
+.info-grid.three-cols {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+fieldset .info-grid:last-of-type {
+    margin-bottom: 0;
 }
 
 .info-grid .full-width {
@@ -277,26 +285,7 @@ legend {
 
 .form-group textarea {
     resize: vertical;
-    min-height: 60px;
-}
-/* --- เพิ่มสไตล์สำหรับ Textarea และ Character Counter --- */
-.form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-    font-size: 15px;
-    resize: vertical; /* อนุญาตให้ผู้ใช้ปรับขนาดแนวตั้งได้ */
     min-height: 80px;
-}
-.char-counter {
-    text-align: right;
-    font-size: 12px;
-    color: #888;
-    margin-top: 5px;
-    padding-right: 2px;
 }
 
 .checkbox-group {
@@ -337,6 +326,14 @@ legend {
     cursor: not-allowed;
 }
 
+.char-counter {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+    padding-right: 2px;
+}
+
 /* มาตรฐาน: Submit Button */
 button[type="submit"] {
     width: 100%;
@@ -369,7 +366,7 @@ button:disabled {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    display: none; /* Initially hidden */
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 2000;

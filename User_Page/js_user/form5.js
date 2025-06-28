@@ -33,6 +33,23 @@ function blockForm(message) {
     }
 }
 
+// ฟังก์ชันใหม่สำหรับแปลงวันที่เป็นรูปแบบไทย
+function formatThaiDate(isoString) {
+    if (!isoString) return 'N/A';
+    try {
+        const date = new Date(isoString);
+        const thaiMonths = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+        
+        const day = date.getDate();
+        const month = thaiMonths[date.getMonth()];
+        const year = date.getFullYear() + 543; // แปลงเป็น พ.ศ.
+
+        return `${day} ${month} ${year}`;
+    } catch (error) {
+        return 'Invalid Date';
+    }
+}
+
 // =================================================================
 // ภาค 2: Form 5 Specific Logic (Logic เฉพาะของหน้านี้)
 // =================================================================
@@ -58,7 +75,6 @@ async function populateForm5() {
         }
         
         // --- Workflow Condition Check ---
-        // ตรวจสอบว่าหัวข้อวิทยานิพนธ์ได้รับการอนุมัติแล้วหรือยัง
         if (currentUser.proposal_status !== 'ผ่าน') {
             blockForm("คุณต้องได้รับการอนุมัติหัวข้อวิทยานิพนธ์ (ฟอร์ม 2) ก่อน จึงจะดำเนินการในขั้นตอนนี้ได้");
             return;
@@ -68,14 +84,19 @@ async function populateForm5() {
         // 1. Navbar Username
         document.getElementById('nav-username').textContent = userEmail;
         
-        // 2. Student Info
+        // 2. ข้อมูลส่วนตัว (ตาม Requirement ใหม่)
         document.getElementById('fullname').value = `${currentUser.prefix_th} ${currentUser.first_name_th} ${currentUser.last_name_th}`.trim();
         document.getElementById('student-id').value = currentUser.student_id;
+        document.getElementById('degree').value = currentUser.degree;
         const programName = programs.find(p => p.id === currentUser.program_id)?.name || 'N/A';
         document.getElementById('program').value = programName;
+        document.getElementById('email').value = currentUser.email;
+        document.getElementById('phone').value = currentUser.phone || 'N/A';
 
-        // 3. Approved Thesis Info
+        // 3. ข้อมูลวิทยานิพนธ์ (ตาม Requirement ใหม่)
+        document.getElementById('proposal-approval-date').value = formatThaiDate(currentUser.proposal_approval_date);
         document.getElementById('thesis-title-th').value = currentUser.thesis_title_th || 'N/A';
+        document.getElementById('thesis-title-en').value = currentUser.thesis_title_en || 'N/A';
         
     } catch (error) {
         console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลสำหรับฟอร์ม 5:", error);
@@ -93,14 +114,12 @@ document.addEventListener('DOMContentLoaded', function() {
         toggle.addEventListener('click', function(event) {
             event.preventDefault();
             const dropdownMenu = this.nextElementSibling;
-            // Close other open dropdowns
             document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
                 if (menu !== dropdownMenu) menu.classList.remove('show');
             });
             if (dropdownMenu) dropdownMenu.classList.toggle('show');
         });
     });
-    // Close dropdown when clicking outside
     window.addEventListener('click', function(event) {
         if (!event.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
@@ -119,13 +138,26 @@ document.addEventListener('DOMContentLoaded', function() {
     if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
     if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
-    // Character Counter Logic for Comment Box
+    // --- Character Counter Logic ---
     const commentBox = document.getElementById('student-comment');
     const charCounter = document.getElementById('char-counter');
-    if(commentBox && charCounter){
+    if (commentBox && charCounter) {
         commentBox.addEventListener('input', () => {
             const currentLength = commentBox.value.length;
-            charCounter.textContent = `${currentLength} / 250`;
+            const maxLength = commentBox.maxLength;
+            charCounter.textContent = `${currentLength} / ${maxLength}`;
+        });
+    }
+
+    // --- Interactive "Other" Checkbox Logic ---
+    const otherCheckbox = document.getElementById('other-checkbox');
+    const otherToolText = document.getElementById('other-tool-text');
+    if (otherCheckbox && otherToolText) {
+        otherCheckbox.addEventListener('change', function() {
+            otherToolText.disabled = !this.checked;
+            if (!this.checked) {
+                otherToolText.value = '';
+            }
         });
     }
 
@@ -137,13 +169,29 @@ document.addEventListener('DOMContentLoaded', function() {
             const userEmail = localStorage.getItem("current_user");
             
             // --- Collect form data ---
-            const targetGroup = document.getElementById('target-group').value.trim();
-            const location = document.getElementById('location').value.trim();
+            const selectedTools = Array.from(document.querySelectorAll('input[name="research-tool"]:checked'))
+                .map(cb => {
+                    if (cb.id === 'other-checkbox') {
+                        const otherText = document.getElementById('other-tool-text').value.trim();
+                        return otherText ? `อื่นๆ: ${otherText}` : null;
+                    }
+                    return cb.value;
+                }).filter(Boolean); // กรองค่า null ออก
+
             const numDocs = document.getElementById('num-docs').value;
+            const studentComment = document.getElementById('student-comment')?.value.trim() || "";
             
             // --- Validation ---
-            if (!targetGroup || !location || !numDocs) {
-                alert("กรุณากรอกข้อมูลในช่องที่มีเครื่องหมาย * ให้ครบถ้วน");
+            if (selectedTools.length === 0) {
+                alert("กรุณาเลือกเครื่องมือที่ใช้ในการวิจัยอย่างน้อย 1 รายการ");
+                return;
+            }
+            if (document.getElementById('other-checkbox').checked && !document.getElementById('other-tool-text').value.trim()) {
+                alert("กรุณาระบุรายละเอียดในช่อง 'อื่นๆ'");
+                return;
+            }
+            if (!numDocs || numDocs < 1) {
+                alert("กรุณาระบุจำนวนหนังสือขออนุญาตที่ต้องการ");
                 return;
             }
 
@@ -155,10 +203,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 student_email: userEmail,
                 student_id: document.getElementById('student-id').value,
                 details: {
-                    target_group: targetGroup,
-                    location: location,
+                    research_tools: selectedTools,
                     num_letters: parseInt(numDocs, 10)
                 },
+                student_comment: studentComment,
                 submitted_date: new Date().toISOString(),
                 status: "รอตรวจ"
             };
