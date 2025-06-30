@@ -1,4 +1,4 @@
-/* /User_Page/css_user/form1.css (Standard Form Styles with Corrected Dropdown Style) */
+/* /User_Page/css_user/form5.css (Standard Form Styles with Corrected Dropdown Style) */
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
 
 /* 🎨 Theme Variables */
@@ -198,55 +198,248 @@ nav {
     width: 180px;
 }
 
-/* 🔹 Form Container */
-.form-container { max-width: 800px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.07); animation: fadeIn 0.6s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-h2 { text-align: center; color: var(--text-primary); margin-top: 0; margin-bottom: 25px; }
-fieldset { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-legend { padding: 0 10px; font-weight: 600; color: var(--color-primary); }
+/* มาตรฐาน: Form Container */
+.form-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
 
-/* Form Grid Layout */
-.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-.info-grid .full-width { grid-column: 1 / -1; }
-.info-grid label, .form-group label { font-size: 14px; color: var(--text-secondary); margin-bottom: 5px; display: block; }
-.info-grid input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background-color: #e9ecef; color: #6c757d; cursor: not-allowed; }
-.form-group { margin-bottom: 15px; }
-.form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; background-color: #fff; cursor: pointer; font-size: 15px;}
-.form-group select:required:invalid { color: #6c757d; } /* Placeholder color for select */
+h2 {
+    text-align: center;
+    color: var(--text-primary);
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 22px;
+}
 
-/* --- สไตล์สำหรับ Textarea และ Character Counter ที่เพิ่มเข้ามา --- */
-.form-group textarea {
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+legend {
+    padding: 0 10px;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+p.fieldset-description,
+p.checklist-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* มาตรฐาน: Form Elements & Layout */
+.info-grid {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.info-grid.two-cols {
+    grid-template-columns: 1fr 1fr;
+}
+.info-grid.three-cols {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+fieldset .info-grid:last-of-type {
+    margin-bottom: 0;
+}
+.info-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.sub-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.sub-section .sub-section-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.sub-section .info-grid {
+    margin-bottom: 0;
+}
+
+label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    display: block;
+}
+
+input[type="text"], input[type="number"], select, textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 6px;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Sarabun', sans-serif;
     font-size: 15px;
+}
+
+input:disabled, textarea:disabled { 
+    background-color: #e9ecef;
+    color: #495057;
+    opacity: 1;
+    cursor: not-allowed; 
+}
+
+textarea {
     resize: vertical;
     min-height: 80px;
 }
+
 .char-counter {
     text-align: right;
     font-size: 12px;
     color: #888;
     margin-top: 5px;
-    padding-right: 2px;
 }
 
-button[type="submit"] { width: 100%; background: var(--color-secondary); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
-button[type="submit"]:hover { background: #e24a1e; }
+/* สไตล์สำหรับ Checklist */
+.checklist-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.checklist-group label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15px;
+    line-height: 1.6;
+    cursor: pointer;
+}
+.checklist-group input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 5px;
+    height: 1.2em;
+    width: 1.2em;
+}
 
-/* Modal Styles */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
-.modal-overlay.show { opacity: 1; pointer-events: auto; }
-.modal-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 400px; text-align: center; transform: scale(0.95); transition: transform 0.3s ease; }
-.modal-overlay.show .modal-box { transform: scale(1); }
+/* Divider */
+hr.subtle-divider {
+    border: none;
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 25px 0;
+}
+
+.file-input {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 5px;
+    cursor: pointer;
+}
+.file-input::file-selector-button {
+    margin-right: 10px;
+    border: none;
+    background: var(--color-primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out;
+}
+.file-input::file-selector-button:hover {
+    background: #c93870;
+}
+
+.file-name-display {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Submit Button Container */
+.submit-container {
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+button[type="submit"] {
+    width: 100%;
+    background: var(--color-secondary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+    background: #e24a1e;
+}
+
+/* มาตรฐาน: Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
 .modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
 .modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
 .modal-actions { display: flex; justify-content: center; gap: 15px; }
 .modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
 .modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
 .modal-actions .btn-secondary:hover { background-color: #dee2e6; }
-.modal-actions .btn-danger { background-color: var(--rejected-color, #dc3545); color: white; }
+.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
 .modal-actions .btn-danger:hover { background-color: #c82333; }

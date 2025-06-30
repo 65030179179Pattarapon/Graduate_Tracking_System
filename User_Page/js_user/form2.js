@@ -1,7 +1,7 @@
-// /User_Page/js_user/form2.js
+// /User_Page/js_user/form2.js (Self-Contained Version)
 
 // =================================================================
-// ภาค 1: Standard Reusable Logic (ส่วนที่ควรย้ายไป common.js)
+// ภาค 1: Helper Functions
 // =================================================================
 function logout() {
     const modal = document.getElementById('logout-confirm-modal');
@@ -25,19 +25,20 @@ function populateRegistrationYears() {
     if (!selectYear) return;
 
     // ทำให้ตัวเลือกปีว่างก่อน เผื่อมีการเรียกซ้ำ
-    selectYear.innerHTML = '<option value="">เลือก</option>';
+    selectYear.innerHTML = '<option value="">เลือกปี</option>';
 
     const currentThaiYear = new Date().getFullYear() + 543;
-    for (let i = 0; i < 5; i++) {
+    
+    // แก้ไขตัวเลข 5 ให้เป็นจำนวนปีที่ต้องการย้อนหลัง เช่น 20 ปี
+    for (let i = 0; i < 20; i++) { 
         const year = currentThaiYear - i;
         const option = new Option(year, year);
         selectYear.appendChild(option);
     }
 }
 
-
 // =================================================================
-// ภาค 2: Form 2 Specific Logic (Logic เฉพาะของหน้านี้)
+// ภาค 2: Form 2 Specific Logic
 // =================================================================
 async function populateForm2() {
     const userEmail = localStorage.getItem("current_user");
@@ -64,7 +65,6 @@ async function populateForm2() {
         // --- Populate Form Fields ---
         document.getElementById('nav-username').textContent = userEmail;
         
-        // 1. ข้อมูลนักศึกษา (ตาม Requirement ใหม่)
         document.getElementById('fullname').value = `${currentUser.prefix_th} ${currentUser.first_name_th} ${currentUser.last_name_th}`.trim();
         document.getElementById('student-id').value = currentUser.student_id;
         document.getElementById('degree').value = currentUser.degree || 'N/A';
@@ -74,26 +74,22 @@ async function populateForm2() {
         document.getElementById('department').value = departmentName;
         document.getElementById('phone').value = currentUser.phone || 'N/A';
 
-        // 2. ข้อมูลอาจารย์ที่ปรึกษา (แสดงผลตามข้อมูลที่มี)
         const mainAdvisor = advisors.find(a => a.advisor_id === currentUser.main_advisor_id);
         const coAdvisor1 = advisors.find(a => a.advisor_id === currentUser.co_advisor1_id);
         
         document.getElementById('main-advisor').value = mainAdvisor ? `${mainAdvisor.prefix_th || ''}${mainAdvisor.first_name_th || ''} ${mainAdvisor.last_name_th || ''}`.trim() : 'ยังไม่ได้เลือก';
         document.getElementById('co-advisor-1').value = coAdvisor1 ? `${coAdvisor1.prefix_th || ''}${coAdvisor1.first_name_th || ''} ${coAdvisor1.last_name_th || ''}`.trim() : 'ไม่มี';
 
-        // 3. Populate Co-Advisor 2 Dropdown (กรองคนซ้ำออก)
         const coAdvisor2Select = document.getElementById("co-advisor-2");
         const usedAdvisorIds = [currentUser.main_advisor_id, currentUser.co_advisor1_id].filter(id => id);
-
-        advisors.forEach(advisor => {
-            if (advisor.advisor_id && !usedAdvisorIds.includes(advisor.advisor_id)) {
-                const advisorFullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
-                const opt = new Option(advisorFullName, advisor.advisor_id);
-                coAdvisor2Select.appendChild(opt);
-            }
+        const availableAdvisors = advisors.filter(a => !usedAdvisorIds.includes(a.advisor_id));
+        
+        availableAdvisors.forEach(advisor => {
+            const advisorFullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
+            const opt = new Option(advisorFullName, advisor.advisor_id);
+            coAdvisor2Select.appendChild(opt);
         });
-
-        // 4. สร้างตัวเลือกปีการศึกษาสำหรับ Checklist
+        
         populateRegistrationYears();
         
     } catch (error) {
@@ -103,10 +99,10 @@ async function populateForm2() {
 }
 
 // =================================================================
-// ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมดในหน้า)
+// ภาค 3: Main Event Listener
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Standard Navbar Logic ---
+    // --- Navbar & Modal Logic ---
     const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
     dropdownToggles.forEach(toggle => {
         toggle.addEventListener('click', function(event) {
@@ -125,8 +121,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-
-    // --- Standard Logout Modal Logic ---
     const logoutButton = document.getElementById("logout-button");
     const modal = document.getElementById('logout-confirm-modal');
     const cancelBtn = document.getElementById('modal-cancel-btn');
@@ -138,47 +132,56 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Character Counter Logic ---
     const commentBox = document.getElementById('student-comment');
-    const charCounter = document.getElementById('char-counter');
-    if(commentBox && charCounter){
-        commentBox.addEventListener('input', () => {
-            const currentLength = commentBox.value.length;
-            charCounter.textContent = `${currentLength} / 250`;
-        });
+    if (commentBox) {
+        const charCounter = document.getElementById('char-counter');
+        if(charCounter){
+            commentBox.addEventListener('input', () => {
+                const currentLength = commentBox.value.length;
+                const maxLength = commentBox.maxLength;
+                charCounter.textContent = `${currentLength} / ${maxLength}`;
+            });
+        }
     }
 
     // --- File Input Display Logic ---
-    const fileInput = document.getElementById('proposal-file');
-    const fileNameDisplay = document.getElementById('file-name-display');
-    if(fileInput && fileNameDisplay){
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                fileNameDisplay.textContent = `ไฟล์ที่เลือก: ${fileInput.files[0].name}`;
+    const fileInputs = document.querySelectorAll('.file-input');
+    fileInputs.forEach(input => {
+        input.addEventListener('change', () => {
+            const fileNameDisplay = input.nextElementSibling;
+            if (input.files.length > 0) {
+                fileNameDisplay.textContent = `ไฟล์ที่เลือก: ${input.files[0].name}`;
             } else {
                 fileNameDisplay.textContent = 'ยังไม่ได้เลือกไฟล์';
             }
         });
-    }
+    });
 
     // --- Form Submission Logic ---
     const thesisForm = document.getElementById("thesis-form");
-    if(thesisForm){
+    if (thesisForm) {
         thesisForm.addEventListener("submit", (e) => {
             e.preventDefault();
             
             const userEmail = localStorage.getItem("current_user");
             
             // --- Validation ---
+            const proposalFile = document.getElementById('proposal-file').files[0];
+            const coverPageFile = document.getElementById('cover-page-file').files[0];
+            const registrationProofFile = document.getElementById('registration-proof-file').files[0];
+            const semester = document.getElementById('registration-semester').value;
+            const year = document.getElementById('registration-year').value;
+
             if (document.getElementById('thesis-title-th').value.trim() === '' || 
-                document.getElementById('thesis-title-en').value.trim() === '' ||
-                document.getElementById('proposal-file').files.length === 0) {
-                alert("กรุณากรอกข้อมูลหัวข้อวิทยานิพนธ์และแนบไฟล์ที่จำเป็น (*) ให้ครบถ้วน");
+                document.getElementById('thesis-title-en').value.trim() === '') {
+                alert("กรุณากรอกข้อมูลหัวข้อวิทยานิพนธ์ให้ครบถ้วน");
                 return;
             }
-
-            const requiredCheckboxes = document.querySelectorAll('input[name="checklist"][required]');
-            const allChecked = Array.from(requiredCheckboxes).every(cb => cb.checked);
-            if (!allChecked) {
-                alert("กรุณายืนยันการดำเนินการใน 'รายการตรวจสอบและยืนยัน' ให้ครบทุกข้อ");
+            if (!proposalFile || !coverPageFile || !registrationProofFile) {
+                alert("กรุณาแนบไฟล์ที่จำเป็น (*) ให้ครบถ้วนทุกช่อง");
+                return;
+            }
+            if (!semester || !year) {
+                alert("กรุณาเลือกภาคการศึกษาและปีการศึกษาสำหรับสำเนาการลงทะเบียน");
                 return;
             }
 
@@ -189,15 +192,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 title: "แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์",
                 student_email: userEmail,
                 student_id: document.getElementById('student-id').value,
-                student: document.getElementById('fullname').value,
-                thesis_title_th: document.getElementById('thesis-title-th').value,
-                thesis_title_en: document.getElementById('thesis-title-en').value,
-                proposal_file_name: document.getElementById('proposal-file').files[0]?.name,
+                thesis_title_th: document.getElementById('thesis-title-th').value.trim(),
+                thesis_title_en: document.getElementById('thesis-title-en').value.trim(),
                 selected_co_advisor2_id: document.getElementById("co-advisor-2").value || null,
+                files: [
+                    { type: 'เค้าโครงวิทยานิพนธ์', name: proposalFile.name },
+                    { type: 'หน้าปก', name: coverPageFile.name },
+                    { type: 'สำเนาลงทะเบียน', name: registrationProofFile.name }
+                ],
                 details: {
-                    registration_semester: document.getElementById('registration-semester').value,
-                    registration_year: document.getElementById('registration-year').value,
-                    checklist_confirmed: true
+                    registration_semester: semester,
+                    registration_year: year,
                 },
                 student_comment: document.getElementById('student-comment')?.value.trim() || "",
                 submitted_date: new Date().toISOString(),

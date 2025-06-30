@@ -31,7 +31,6 @@
               
           <li class="dropdown-divider"></li> <li class="dropdown-header">ขั้นการสอบวิทยานิพนธ์ขั้นสุดท้าย</li>
             <li><a href="/User_Page/html_user/form6.html">บันทึกข้อความ เรื่อง ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</a></li>
-            <li><a href="/User_Page/html_user/form7.html">แบบฟอร์มขอกำหนดการสอบวิทยานิพนธ์และคำรับรองจากผู้ที่เกี่ยวข้อง</a></li>
         </ul>
       </li>
       <li><a href="/User_Page/html_user/eng.html"><i class="fas fa-language"></i> ยื่นผลสอบอังกฤษ</a></li>
@@ -87,42 +86,35 @@
       </fieldset>
 
       <fieldset>
-        <legend>✔️ หมายเหตุ</legend>
-        <p class="checklist-description">กรุณาดำเนินการตามรายการด้านล่างให้ครบถ้วน และกดยืนยันเพื่อรับทราบ</p>
-        <div class="checklist-group">
-            <label>
-                <input type="checkbox" name="checklist" id="checklist1" required>
-                <span>นักศึกษายื่นเรื่องก่อนสอบ 2 สัปดาห์พร้อมแนบเล่มหัวข้อและเค้าโครงวิทยานิพนธ์ ด้วยตามจำนวนกรรมการการสอบและนำมาปั๊มลงวันที่ก่อนวันสอบได้ที่งานบัณฑิตศึกษา</span>
-            </label>
-            <label>
-                <input type="checkbox" name="checklist" id="checklist2" required>
-                <span>แนบหน้าปกของหัวข้อและเค้าโครงวิทยานิพนธ์ จำนวน 1 ฉบับ</span>
-            </label>
-            <label>
-                <input type="checkbox" name="checklist" id="checklist3" required>
-                <span>แนบสำเนาการลงทะเบียนประจำภาคการศึกษาล่าสุดภาคการศึกษาที่ 
-                  <select id="registration-semester" class="inline-select" required>
-                      <option value="">เลือก</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="ภาคพิเศษ">ภาคพิเศษ</option>
-                  </select>
-                  ปีการศึกษา 
-                  <select id="registration-year" class="inline-select" required>
-                      <option value="">เลือก</option>
-                  </select>
-                  จำนวน 1 ฉบับ
-                </span>
-            </label>
+        <legend>📎 แนบเอกสารประกอบ</legend>
+        <div class="form-group sub-section">
+          <label for="proposal-file">1. ไฟล์หัวข้อและเค้าโครงวิทยานิพนธ์* (.pdf, .docx ไม่เกิน 10MB)</label>
+          <input type="file" id="proposal-file" class="file-input" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+          <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>📎 แนบเอกสารเค้าโครง</legend>
-        <div class="form-group">
-            <label for="proposal-file">ไฟล์เค้าโครงวิทยานิพนธ์* (.pdf, .docx ไม่เกิน 10MB)</label>
-            <input type="file" id="proposal-file" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
-            <span id="file-name-display" class="file-name">ยังไม่ได้เลือกไฟล์</span>
+        <div class="form-group sub-section">
+          <label for="cover-page-file">2. ไฟล์หน้าปกของหัวข้อและเค้าโครง* (.pdf, .docx)</label>
+          <input type="file" id="cover-page-file" class="file-input" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+          <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
+        </div>
+        <div class="form-group sub-section">
+          <label for="registration-proof-file">3. ไฟล์สำเนาการลงทะเบียนภาคการศึกษาล่าสุด* (.pdf, .jpg, .png)</label>
+        <div class="inline-select-group">
+            <label for="registration-semester">ภาคการศึกษาที่:</label>
+            <select id="registration-semester" class="inline-select" required>
+                <option value="">เลือก</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="ภาคฤดูร้อน">ภาคพิเศษ</option>
+            </select>
+            
+            <label for="registration-year">ปีการศึกษา:</label>
+            <select id="registration-year" class="inline-select" required>
+                <option value="">เลือกปี</option>
+                </select>
+        </div>
+          <input type="file" id="registration-proof-file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" required>
+          <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
       </fieldset>
       

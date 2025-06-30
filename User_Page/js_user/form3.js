@@ -1,4 +1,8 @@
-// --- Standard Navbar & Logout Logic ---
+// /User_Page/js_user/form3.js (Corrected and Self-Contained Version)
+
+// =================================================================
+// ภาค 1: Helper Functions (ฟังก์ชันช่วยเหลือ)
+// =================================================================
 function logout() {
     const modal = document.getElementById('logout-confirm-modal');
     if (modal) {
@@ -6,6 +10,7 @@ function logout() {
         requestAnimationFrame(() => modal.classList.add('show'));
     }
 }
+
 function closeModal() {
     const modal = document.getElementById('logout-confirm-modal');
     if (modal) {
@@ -14,7 +19,9 @@ function closeModal() {
     }
 }
 
-// --- Form 3 Specific Logic ---
+// =================================================================
+// ภาค 2: Form 3 Specific Logic (Logic หลักของฟอร์ม 3)
+// =================================================================
 async function populateForm3() {
     const userEmail = localStorage.getItem("current_user");
     if (!userEmail) {
@@ -36,7 +43,7 @@ async function populateForm3() {
             return;
         }
 
-        // --- Populate Navbar and Student Info ---
+        // --- Populate Form Fields ---
         document.getElementById('nav-username').textContent = userEmail;
         document.getElementById('fullname').value = `${currentUser.prefix_th || ''} ${currentUser.first_name_th || ''} ${currentUser.last_name_th || ''}`.trim();
         document.getElementById('student-id').value = currentUser.student_id || '';
@@ -46,9 +53,14 @@ async function populateForm3() {
         const departmentName = departments.find(d => d.id === currentUser.department_id)?.name || 'N/A';
         document.getElementById('department').value = departmentName;
 
-        // --- Populate Approved Thesis Info ---
-        // (This data comes from the student record, assuming it was updated after Form 2 approval)
-        document.getElementById('proposal-date').value = currentUser.proposal_approval_date || 'ยังไม่มีข้อมูลการอนุมัติหัวข้อ';
+        // ฟังก์ชันแปลงวันที่ (ควรย้ายไปไฟล์กลาง)
+        const formatThaiDate = (isoString) => {
+             if (!isoString) return 'ยังไม่มีข้อมูลการอนุมัติหัวข้อ';
+             const date = new Date(isoString);
+             return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+        }
+
+        document.getElementById('proposal-date').value = formatThaiDate(currentUser.proposal_approval_date);
         document.getElementById('thesis-title-th').value = currentUser.thesis_title_th || 'ยังไม่มีข้อมูลการอนุมัติหัวข้อ';
         document.getElementById('thesis-title-en').value = currentUser.thesis_title_en || 'ยังไม่มีข้อมูลการอนุมัติหัวข้อ';
         
@@ -58,113 +70,134 @@ async function populateForm3() {
     }
 }
 
-// --- Main Event Listener for all page interactions ---
+// =================================================================
+// ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมด)
+// =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Standard Navbar & Logout Logic
+    
+    // --- ส่วนที่ขาดไปและได้เติมให้สมบูรณ์แล้ว ---
+    // --- Navbar Dropdown Logic ---
     const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
     dropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', function(event) {
-        event.preventDefault();
-        const dropdownMenu = this.nextElementSibling;
-        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-          if (menu !== dropdownMenu) menu.classList.remove('show');
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault();
+            const dropdownMenu = this.nextElementSibling;
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                if (menu !== dropdownMenu) menu.classList.remove('show');
+            });
+            if (dropdownMenu) dropdownMenu.classList.toggle('show');
         });
-        if (dropdownMenu) dropdownMenu.classList.toggle('show');
-      });
     });
     window.addEventListener('click', function(event) {
-      if (!event.target.closest('.dropdown')) {
-        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-          menu.classList.remove('show');
-        });
-      }
+        if (!event.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        }
     });
 
+    // --- Logout Modal Logic ---
     const logoutButton = document.getElementById("logout-button");
     const modal = document.getElementById('logout-confirm-modal');
     const cancelBtn = document.getElementById('modal-cancel-btn');
     const confirmBtn = document.getElementById('modal-confirm-btn');
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
-    if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+    if (logoutButton) {
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+    }
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', closeModal);
+    }
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = "/login/index.html";
+        });
+    }
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    }
+    // --- จบส่วนที่เติมเข้ามา ---
 
 
     // --- File Input Display Logic ---
-    const fileInputs = document.querySelectorAll('.file-input');
-    fileInputs.forEach(input => {
-        input.addEventListener('change', () => {
-            const fileNameDisplay = input.nextElementSibling; // Get the span right after the input
-            if (input.files.length > 0) {
-                fileNameDisplay.textContent = `ไฟล์ที่เลือก: ${input.files[0].name}`;
+    const fileInput = document.getElementById('outline-file');
+    if(fileInput) {
+        fileInput.addEventListener('change', () => {
+            const fileNameDisplay = fileInput.nextElementSibling;
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = `ไฟล์ที่เลือก: ${fileInput.files[0].name}`;
             } else {
                 fileNameDisplay.textContent = 'ยังไม่ได้เลือกไฟล์';
             }
         });
-    });
+    }
 
-        // Character Counter Logic for Comment Box
+    // --- Character Counter Logic ---
     const commentBox = document.getElementById('student-comment');
-    const charCounter = document.getElementById('char-counter');
-    if(commentBox && charCounter){
-        commentBox.addEventListener('input', () => {
-            const currentLength = commentBox.value.length;
-            charCounter.textContent = `${currentLength} / 250`;
-        });
+    if (commentBox) {
+        const charCounter = document.getElementById('char-counter');
+        if(charCounter){
+            commentBox.addEventListener('input', () => {
+                const currentLength = commentBox.value.length;
+                const maxLength = commentBox.maxLength;
+                charCounter.textContent = `${currentLength} / ${maxLength}`;
+            });
+        }
     }
 
     // --- Form Submission Logic ---
     const form3 = document.getElementById("form3");
     if (form3) {
         form3.addEventListener("submit", (e) => {
-          e.preventDefault();
-        
-          const userEmail = localStorage.getItem("current_user");
-          const signatureData = localStorage.getItem(`${userEmail}_signature_data`);
-          if (!signatureData) {
-            alert("ไม่พบข้อมูลลายเซ็น กรุณาลงลายเซ็นก่อน");
-            return;
-          }
-        
-          // Validation
-          const outlineFile = document.getElementById('outline-file').files[0];
-          
-          if (!outlineFile) {
-              alert("กรุณาแนบไฟล์เค้าโครงวิทยานิพนธ์");
-              return;
-          }
+            e.preventDefault();
+            
+            const userEmail = localStorage.getItem("current_user");
+            const signatureData = localStorage.getItem(`${userEmail}_signature_data`);
+            if (!signatureData) {
+                alert("ไม่พบข้อมูลลายเซ็น กรุณาลงลายเซ็นก่อน");
+                return;
+            }
+            
+            const outlineFile = document.getElementById('outline-file').files[0];
+            if (!outlineFile) {
+                alert("กรุณาแนบไฟล์เค้าโครงวิทยานิพนธ์");
+                return;
+            }
 
-          // รวบรวมข้อมูลจากฟอร์ม
-          const submissionData = {
-            doc_id: `form3_${userEmail}_${Date.now()}`,
-            type: "ฟอร์ม 3",
-            title: "แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม",
-            student_email: userEmail,
-            student_id: document.getElementById('student-id').value,
-            student: document.getElementById('fullname').value,
-            thesis_title_th: document.getElementById('thesis-title-th').value,
-            // ในระบบจริง จะต้องมีการอัปโหลดไฟล์ไปที่ Server
-            // ในที่นี้ เราจะเก็บแค่ชื่อไฟล์เพื่อการจำลอง
-            files: [
-                { type: 'เค้าโครงวิทยานิพนธ์', name: outlineFile.name }
-                // ถ้ามีช่องอัปโหลดอื่น ก็เพิ่ม object เข้าไปใน array นี้
-            ],
-            submitted_date: new Date().toISOString(),
-            signature: signatureData,
-            status: "รอตรวจ"
-          };
-        
-          // จำลองการส่งข้อมูลโดยบันทึกลง localStorage
-          const existingPendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
-          existingPendingDocs.push(submissionData);
-          localStorage.setItem('localStorage_pendingDocs', JSON.stringify(existingPendingDocs));
-          
-          console.log("Form 3 Submission Data:", submissionData);
-          alert("✅ ยืนยันและนำส่งเอกสารเรียบร้อยแล้ว!");
-          window.location.href = "/User_Page/html_user/status.html";
+            const studentComment = document.getElementById('student-comment')?.value.trim() || "";
+
+            const submissionData = {
+                doc_id: `form3_${userEmail}_${Date.now()}`,
+                type: "ฟอร์ม 3",
+                title: "แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม",
+                student_email: userEmail,
+                student_id: document.getElementById('student-id').value,
+                student: document.getElementById('fullname').value,
+                files: [{ type: 'เค้าโครงวิทยานิพนธ์', name: outlineFile.name }],
+                student_comment: studentComment,
+                submitted_date: new Date().toISOString(),
+                signature: signatureData,
+                status: "รอตรวจ"
+            };
+            
+            const existingPendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+            existingPendingDocs.push(submissionData);
+            localStorage.setItem('localStorage_pendingDocs', JSON.stringify(existingPendingDocs));
+            
+            console.log("Form 3 Submission Data:", submissionData);
+            alert("✅ ยืนยันและนำส่งเอกสารเรียบร้อยแล้ว!");
+            window.location.href = "/User_Page/html_user/status.html";
         });
     }
 
-    // Populate form data on page load
+    // --- Initial data population ---
     populateForm3();
 });

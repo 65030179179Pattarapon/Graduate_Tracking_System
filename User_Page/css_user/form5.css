@@ -1,3 +1,6 @@
+/* /User_Page/css_user/form5.css (Standard Form Styles with Corrected Dropdown Style) */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+
 /* 🎨 Theme Variables */
 :root {
     --color-primary: #ed4988;
@@ -12,7 +15,7 @@
 
 /* 🖌️ General Body Styles */
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Sarabun', sans-serif;
     background: var(--bg-main);
     margin: 0; 
     padding: 0;
@@ -20,7 +23,7 @@ body {
     padding-top: 65px; /* Space for fixed navbar */
 }
 
-/* มาตรฐาน: Navbar Styles */
+/* มาตรฐาน: Navbar Styles (ฉบับแก้ไข) */
 nav {
     background: var(--bg-card);
     display: flex;
@@ -67,7 +70,7 @@ nav {
     padding: 0;
 }
 
-.nav-links li a {
+.nav-links > li > a { /* ใช้ > เพื่อเจาะจงเฉพาะเมนูหลัก */
     color: var(--text-secondary);
     text-decoration: none;
     padding: 8px 12px;
@@ -80,13 +83,15 @@ nav {
     gap: 8px;
 }
 
-.nav-links li a.active {
+/* สไตล์สำหรับเมนูหลักที่ Active (ตัวหนังสือสีชมพู ไม่มีพื้นหลัง) */
+.nav-links > li > a.active {
     background-color: transparent;
     color: var(--color-primary);
     font-weight: 600;
 }
 
-.nav-links li a:hover {
+/* สไตล์เมื่อเมาส์ชี้บนเมนูหลัก (ที่ไม่ใช่หน้าที่ Active) ให้มีพื้นหลังสีชมพู */
+.nav-links > li > a:not(.active):hover {
     background-color: var(--color-primary);
     color: white;
 }
@@ -96,7 +101,8 @@ nav {
     margin-left: 4px;
 }
 
-/* มาตรฐาน: Dropdown Styles */
+
+/* มาตรฐาน: Dropdown Styles (ฉบับแก้ไข) */
 .dropdown {
     position: relative;
 }
@@ -130,20 +136,14 @@ nav {
     align-items: center;
     gap: 10px;
     text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.dropdown-menu li a:hover {
-    background-color: #f8f9fa;
-    color: var(--color-primary);
-}
-
+/* สไตล์เมื่อเมาส์ชี้ หรือเป็นรายการที่เลือกอยู่ (พื้นหลังเทาอ่อน ตัวหนังสือชมพู) */
+.dropdown-menu li a:hover,
 .dropdown-menu .active-item {
-    background-color: var(--color-primary);
-    color: white !important;
-}
-
-.dropdown-menu .active-item:hover {
-    background-color: #c93870 !important;
+    background-color: #f8f9fa; 
+    color: var(--color-primary); 
 }
 
 .dropdown-menu .dropdown-header {

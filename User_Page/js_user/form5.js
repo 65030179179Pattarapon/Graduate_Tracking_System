@@ -19,20 +19,6 @@ function closeModal() {
     }
 }
 
-function blockForm(message) {
-    alert(message);
-    const form = document.querySelector('form');
-    if (form) {
-        Array.from(form.elements).forEach(element => element.disabled = true);
-        const submitButton = form.querySelector('button[type="submit"]');
-        if (submitButton) {
-            submitButton.textContent = 'ไม่สามารถใช้งานได้';
-            submitButton.style.backgroundColor = '#ccc';
-            submitButton.style.cursor = 'not-allowed';
-        }
-    }
-}
-
 // ฟังก์ชันใหม่สำหรับแปลงวันที่เป็นรูปแบบไทย
 function formatThaiDate(isoString) {
     if (!isoString) return 'N/A';
