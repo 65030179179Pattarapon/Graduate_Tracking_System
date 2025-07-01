@@ -1,91 +1,148 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>โปรไฟล์</title>
-  <link rel="stylesheet" href="/User_Page/css_user/profile.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>โปรไฟล์ของฉัน | Graduate Tracker</title>
+    <link rel="stylesheet" href="/User_Page/css_user/profile.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="icon" href="/assets/images/logo.png">
 </head>
-<body>
-  <nav>
-    <div class="logo">
-      <img src="/assets/images/logo.png" alt="KMITL Logo" />
-      <span>Graduate Tracker</span>
-    </div>
-    <ul class="nav-links">
-      <li><a href="/User_Page/html_user/home.html">🏠 หน้าหลัก</a></li>
-      <li><a href="/User_Page/html_user/status.html">📄 สถานะเอกสาร</a></li>
-      <li class="dropdown">
-        <a href="#">✍️ กรอกแบบฟอร์ม ▼</a>
-        <ul class="dropdown-menu">
-          <li><a href="/User_Page/html_user/form1.html">ขอรับรองอาจารย์ที่ปรึกษา</a></li>
-          <li><a href="/User_Page/html_user/form2.html">เสนอหัวข้อวิทยานิพนธ์</a></li>
-          <li><a href="/User_Page/html_user/form3.html">นำส่งเอกสารหัวข้อ</a></li>
-          <li><a href="/User_Page/html_user/form4.html">เชิญผู้ทรงคุณวุฒิ</a></li>
-          <li><a href="/User_Page/html_user/form5.html">ขออนุญาตเก็บข้อมูล</a></li>
+  <body>
+    <nav>
+      <a href="/User_Page/html_user/home.html" class="logo-link">
+        <div class="logo">
+          <img src="/assets/images/logo.png" alt="KMITL Logo" />
+          <span>Graduate Tracking System</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/User_Page/html_user/home.html"><i class="fas fa-home"></i> หน้าหลัก</a></li>
+        <li><a href="/User_Page/html_user/status.html"><i class="fas fa-file-alt"></i> สถานะเอกสาร</a></li>
+        <li class="dropdown">
+          <a href="#" class="nav-dropdown-toggle"><i class="fas fa-edit"></i> กรอกแบบฟอร์ม <i class="fas fa-caret-down"></i></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-header">ขั้นการสอบหัวข้อและเค้าโครง</li>
+              <li><a href="/User_Page/html_user/form1.html">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</a></li>
+              <li><a href="/User_Page/html_user/form2.html">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</a></li>
+              <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
+              <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
+              <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
+                
+            <li class="dropdown-divider"></li> <li class="dropdown-header">ขั้นการสอบวิทยานิพนธ์ขั้นสุดท้าย</li>
+              <li><a href="/User_Page/html_user/form6.html">บันทึกข้อความ เรื่อง ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</a></li>
+          </ul>
+        </li>
+        <li><a href="/User_Page/html_user/eng.html"><i class="fas fa-language"></i> ยื่นผลสอบอังกฤษ</a></li>
+        <li><a href="/User_Page/html_user/templates.html"><i class="fas fa-download"></i> ดาวน์โหลดเอกสาร</a></li>
+        <li><a href="/User_Page/html_user/guide.html"><i class="fas fa-book-open"></i> คู่มือการใช้งาน</a></li>
+      </ul>
+      <div class="user-menu dropdown">
+        <a href="#" class="nav-dropdown-toggle" id="user-profile-link">
+          <span id="nav-username">กำลังโหลด...</span>
+          <i class="fas fa-user-circle"></i>
+          <i class="fas fa-caret-down"></i>
+        </a>
+        <ul class="dropdown-menu user-dropdown-menu">
+          <li><a href="/User_Page/html_user/profile.html"  class="active"><i class="fas fa-user-edit"></i> จัดการโปรไฟล์</a></li>
+          <li><a href="#" id="logout-button"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
         </ul>
-      </li>
-      <li><a href="/User_Page/html_user/eng.html">📜 ยื่นผลสอบอังกฤษ</a></li>
-      <li><a href="/User_Page/html_user/templates.html">📥 ดาวน์โหลดเอกสาร</a></li>
-      <li><a href="/User_Page/html_user/guide.html">📖 คู่มือการใช้งาน</a></li>
-      <li><a href="/User_Page/html_user/profile.html" class="active">👤 โปรไฟล์</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-
-  <div class="profile-container">
-    <div class="left-panel">
-      <div class="profile-card">
-        <img id="profile-img" src="/images/profile-placeholder.png" alt="รูปโปรไฟล์" />
-        <br>
-        <input type="file" id="upload-img" accept="image/*">
-        <button id="remove-img">🗑️ ลบรูปโปรไฟล์</button>
-        <h3 id="fullname" class="label">นายภัทรพล พลกุล</h3>
-        <p>รหัสนักศึกษา: <span id="student-id" class="label">65030179</span></p>
-        <p>เบอร์โทรศัพท์: <span id="phone" class="label">083-880-3421</span></p>
-        <p>อีเมล: <span id="email" class="label">65030179@kmitl.ac.th</span></p>
       </div>
+    </nav>
 
-      <div class="signature-block">
-        <h3>✒️ ลายเซ็นออนไลน์</h3>
-        <canvas id="signature-canvas" width="300" height="150"></canvas>
-        <br>
-        <button id="clear-signature">🧽 ล้าง</button>
-        <button id="submit-signature">📥 บันทึกลายเซ็น</button>
-        <p id="signature-status"></p>
+    <main class="profile-container">
+        <h1><i class="fas fa-user-circle"></i> โปรไฟล์ของฉัน</h1>
+
+        <div class="profile-layout">
+            <div class="main-profile-column">
+                <section class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-picture-wrapper">
+                            <img src="/assets/images/students/placeholder.png" alt="รูปโปรไฟล์" id="profile-picture-img">
+                            <label for="profile-picture-input" class="edit-picture-btn" title="เปลี่ยนรูปโปรไฟล์">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="profile-picture-input" accept="image/png, image/jpeg" style="display:none;">
+                        </div>
+                        <div class="profile-name-group">
+                            <h2 id="profile-fullname">กำลังโหลด...</h2>
+                            <p id="profile-studentid">รหัสนักศึกษา: กำลังโหลด...</p>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <h3>ข้อมูลส่วนตัว</h3>
+                        <div class="details-grid">
+                            <div><label>ระดับการศึกษา:</label><span id="profile-degree">-</span></div>
+                            <div><label>แผนการเรียน:</label><span id="profile-plan">-</span></div>
+                            <div><label>หลักสูตร/สาขา:</label><span id="profile-program">-</span></div>
+                            <div><label>ภาควิชา:</label><span id="profile-department">-</span></div>
+                            <div><label>คณะ:</label><span id="profile-faculty">-</span></div>
+                            <div><label>สถานะ:</label><span id="profile-status" class="status-badge">-</span></div>
+                            <div><label>เบอร์โทรศัพท์:</label><span id="profile-phone">-</span></div>
+                            <div><label>อีเมล:</label><span id="profile-email">-</span></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-card">
+                    <h3><i class="fas fa-signature"></i> ลายเซ็นดิจิทัล</h3>
+                    <div id="signature-display-area">
+                        <p>กำลังโหลดลายเซ็น...</p>
+                    </div>
+                    <div class="signature-actions">
+                        <a href="/User_Page/html_user/signature.html" class="btn btn-primary"><i class="fas fa-edit"></i> แก้ไขลายเซ็น</a>
+                        <button id="delete-signature-btn" class="btn btn-danger"><i class="fas fa-trash"></i> ลบลายเซ็น</button>
+                    </div>
+                </section>
+            </div>
+
+            <div class="side-profile-column">
+                <section class="profile-card">
+                    <h3><i class="fas fa-graduation-cap"></i> สรุปสถานะการศึกษา</h3>
+                    <ul class="status-list">
+                        <li><label>ผลสอบภาษาอังกฤษ:</label><span id="eng-test-status" class="status-badge">-</span></li>
+                        <li><label>ผลการสอบหัวข้อและเค้าโครงวิทยานิพนธ์:</label><span id="proposal-status" class="status-badge">-</span></li>
+                        <li><label>วันที่อนุมัติหัวข้อและเค้าโครงวิทยานิพนธ์:</label><span id="proposal-date-info">-</span></li>
+                        <li><label>ผลการสอบวิทยานิพนธ์ขั้นสุดท้าย:</label><span id="final-defense-status" class="status-badge">-</span></li>
+                        <li><label>วันที่สำเร็จการศึกษา:</label><span id="graduation-date-info">-</span></li>
+                    </ul>
+                </section>
+
+                <section class="profile-card">
+                    <h3><i class="fas fa-paperclip"></i> เอกสารแนบในระบบ</h3>
+                    <ul id="uploaded-files-list" class="file-list">
+                        <li class="loading-text">กำลังโหลดรายการไฟล์...</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
+      <div class="modal-box">
+        <h3>ยืนยันการออกจากระบบ</h3>
+        <p>คุณต้องการออกจากระบบใช่หรือไม่?</p>
+        <div class="modal-actions">
+          <button id="modal-cancel-btn" class="btn-secondary">ยกเลิก</button>
+          <button id="modal-confirm-btn" class="btn-danger">ยืนยัน</button>
+        </div>
       </div>
     </div>
-
-    <div class="right-panel">
-      <div class="info-box">
-        <h3>📘 ข้อมูลการศึกษา</h3>
-        <p>ระดับ: <span id="degree" class="label">ปริญญาโท</span></p>
-        <p>หลักสูตร: <span id="program" class="label">ครุศาสตร์อุตสาหกรรมมหาบัณฑิต</span></p>
-        <p>ภาควิชา: <span id="department" class="label">ภาควิชาครุศาสตร์วิศวกรรม</span></p>
-        <p>คณะ: <span id="faculty" class="label">ครุศาสตร์อุตสาหกรรมและเทคโนโลยี</span></p>
-        <p>แผน: <span id="plan" class="label">แผน ก แบบ ก2</span></p>
-      </div>
-
-      <div class="info-box">
-        <h3>📖 วิทยานิพนธ์</h3>
-        <p>ชื่อหัวข้อ: <span id="thesistitle" class="label">เว็บแอพพลิเคชันสำหรับระบบติดตามสถานะนักศึกษาระดับบัณฑิตศึกษา</span></p>
-        <p>อ.ที่ปรึกษาหลัก: <span id="advisor-main" class="label">ผศ.สุระชัย พิมพ์สาลี</span></p>
-        <p>อ.ที่ปรึกษาร่วม 1: <span id="advisor-co1" class="label">ผศ.พงษ์เกียรติ จงไตรลักษณ์</span></p>
-        <p>อ.ที่ปรึกษาร่วม 2: <span id="advisor-co2" class="label">-</span></p>
-        <p>วันที่สอบหัวข้อ: <span id="proposal-date" class="label">18 มีนาคม 2568</span></p>
-        <p>สถานะสอบหัวข้อ: <span id="proposal-status" class="label">ผ่าน</span></p>
-        <p>วันที่สอบขั้นสุดท้าย: <span id="final-date" class="label">20 สิงหาคม 2568</span></p>
-        <p>สถานะสอบขั้นสุดท้าย: <span id="final-status" class="label">-</span></p>
-      </div>
-
-      <div class="info-box">
-        <h3>📝 ผลสอบภาษาอังกฤษ</h3>
-        <p>ประเภท: <span id="eng-type" class="label">KMITL-TEP</span></p>
-        <p>คะแนน: <span id="eng-score" class="label">41</span></p>
-      </div>
+    
+    <div id="crop-image-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box image-crop-box">
+            <h3>ปรับขนาดรูปโปรไฟล์</h3>
+            <div><img id="image-to-crop" src=""></div>
+            <div class="modal-actions">
+                <button id="crop-cancel-btn" class="btn-secondary">ยกเลิก</button>
+                <button id="crop-confirm-btn" class="btn-primary">ยืนยัน</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="/User_Page/js_user/profile.js"></script>
-</body>
+    <script src="/User_Page/js_user/profile.js"></script>
+
+  </body>
 </html>

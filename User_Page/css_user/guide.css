@@ -1,57 +1,108 @@
-/* 🎨 Theme */
+/* /User_Page/css_user/guide.css */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+
+/* 🎨 Theme Variables */
 :root {
     --color-primary: #ed4988;
     --color-secondary: #f1592b;
-    --approved: #d1f5d3;
-    --pending: #fff3cd;
-    --rejected: #f8d7da;
-    --text: #333;
-  }
-  
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: #fef7ff;
-    margin: 0;
+    --text-primary: #1e2022;
+    --text-secondary: #52575d;
+    --bg-main: #f4f7f6;
+    --bg-card: #ffffff;
+    --border-color: #e9ecef;
+    --rejected-color: #dc3545;
+}
+
+/* 🖌️ General Body Styles */
+body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg-main);
+    margin: 0; 
     padding: 0;
-    color: #333;
-  }
-  nav {
-    background: #ed4988;
+    color: var(--text-primary);
+    padding-top: 65px;
+}
+
+/* มาตรฐาน: Navbar Styles (ฉบับแก้ไข) */
+nav {
+    background: var(--bg-card);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    flex-wrap: wrap;
-  }
-  .logo {
+    padding: 0 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-link {
+    text-decoration: none;
+}
+
+.logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-  .logo img {
-    width: 300px;
-  }
-  .nav-links {
+    gap: 12px;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.logo span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-primary);
+}
+
+.nav-links {
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
     margin: 0;
     padding: 0;
-  }
-  .nav-links li {
-    margin: 0 10px;
-    position: relative;
-  }
-  .nav-links li a {
-    color: white;
+}
+
+.nav-links > li > a { /* ใช้ > เพื่อเจาะจงเฉพาะเมนูหลัก */
+    color: var(--text-secondary);
     text-decoration: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 6px;
-  }
-  .nav-links li a:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-  /* 📌 Dropdown */
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* สไตล์สำหรับเมนูหลักที่ Active (ตัวหนังสือสีชมพู ไม่มีพื้นหลัง) */
+.nav-links > li > a.active {
+    background-color: transparent;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* สไตล์เมื่อเมาส์ชี้บนเมนูหลัก (ที่ไม่ใช่หน้าที่ Active) ให้มีพื้นหลังสีชมพู */
+.nav-links > li > a:not(.active):hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.nav-links li a .fa-caret-down {
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+
+/* มาตรฐาน: Dropdown Styles (ฉบับแก้ไข) */
 .dropdown {
     position: relative;
 }
@@ -59,106 +110,315 @@
 .dropdown-menu {
     display: none;
     position: absolute;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 10px;
+    background: var(--bg-card);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
     list-style: none;
-    top: 100%;
+    top: 110%;
     left: 0;
-    width: 250px;
-    z-index: 1000;
+    min-width: 220px;
+    white-space: nowrap;
+    z-index: 1001;
+    border: 1px solid var(--border-color);
 }
 
-.dropdown-menu li {
-    padding: 5px 10px;
+.dropdown-menu.show {
+    display: block;
 }
 
 .dropdown-menu li a {
-    color: #FE0066;
+    color: var(--text-primary);
     font-size: 14px;
+    padding: 10px 15px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    display: block;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.dropdown:hover .dropdown-menu {
-    display: block;
+/* สไตล์เมื่อเมาส์ชี้ หรือเป็นรายการที่เลือกอยู่ (พื้นหลังเทาอ่อน ตัวหนังสือชมพู) */
+.dropdown-menu li a:hover,
+.dropdown-menu .active-item {
+    background-color: #f8f9fa; 
+    color: var(--color-primary); 
 }
-  main {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #ed4988;
-  }
-  
-  /* Layout */
-  .guide-container {
+
+.dropdown-menu .dropdown-header {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-menu .dropdown-divider {
+    height: 1px;
+    margin: 8px 0;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-menu > a {
+    color: var(--text-secondary);
+    text-decoration: none;
     display: flex;
-    max-width: 1200px;
-    margin: 30px auto;
-    gap: 30px;
-    padding: 0 20px;
-  }
-  
-  .sidebar {
-    flex: 1;
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  }
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  .sidebar ul li {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
     cursor: pointer;
-  }
-  .sidebar ul li:hover {
-    background: #f9f9f9;
-    color: var(--color-secondary);
-  }
-  
-  .content {
-    flex: 3;
-    background: #fff;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
-  }
-  
-  .guide-section {
-    animation: fadeIn 0.4s ease-in-out;
-  }
-  .guide-section h2 {
+}
+
+.user-menu > a:hover {
+    background-color: #f8f9fa;
     color: var(--color-primary);
-  }
-  .btn-download {
-    display: inline-block;
-    margin-top: 10px;
+}
+
+#nav-username {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-menu .fas {
+    font-size: 18px;
+}
+
+.user-menu .dropdown-menu {
+    right: 0;
+    left: auto;
+    width: 180px;
+}
+
+/* --- Main Page Styles --- */
+.page-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 28px;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+}
+
+.guide-category {
+    margin-bottom: 40px;
+}
+
+.category-title {
+    font-size: 22px;
+    font-weight: 600;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-primary);
+    margin-bottom: 20px;
+}
+
+/* --- Accordion Styles --- */
+.accordion {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.accordion-btn {
+    width: 100%;
+    background-color: var(--bg-card);
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 18px 20px;
+    text-align: left;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.accordion:last-child .accordion-btn {
+    border-bottom: none;
+}
+
+.accordion-btn:hover {
+    background-color: #f8f9fa;
+}
+
+/* Icon for accordion button */
+.accordion-btn::after {
+    content: '\f078'; /* Font Awesome down arrow */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: var(--text-secondary);
+    transition: transform 0.3s ease;
+}
+
+.accordion-btn.active::after {
+    transform: rotate(180deg); /* Flip arrow up */
+}
+
+.accordion-panel {
+    background-color: #fafcfe;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+    padding: 0 20px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.accordion-panel ul, .accordion-panel ol {
+    padding-left: 25px;
+    margin: 15px 0;
+}
+.accordion-panel ul li, .accordion-panel ol li {
+    margin-bottom: 10px;
+}
+.accordion-panel b {
+    color: var(--text-primary);
+}
+
+
+/* --- Contact Form Styles (ส่วนที่แก้ไข) --- */
+#contact-form fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    background-color: var(--bg-card);
+}
+
+/* แก้ไขที่นี่: ทำให้ legend แสดงผลถูกต้อง */
+#contact-form legend {
+    padding: 0 10px;
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 18px; /* ปรับขนาดให้ใหญ่กว่า label ปกติ */
+    margin: 0; 
+}
+
+#contact-form .form-group { margin-bottom: 20px; }
+#contact-form .form-group:last-child { margin-bottom: 0; }
+
+#contact-form label { 
+    font-size: 14px; 
+    color: var(--text-secondary); 
+    margin-bottom: 5px; 
+    display: block; 
+}
+
+/* จัดสไตล์ input, select, textarea ในฟอร์มนี้ให้เหมือนฟอร์มอื่น */
+#contact-form input[type="text"],
+#contact-form input[type="file"],
+#contact-form select, 
+#contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box; /* สำคัญมาก */
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+}
+
+#contact-form textarea { 
+    resize: vertical; 
+    min-height: 120px; 
+}
+
+/* สไตล์ปุ่มเลือกไฟล์ และแสดงชื่อไฟล์ */
+#contact-form .file-input::file-selector-button {
+    margin-right: 10px;
+    border: none;
+    background: var(--color-primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out;
+}
+#contact-form .file-input::file-selector-button:hover {
+    background: #c93870;
+}
+#contact-form .file-name-display {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.submit-contact-btn {
+    width: 100%;
     background: var(--color-secondary);
     color: white;
-    padding: 10px 326px;
-    text-decoration: none;
-    border-radius: 8px;
-  }
-  .btn-download:hover {
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 20px; /* เพิ่มระยะห่างจาก fieldset */
+}
+.submit-contact-btn:hover {
     background: #e24a1e;
-  }
-  
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(10px);}
-    to {opacity: 1; transform: translateY(0);}
-  }
-  
-  @media screen and (max-width: 768px) {
-    .guide-container {
-      flex-direction: column;
-    }
-  }
-  
+}
+
+/* มาตรฐาน: Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
+.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
+.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
+.modal-actions { display: flex; justify-content: center; gap: 15px; }
+.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
+.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
+.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
+.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
+.modal-actions .btn-danger:hover { background-color: #c82333; }

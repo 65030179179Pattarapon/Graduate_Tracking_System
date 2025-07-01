@@ -1,57 +1,109 @@
-/* 🎨 Theme */
+/* /User_Page/css_user/templates.css */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+
+/* 🎨 Theme Variables */
 :root {
     --color-primary: #ed4988;
     --color-secondary: #f1592b;
-    --approved: #d1f5d3;
-    --pending: #fff3cd;
-    --rejected: #f8d7da;
-    --text: #333;
-  }
-  
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: #fef7ff;
-    margin: 0;
+    --text-primary: #1e2022;
+    --text-secondary: #52575d;
+    --bg-main: #f4f7f6;
+    --bg-card: #ffffff;
+    --border-color: #e9ecef;
+    --rejected-color: #dc3545;
+}
+
+/* 🖌️ General Body Styles */
+body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg-main);
+    margin: 0; 
     padding: 0;
-    color: #333;
-  }
-  nav {
-    background: #ed4988;
+    color: var(--text-primary);
+    padding-top: 65px; /* Space for fixed navbar */
+}
+
+/* มาตรฐาน: Navbar Styles (ฉบับแก้ไข) */
+nav {
+    background: var(--bg-card);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
-    flex-wrap: wrap;
-  }
-  .logo {
+    padding: 0 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-link {
+    text-decoration: none;
+}
+
+.logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-  .logo img {
-    width: 300px;
-  }
-  .nav-links {
+    gap: 12px;
+}
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.logo span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-primary);
+}
+
+.nav-links {
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
     margin: 0;
     padding: 0;
-  }
-  .nav-links li {
-    margin: 0 10px;
-    position: relative;
-  }
-  .nav-links li a {
-    color: white;
+}
+
+.nav-links > li > a { /* ใช้ > เพื่อเจาะจงเฉพาะเมนูหลัก */
+    color: var(--text-secondary);
     text-decoration: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 6px;
-  }
-  .nav-links li a:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-  /* 📌 Dropdown */
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* สไตล์เมนูหลักที่ Active (เช่น หน้าหลัก, สถานะเอกสาร) */
+.nav-links > li > a.active {
+    background-color: var(--color-primary); /* เปลี่ยนกลับมาเป็นพื้นหลังสีชมพู */
+    color: white; /* ตัวหนังสือสีขาว */
+}
+
+/* ทำให้ปุ่ม "หน้าหลัก" เป็นกรณีพิเศษ (ตัวหนังสือชมพู ไม่มีพื้นหลัง) */
+.nav-links > li > a.home-link.active {
+    background-color: transparent;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* สไตล์เมื่อเมาส์ชี้บนเมนูหลัก (ที่ไม่ใช่หน้าที่ Active) */
+.nav-links > li > a:not(.active):hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+
+/* มาตรฐาน: Dropdown Styles (ฉบับแก้ไข) */
 .dropdown {
     position: relative;
 }
@@ -59,96 +111,257 @@
 .dropdown-menu {
     display: none;
     position: absolute;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 10px;
+    background: var(--bg-card);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
     list-style: none;
-    top: 100%;
+    top: 110%;
     left: 0;
-    width: 250px;
-    z-index: 1000;
+    min-width: 220px;
+    white-space: nowrap;
+    z-index: 1001;
+    border: 1px solid var(--border-color);
 }
 
-.dropdown-menu li {
-    padding: 5px 10px;
+.dropdown-menu.show {
+    display: block;
 }
 
 .dropdown-menu li a {
-    color: #FE0066;
+    color: var(--text-primary);
     font-size: 14px;
+    padding: 10px 15px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    display: block;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.dropdown:hover .dropdown-menu {
-    display: block;
+/* สไตล์เมื่อเมาส์ชี้ หรือเป็นรายการที่เลือกอยู่ (พื้นหลังเทาอ่อน ตัวหนังสือชมพู) */
+.dropdown-menu li a:hover,
+.dropdown-menu .active-item {
+    background-color: #f8f9fa; 
+    color: var(--color-primary); 
 }
-  main {
+
+.dropdown-menu .dropdown-header {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-menu .dropdown-divider {
+    height: 1px;
+    margin: 8px 0;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-menu > a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.user-menu > a:hover {
+    background-color: #f8f9fa;
+    color: var(--color-primary);
+}
+
+#nav-username {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-menu .fas {
+    font-size: 18px;
+}
+
+.user-menu .dropdown-menu {
+    right: 0;
+    left: auto;
+    width: 180px;
+}
+
+/* --- Main Page Styles --- */
+.page-container {
     max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
-  }
-  h1 {
-    text-align: center;
-    color: #ed4988;
-  }
-  
-  .form-container {
-    max-width: 1000px;
     margin: 40px auto;
-    padding: 30px;
-    background: white;
+    padding: 0 20px;
+}
+
+h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 28px;
+    color: var(--text-primary);
+    margin-bottom: 30px;
+}
+
+.template-section {
+    background: var(--bg-card);
+    padding: 25px 30px;
     border-radius: 12px;
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.6s ease-in-out;
-  }
-  
-  h2 {
-    text-align: center;
-    color: var(--text);
-    margin-bottom: 20px;
-  }
-  
-  .template-table table {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+.section-description {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin: 0 0 25px 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-wrapper {
+    overflow-x: auto; /* ทำให้ตารางเลื่อนซ้าย-ขวาได้บนจอมือถือ */
+}
+
+table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-  }
-  .template-table th, .template-table td {
+    font-size: 15px;
+}
+
+thead tr {
+    border-bottom: 2px solid #dee2e6;
+}
+
+th {
     padding: 12px 15px;
-    border: 1px solid #ddd;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--border-color);
+}
+tbody tr:last-child {
+    border-bottom: none;
+}
+
+td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.loading-text {
     text-align: center;
-  }
-  .template-table th {
-    background-color: var(--color-primary);
-    color: white;
-  }
-  .template-table a {
-    color: var(--color-secondary);
-    text-decoration: none;
-    font-weight: bold;
-  }
-  .template-table a:hover {
-    text-decoration: underline;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  @media screen and (max-width: 768px) {
-    .form-container {
-      padding: 20px;
-      margin: 20px;
-    }
-    .template-table table, .template-table thead, .template-table tbody, .template-table tr, .template-table td, .template-table th {
-      display: block;
-    }
-    .template-table td {
-      text-align: left;
-      padding: 10px;
-    }
-  }
-  
+    color: var(--text-secondary);
+    padding: 40px 0;
+}
+
+/* สไตล์สำหรับปุ่มและไอคอนดาวน์โหลด */
+.download-links a {
+    display: inline-block;
+    margin: 0 8px;
+    transition: transform 0.2s;
+}
+.download-links a:hover {
+    transform: scale(1.1);
+}
+.download-links .fas, .download-links .far {
+    font-size: 22px;
+}
+.fa-file-word {
+    color: #2b579a;
+}
+.fa-file-pdf {
+    color: #d93025;
+}
+
+/* --- 🆕 สไตล์สำหรับ Modal ยืนยันการ Logout --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.show {
+    opacity: 1;
+}
+.modal-box {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
+.modal-box h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 20px;
+}
+.modal-box p {
+  margin-bottom: 25px;
+  color: var(--text-secondary);
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.modal-actions button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.modal-actions .btn-secondary {
+  background-color: #e9ecef;
+  color: var(--text-secondary);
+  border: 1px solid #dee2e6;
+}
+.modal-actions .btn-secondary:hover {
+  background-color: #dee2e6;
+}
+.modal-actions .btn-danger {
+  background-color: var(--rejected-color);
+  color: white;
+}
+.modal-actions .btn-danger:hover {
+  background-color: #c82333;
+}

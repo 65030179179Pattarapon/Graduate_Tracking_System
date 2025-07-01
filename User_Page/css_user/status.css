@@ -1,24 +1,29 @@
-/* 🎨 Theme */
+/* /User_Page/css_user/form1.css (Standard Form Styles with Corrected Dropdown Style) */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+
+/* 🎨 Theme Variables */
 :root {
-  --color-primary: #ed4988;
-  --color-secondary: #f1592b;
-  --text-primary: #1e2022;
-  --text-secondary: #52575d;
-  --bg-main: #f4f7f6;
-  --bg-card: #ffffff;
-  --border-color: #e9ecef;
-  --approved-text: #0b802c;
-  --pending-text: #b58105; /* Darker yellow for text */
-  --rejected-text: #d4380d;
+    --color-primary: #ed4988;
+    --color-secondary: #f1592b;
+    --text-primary: #1e2022;
+    --text-secondary: #52575d;
+    --bg-main: #f4f7f6;
+    --bg-card: #ffffff;
+    --border-color: #e9ecef;
+    --rejected-color: #dc3545;
+    --approved-text: #0b802c;
+    --pending-text: #b58105;
+    --rejected-text: #d4380d;
 }
 
+/* 🖌️ General Body Styles */
 body {
-  font-family: 'Poppins', sans-serif;
-  background: var(--bg-main);
-  margin: 0;
-  padding: 0;
-  color: var(--text-primary);
-  padding-top: 65px;
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg-main);
+    margin: 0; 
+    padding: 0;
+    color: var(--text-primary);
+    padding-top: 65px; /* Space for fixed navbar */
 }
 
 /* 🔹 Navbar (Standardized) */
@@ -176,6 +181,44 @@ nav .dropdown-menu li a { text-decoration: none; }
   cursor: not-allowed;
 }
 
-
-/* Modal Styles */
-.modal-overlay { /* ... (โค้ด Modal เหมือนเดิม) ... */ }
+/* มาตรฐาน: Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
+.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
+.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
+.modal-actions { display: flex; justify-content: center; gap: 15px; }
+.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
+.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
+.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
+.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
+.modal-actions .btn-danger:hover { background-color: #c82333; }
