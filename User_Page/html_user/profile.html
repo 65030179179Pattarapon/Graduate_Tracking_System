@@ -101,13 +101,51 @@
             <div class="side-profile-column">
                 <section class="profile-card">
                     <h3><i class="fas fa-graduation-cap"></i> สรุปสถานะการศึกษา</h3>
-                    <ul class="status-list">
-                        <li><label>ผลสอบภาษาอังกฤษ:</label><span id="eng-test-status" class="status-badge">-</span></li>
-                        <li><label>ผลการสอบหัวข้อและเค้าโครงวิทยานิพนธ์:</label><span id="proposal-status" class="status-badge">-</span></li>
-                        <li><label>วันที่อนุมัติหัวข้อและเค้าโครงวิทยานิพนธ์:</label><span id="proposal-date-info">-</span></li>
-                        <li><label>ผลการสอบวิทยานิพนธ์ขั้นสุดท้าย:</label><span id="final-defense-status" class="status-badge">-</span></li>
-                        <li><label>วันที่สำเร็จการศึกษา:</label><span id="graduation-date-info">-</span></li>
-                    </ul>
+
+                    <div class="status-group">
+                        <h4 class="group-title">ข้อมูลวิทยานิพนธ์</h4>
+                        <ul class="status-list-detailed">
+                            <li>
+                                <label>ชื่อเรื่อง (ไทย):</label>
+                                <span id="profile-thesis-th">-</span>
+                            </li>
+                            <li>
+                                <label>ชื่อเรื่อง (อังกฤษ):</label>
+                                <span id="profile-thesis-en">-</span>
+                            </li>
+                            <li>
+                                <label>อาจารย์ที่ปรึกษา:</label>
+                                <span id="profile-advisors">-</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="status-group">
+                        <h4 class="group-title">การสอบหัวข้อและเค้าโครง</h4>
+                        <ul class="status-list-detailed">
+                            <li><label>วันที่สอบหัวข้อ:</label><span id="proposal-exam-date">-</span></li>
+                            <li><label>สถานะการสอบ:</label><span id="proposal-status" class="status-badge">-</span></li>
+                            <li><label>วันที่อนุมัติหัวข้อ:</label><span id="proposal-approval-date">-</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="status-group">
+                        <h4 class="group-title">การสอบวิทยานิพนธ์ขั้นสุดท้าย</h4>
+                        <ul class="status-list-detailed">
+                            <li><label>วันที่สอบขั้นสุดท้าย:</label><span id="final-exam-date">-</span></li>
+                            <li><label>สถานะการสอบ:</label><span id="final-defense-status" class="status-badge">-</span></li>
+                            <li><label>วันที่สำเร็จการศึกษา:</label><span id="graduation-date">-</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="status-group">
+                        <h4 class="group-title">ผลการสอบภาษาอังกฤษ</h4>
+                        <ul class="status-list-detailed">
+                            <li><label>ประเภทการสอบ:</label><span id="eng-test-type">-</span></li>
+                            <li><label>วันที่อนุมัติผลสอบ:</label><span id="eng-approval-date">-</span></li>
+                            <li><label>สถานะ:</label><span id="eng-test-status-detailed" class="status-badge">-</span></li>
+                        </ul>
+                    </div>
                 </section>
 
                 <section class="profile-card">

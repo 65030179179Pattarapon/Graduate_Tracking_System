@@ -25,7 +25,7 @@ body {
     padding-top: 65px;
 }
 
-/* มาตรฐาน: Navbar Styles (ฉบับแก้ไข) */
+/* --- Standard Navbar Styles --- */
 nav {
     background: var(--bg-card);
     display: flex;
@@ -72,7 +72,7 @@ nav {
     padding: 0;
 }
 
-.nav-links > li > a { /* ใช้ > เพื่อเจาะจงเฉพาะเมนูหลัก */
+.nav-links > li > a {
     color: var(--text-secondary);
     text-decoration: none;
     padding: 8px 12px;
@@ -85,26 +85,18 @@ nav {
     gap: 8px;
 }
 
-/* สไตล์สำหรับเมนูหลักที่ Active (ตัวหนังสือสีชมพู ไม่มีพื้นหลัง) */
 .nav-links > li > a.active {
     background-color: transparent;
     color: var(--color-primary);
     font-weight: 600;
 }
 
-/* สไตล์เมื่อเมาส์ชี้บนเมนูหลัก (ที่ไม่ใช่หน้าที่ Active) ให้มีพื้นหลังสีชมพู */
 .nav-links > li > a:not(.active):hover {
     background-color: var(--color-primary);
     color: white;
 }
 
-.nav-links li a .fa-caret-down {
-    font-size: 12px;
-    margin-left: 4px;
-}
-
-
-/* มาตรฐาน: Dropdown Styles (ฉบับแก้ไข) */
+/* Dropdown Styles */
 .dropdown {
     position: relative;
 }
@@ -141,11 +133,10 @@ nav {
     transition: background-color 0.2s, color 0.2s;
 }
 
-/* สไตล์เมื่อเมาส์ชี้ หรือเป็นรายการที่เลือกอยู่ (พื้นหลังเทาอ่อน ตัวหนังสือชมพู) */
 .dropdown-menu li a:hover,
 .dropdown-menu .active-item {
-    background-color: #f8f9fa; 
-    color: var(--color-primary); 
+    background-color: #f8f9fa;
+    color: var(--color-primary);
 }
 
 .dropdown-menu .dropdown-header {
@@ -218,7 +209,7 @@ h1 {
 
 .profile-layout {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* แบ่ง 2 คอลัมน์ ไม่เท่ากัน */
+    grid-template-columns: 1fr 2fr;
     gap: 30px;
 }
 
@@ -339,6 +330,10 @@ h1 {
     max-width: 80%;
     max-height: 100px;
 }
+#signature-display-area .text-muted {
+    color: var(--text-secondary);
+    font-style: italic;
+}
 .signature-actions {
     display: flex;
     gap: 10px;
@@ -377,33 +372,52 @@ h1 {
     color: white;
 }
 
-/* --- Status & Files Cards --- */
-.status-list, .file-list {
+/* --- Academic Status & Files Cards --- */
+.status-group {
+    margin-bottom: 25px;
+}
+.status-group:last-child {
+    margin-bottom: 0;
+}
+.group-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding-bottom: 8px;
+    margin: 0 0 10px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.status-list-detailed, .file-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-.status-list li, .file-list li {
+.status-list-detailed li, .file-list li {
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
+    align-items: baseline;
+    padding: 9px 0;
+    font-size: 15px;
+}
+.status-list-detailed li:not(:last-child), .file-list li:not(:last-child) {
     border-bottom: 1px solid var(--border-color);
 }
-.status-list li:last-child, .file-list li:last-child {
-    border-bottom: none;
-}
-.status-list label, .file-list label {
+.status-list-detailed label, .file-list label {
     margin: 0;
     font-weight: 500;
     color: var(--text-secondary);
+    flex-shrink: 0;
+    margin-right: 15px;
 }
-.status-list span, .file-list a {
-    font-weight: 600;
+.status-list-detailed span, .file-list a {
+    font-weight: 500;
     color: var(--text-primary);
+    text-align: right;
 }
 .file-list a {
     text-decoration: none;
     color: var(--color-primary);
+    word-break: break-all;
 }
 .file-list a:hover {
     text-decoration: underline;
@@ -412,11 +426,12 @@ h1 {
 .status-badge {
     padding: 4px 10px;
     border-radius: 12px;
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: 600;
 }
-.status-badge.approved { background-color: #e6f7ec; color: #0b802c; }
-.status-badge.pending { background-color: #fffbe6; color: #b58105; }
-.status-badge.rejected { background-color: #fff1f0; color: #d4380d; }
+.status-badge.approved, .status-badge.ผ่าน, .status-badge.ผ่านเกณฑ์ { background-color: #e6f7ec; color: #0b802c; }
+.status-badge.pending, .status-badge.รอตรวจ, .status-badge.รอตรวจสอบ, .status-badge.ยังไม่ยื่น, .status-badge.- { background-color: #fffbe6; color: #b58105; }
+.status-badge.rejected, .status-badge.ไม่ผ่าน, .status-badge.ไม่ผ่านเกณฑ์ { background-color: #fff1f0; color: #d4380d; }
 
 /* --- Image Crop Modal --- */
 .image-crop-box {
@@ -426,8 +441,13 @@ h1 {
     display: block;
     max-width: 100%;
 }
+.loading-text {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+}
 
-/* มาตรฐาน: Modal Styles */
+/* --- Standard Modal Styles --- */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -468,3 +488,10 @@ h1 {
 .modal-actions .btn-secondary:hover { background-color: #dee2e6; }
 .modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
 .modal-actions .btn-danger:hover { background-color: #c82333; }
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
