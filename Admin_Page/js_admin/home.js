@@ -11,7 +11,12 @@ let masterDataCache = {
 };
 
 const pageState = {
-    pendingReview: { fullData: [], filteredData: [], currentPage: 1, rowsPerPage: 10 },
+    pendingReview: { 
+        fullData: [], 
+        filteredData: [], 
+        currentPage: 1, 
+        rowsPerPage: 10 
+    },
     pendingAdvisor: { 
         fullData: { waiting: [], processed: [] }, 
         filteredData: [], 
@@ -26,7 +31,19 @@ const pageState = {
         rowsPerPage: 10, 
         currentTab: 'external-waiting'
     },
-    // (เพิ่ม state สำหรับ section อื่นๆ ที่นี่ในอนาคต)
+    pendingExecutive: { 
+        fullData: { waiting: [], processed: [] }, 
+        filteredData: [], 
+        currentPage: 1, 
+        rowsPerPage: 10, 
+        currentTab: 'executive-waiting'
+    },
+    allDocuments: { 
+        fullData: [], 
+        filteredData: [], 
+        currentPage: 1, 
+        rowsPerPage: 10 
+    }
 };
 
 
@@ -89,13 +106,19 @@ function showSection(sectionId) {
             loadDashboardData();
             break;
         case 'pending-review':
-            displayPendingReviewPage(1);
+            loadPendingReviewData();
             break;
         case 'pending-advisor':
             loadAdvisorApprovalData();
             break;
         case 'pending-external':
             loadExternalApprovalData();
+            break;
+        case 'pending-executive':
+            loadExecutiveApprovalData();
+            break;
+        case 'all-documents':
+            loadAllDocumentsData();
             break;
     }
 }
@@ -114,6 +137,28 @@ async function fetchAndCacheMasterData() {
         masterDataCache = { students, advisors, programs, departments };
     } catch (error) {
         console.error("Failed to fetch master data:", error);
+    }
+}
+
+/**
+ * ดึงและแสดงข้อมูลสำหรับ Section "เอกสารรอตรวจ"
+ */
+async function loadPendingReviewData() {
+    try {
+        const pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+        
+        // อัปเดต Stat Cards ของหน้านี้
+        document.getElementById('pending-total-count').textContent = pendingDocs.length;
+        document.getElementById('pending-today-count').textContent = pendingDocs.filter(d => new Date(d.submitted_date).toDateString() === new Date().toDateString()).length;
+        document.getElementById('pending-resubmitted-count').textContent = pendingDocs.filter(d => d.status === 'แก้ไขแล้วส่งกลับ').length;
+        
+        // เก็บข้อมูลและแสดงผลหน้าแรกของตาราง
+        pageState.pendingReview.fullData = pendingDocs;
+        pageState.pendingReview.filteredData = pendingDocs;
+        displayPendingReviewPage(1);
+        
+    } catch (error) {
+        console.error("Error loading pending review data:", error);
     }
 }
 
@@ -141,10 +186,18 @@ async function initializeApp() {
     pageState.pendingAdvisor.fullData = { waiting: [], processed: [] };
     pageState.pendingAdvisor.filteredData = [];
     setupAdvisorApprovalFilters();
-
-    pageState.pendingExternal.fullData = { waiting: [], processed: [] };
-    pageState.pendingExternal.filteredData = [];
     setupExternalApprovalFilters();
+    setupExecutiveApprovalFilters();
+    setupAllDocumentsFilters();
+
+    // ซ่อน Filter ไว้เป็นค่าเริ่มต้น
+    const filterBody = document.getElementById('advanced-filter-body');
+    const toggleBtn = document.getElementById('toggle-filter-btn');
+    if (filterBody && toggleBtn) {
+        filterBody.classList.add('hidden');
+        toggleBtn.classList.add('collapsed');
+        toggleBtn.textContent = 'แสดง';
+    }
 
     // --- แสดงหน้า Dashboard เป็นหน้าแรก ---
     showSection('dashboard');
@@ -464,8 +517,297 @@ function setupExternalApprovalFilters() {
     processedStatusFilter?.addEventListener('change', applyFilter);
 }
 
+// =================================================================
+// ภาค 9: Executive Approval Section Logic
+// =================================================================
+
+/**
+ * โหลดข้อมูลเริ่มต้นสำหรับ Section "รอผู้บริหารอนุมัติ"
+ */
+function loadExecutiveApprovalData() {
+    // ในระบบจริง ข้อมูลส่วนนี้จะมาจากฐานข้อมูล
+    const waitingData = []; // Placeholder
+    const processedData = []; // Placeholder
+    
+    pageState.pendingExecutive.fullData = { waiting: waitingData, processed: processedData };
+
+    // Update Stat Cards
+    document.getElementById('executive-waiting-count').textContent = waitingData.length;
+    document.getElementById('executive-approved-today-count').textContent = "0";
+    document.getElementById('executive-rejected-today-count').textContent = "0";
+
+    // แสดงแท็บ "กำลังรออนุมัติ" เป็นค่าเริ่มต้น
+    displayExecutiveApprovalPage('executive-waiting', 1);
+}
+
+/**
+ * แสดงข้อมูลในตารางตามแท็บที่เลือก (รออนุมัติ / ดำเนินการแล้ว)
+ */
+function displayExecutiveApprovalPage(tab, page) {
+    pageState.pendingExecutive.currentTab = tab;
+    pageState.pendingExecutive.currentPage = page;
+
+    // สลับ Active Class ของปุ่ม Tab และเนื้อหา
+    document.querySelectorAll('#section-pending-executive .tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+    document.querySelectorAll('#section-pending-executive .tab-content').forEach(content => content.classList.toggle('active', content.id === `tab-${tab}`));
+
+    const dataForTab = pageState.pendingExecutive.fullData[tab.replace('executive-', '')] || [];
+    pageState.pendingExecutive.filteredData = dataForTab;
+
+    const tableBody = document.querySelector(`#table-${tab} tbody`);
+    tableBody.innerHTML = '';
+
+    const start = (page - 1) * pageState.pendingExecutive.rowsPerPage;
+    const end = start + pageState.pendingExecutive.rowsPerPage;
+    const paginatedItems = pageState.pendingExecutive.filteredData.slice(start, end);
+    
+    if (paginatedItems.length === 0) {
+        const colspan = (tab === 'executive-waiting') ? 4 : 5;
+        tableBody.innerHTML = `<tr><td colspan="${colspan}" class="loading-text">ไม่มีข้อมูลในรายการนี้</td></tr>`;
+    } else {
+        paginatedItems.forEach(doc => {
+            const student = masterDataCache.students.find(s => s.email === doc.student_email);
+            const studentName = student ? `${student.first_name_th} ${student.last_name_th}` : doc.student_email;
+            const tr = document.createElement('tr');
+            tr.className = 'clickable-row';
+            tr.onclick = () => viewDocumentDetail(doc.doc_id, doc.type);
+
+            if (tab === 'executive-waiting') {
+                tr.innerHTML = `
+                    <td>${doc.title}</td>
+                    <td>${doc.student_id}</td>
+                    <td>${studentName}</td>
+                    <td>${formatDate(doc.forwarded_to_executive_date)}</td>
+                `;
+            } else { // executive-processed
+                tr.innerHTML = `
+                    <td>${doc.title}</td>
+                    <td>${doc.student_id}</td>
+                    <td>${studentName}</td>
+                    <td><span class="status-badge ${doc.status === 'อนุมัติแล้ว' ? 'approved' : 'rejected'}">${doc.status}</span></td>
+                    <td>${formatDate(doc.executive_action_date)}</td>
+                `;
+            }
+            tableBody.appendChild(tr);
+        });
+    }
+    updateExecutiveApprovalPagination();
+}
+
+/**
+ * อัปเดตปุ่ม Pagination สำหรับหน้า "รอผู้บริหารอนุมัติ"
+ */
+function updateExecutiveApprovalPagination() {
+    const state = pageState.pendingExecutive;
+    const controlsContainer = document.getElementById(`pagination-${state.currentTab}`);
+    if (!controlsContainer) return;
+    const totalPages = Math.ceil(state.filteredData.length / state.rowsPerPage) || 1;
+    
+    controlsContainer.innerHTML = `
+        <span class="page-info">หน้า ${state.currentPage} จาก ${totalPages}</span>
+        <button class="prev-btn" ${state.currentPage === 1 ? 'disabled' : ''}>ก่อนหน้า</button>
+        <button class="next-btn" ${state.currentPage >= totalPages ? 'disabled' : ''}>ถัดไป</button>
+    `;
+
+    controlsContainer.querySelector('.prev-btn').onclick = () => displayExecutiveApprovalPage(state.currentTab, state.currentPage - 1);
+    controlsContainer.querySelector('.next-btn').onclick = () => displayExecutiveApprovalPage(state.currentTab, state.currentPage + 1);
+}
+
+/**
+ * ตั้งค่าการกรองข้อมูลสำหรับหน้า "รอผู้บริหารอนุมัติ"
+ */
+function setupExecutiveApprovalFilters() {
+    document.querySelectorAll('#section-pending-executive .tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.dataset.tab;
+            displayExecutiveApprovalPage(tabId, 1);
+        });
+    });
+    // (เพิ่ม Logic ของ Filter และ Search ที่นี่ในอนาคต)
+}
 
 // =================================================================
-// ภาค 9: Main Execution
+// ภาค 10: All Documents Section Logic
+// =================================================================
+
+/** 
+ * โหลดข้อมูลเริ่มต้นสำหรับ Section "เอกสารทั้งหมด"
+ */
+async function loadAllDocumentsData() {
+    const pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+    const approvedDocs = JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]');
+    const rejectedDocs = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
+    
+    pageState.allDocuments.fullData = [...pendingDocs, ...approvedDocs, ...rejectedDocs];
+    pageState.allDocuments.filteredData = pageState.allDocuments.fullData;
+
+    document.getElementById('all-docs-count').textContent = `พบ ${pageState.allDocuments.fullData.length} รายการ`;
+    displayAllDocumentsPage(1);
+}
+
+/**
+ * แสดงข้อมูลในตาราง "เอกสารทั้งหมด"
+ */
+function displayAllDocumentsPage(page) {
+    const state = pageState.allDocuments;
+    state.currentPage = page;
+
+    const tableBody = document.querySelector("#table-all-documents tbody");
+    tableBody.innerHTML = '';
+
+    const start = (state.currentPage - 1) * state.rowsPerPage;
+    const end = start + state.rowsPerPage;
+    const paginatedItems = state.filteredData.slice(start, end);
+    
+    if (paginatedItems.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="6" class="loading-text">ไม่พบเอกสารตามเงื่อนไข</td></tr>`;
+    } else {
+        paginatedItems.forEach(doc => {
+            const student = masterDataCache.students.find(s => s.email === doc.student_email);
+            const studentName = student ? `${student.first_name_th} ${student.last_name_th}` : doc.student_email;
+            const tr = document.createElement('tr');
+            tr.className = 'clickable-row';
+            tr.onclick = () => viewDocumentDetail(doc.doc_id, doc.type);
+            tr.innerHTML = `
+                <td class="checkbox-cell"><input type="checkbox" onclick="event.stopPropagation();"></td>
+                <td>${doc.title}</td>
+                <td>${doc.type}</td>
+                <td>${doc.student_id}</td>
+                <td>${studentName}</td>
+                <td><span class="status-badge ${doc.status === 'อนุมัติแล้ว' ? 'approved' : (doc.status === 'ไม่อนุมัติ' ? 'rejected' : 'pending')}">${doc.status}</span></td>
+                <td>${formatDate(doc.submitted_date)}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+    updateAllDocumentsPagination();
+}
+
+/**
+ * อัปเดตปุ่ม Pagination สำหรับหน้า "เอกสารทั้งหมด"
+ */
+function updateAllDocumentsPagination() {
+    const state = pageState.allDocuments;
+    const controlsContainer = document.getElementById("pagination-all-documents");
+    if (!controlsContainer) return;
+    const totalPages = Math.ceil(state.filteredData.length / state.rowsPerPage) || 1;
+    
+    controlsContainer.innerHTML = `
+        <span class="page-info">หน้า ${state.currentPage} จาก ${totalPages}</span>
+        <button class="prev-btn" ${state.currentPage === 1 ? 'disabled' : ''}>ก่อนหน้า</button>
+        <button class="next-btn" ${state.currentPage >= totalPages ? 'disabled' : ''}>ถัดไป</button>
+    `;
+
+    controlsContainer.querySelector('.prev-btn').onclick = () => displayAllDocumentsPage(state.currentPage - 1);
+    controlsContainer.querySelector('.next-btn').onclick = () => displayAllDocumentsPage(state.currentPage + 1);
+}
+
+/**
+ * กรองข้อมูลในตาราง "เอกสารทั้งหมด" ตามเงื่อนไขที่เลือก
+ */
+function applyAllDocumentsFilters() {
+    const state = pageState.allDocuments;
+    if (!state) return;
+
+    // ดึงค่าจากทุกช่อง Filter
+    const searchTerm = document.getElementById('search-all-input').value.toLowerCase();
+    const status = document.getElementById('filter-status-all').value;
+    const docType = document.getElementById('filter-type-all').value;
+    const program = document.getElementById('filter-program-all').value;
+    const dateStart = document.getElementById('filter-date-start').value;
+    const dateEnd = document.getElementById('filter-date-end').value;
+
+    state.filteredData = state.fullData.filter(doc => {
+        const student = masterDataCache.students.find(s => s.email === doc.student_email);
+        const studentName = student ? `${student.first_name_th} ${student.last_name_th}`.toLowerCase() : '';
+        const programName = student ? masterDataCache.programs.find(p => p.id === student.program_id)?.name : '';
+
+        // ตรวจสอบแต่ละเงื่อนไข
+        if (status && doc.status !== status) return false;
+        if (docType && doc.type !== docType) return false;
+        if (program && programName !== program) return false;
+        if (dateStart && new Date(doc.submitted_date) < new Date(dateStart)) return false;
+        if (dateEnd && new Date(doc.submitted_date) > new Date(dateEnd)) return false;
+        
+        // ตรวจสอบ Search Term
+        if (searchTerm && !(
+            doc.title.toLowerCase().includes(searchTerm) ||
+            studentName.includes(searchTerm) ||
+            doc.student_id.includes(searchTerm)
+        )) {
+            return false;
+        }
+
+        return true;
+    });
+
+    displayAllDocumentsPage(1);
+    document.getElementById('all-docs-count').textContent = `พบ ${state.filteredData.length} รายการ`;
+}
+
+/**
+ * ตั้งค่าการกรองข้อมูลสำหรับหน้า "เอกสารทั้งหมด"
+ */
+function setupAllDocumentsFilters() {
+    const applyBtn = document.getElementById('apply-filters-btn');
+    const resetBtn = document.getElementById('reset-filters-btn');
+    const searchInput = document.getElementById('search-all-input');
+    
+    const applyFilters = () => {
+        const state = pageState.allDocuments;
+        const searchTerm = searchInput.value.toLowerCase();
+        // (เพิ่ม Logic การกรองจาก Dropdown และ Date ที่นี่)
+        
+        state.filteredData = state.fullData.filter(doc => {
+            const student = masterDataCache.students.find(s => s.email === doc.student_email);
+            const studentName = student ? `${student.first_name_th} ${student.last_name_th}` : '';
+            return doc.title.toLowerCase().includes(searchTerm) ||
+                   studentName.toLowerCase().includes(searchTerm);
+        });
+        displayAllDocumentsPage(1);
+    };
+
+    applyBtn?.addEventListener('click', applyFilters);
+    searchInput?.addEventListener('input', applyFilters);
+
+    resetBtn?.addEventListener('click', () => {
+        document.getElementById('search-all-input').value = '';
+        // (เพิ่มการรีเซ็ต Filter อื่นๆ)
+        pageState.allDocuments.filteredData = pageState.allDocuments.fullData;
+        displayAllDocumentsPage(1);
+    });
+}
+
+/**
+ * ตั้งค่า Event Listeners สำหรับหน้า "เอกสารทั้งหมด"
+ */
+function setupAllDocumentsFilters() {
+    const applyBtn = document.getElementById('apply-filters-btn');
+    const resetBtn = document.getElementById('reset-filters-btn');
+    const toggleBtn = document.getElementById('toggle-filter-btn');
+    const filterBody = document.getElementById('advanced-filter-body');
+
+    // ปุ่มซ่อน/แสดง
+    toggleBtn?.addEventListener('click', () => {
+        filterBody.classList.toggle('hidden');
+        toggleBtn.classList.toggle('collapsed');
+        toggleBtn.textContent = filterBody.classList.contains('hidden') ? 'แสดง' : 'ซ่อน';
+    });
+
+    // ปุ่มใช้ตัวกรอง และ ล้างตัวกรอง
+    applyBtn?.addEventListener('click', applyAllDocumentsFilters);
+    resetBtn?.addEventListener('click', () => {
+        document.getElementById('search-all-input').value = '';
+        document.getElementById('filter-status-all').value = '';
+        document.getElementById('filter-type-all').value = '';
+        document.getElementById('filter-program-all').value = '';
+        document.getElementById('filter-date-start').value = '';
+        document.getElementById('filter-date-end').value = '';
+        applyAllDocumentsFilters();
+    });
+}
+
+// =================================================================
+// ภาค 11: Main Execution
 // =================================================================
 document.addEventListener('DOMContentLoaded', initializeApp);

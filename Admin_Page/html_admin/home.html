@@ -337,15 +337,174 @@
               </div>
           </section>
             
-            <section id="section-pending-executive" class="content-section">
-                 <h1><i class="fas fa-user-shield"></i> ผู้บริหารอนุมัติ</h1>
-                 <p>เอกสารที่ผ่านการอนุมัติจากกรรมการและรอผู้บริหารอนุมัติขั้นสุดท้าย</p>
-            </section>
+          <section id="section-pending-executive" class="content-section">
+              <h1><i class="fas fa-user-shield"></i> ผู้บริหารอนุมัติ</h1>
+              <p>เอกสารที่รอการอนุมัติขั้นสุดท้ายจากผู้บริหาร</p>
 
-            <section id="section-all-documents" class="content-section">
-                 <h1><i class="fas fa-folder-open"></i> เอกสารทั้งหมด</h1>
-                 <p>ค้นหาและกรองเอกสารทั้งหมดในระบบ</p>
-            </section>
+              <div class="stats-container-inline">
+                  <div class="stat-card-inline">
+                      <p class="stat-title">กำลังรออนุมัติ</p>
+                      <h2 id="executive-waiting-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline">
+                      <p class="stat-title">อนุมัติแล้ววันนี้</p>
+                      <h2 id="executive-approved-today-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline">
+                      <p class="stat-title">ตีกลับวันนี้</p>
+                      <h2 id="executive-rejected-today-count" class="stat-value">0</h2>
+                  </div>
+              </div>
+
+              <div class="tab-nav">
+                  <button class="tab-btn active" data-tab="executive-waiting">รายการที่กำลังรออนุมัติ</button>
+                  <button class="tab-btn" data-tab="executive-processed">รายการที่ดำเนินการแล้ว</button>
+              </div>
+
+              <div class="tab-content-wrapper">
+                  <div id="tab-executive-waiting" class="tab-content active">
+                      <div class="table-card">
+                          <div class="filter-controls">
+                              <input type="text" id="executive-waiting-search" placeholder="🔍 ค้นหาจากชื่อเอกสารหรือชื่อนักศึกษา...">
+                          </div>
+                          <div class="table-container">
+                              <table id="table-executive-waiting">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>วันที่ส่งต่อ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                          <div class="pagination-controls" id="pagination-executive-waiting"></div>
+                      </div>
+                  </div>
+
+                  <div id="tab-executive-processed" class="tab-content">
+                      <div class="table-card">
+                          <div class="filter-controls">
+                              <input type="text" id="executive-processed-search" placeholder="🔍 ค้นหา...">
+                              <select id="executive-processed-filter-status">
+                                  <option value="all">ทุกสถานะ</option>
+                                  <option value="อนุมัติ">อนุมัติ</option>
+                                  <option value="ตีกลับ">ตีกลับ</option>
+                              </select>
+                          </div>
+                          <div class="table-container">
+                              <table id="table-executive-processed">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>สถานะ</th>
+                                          <th>วันที่ดำเนินการ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                          <div class="pagination-controls" id="pagination-executive-processed"></div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <section id="section-all-documents" class="content-section">
+              <h1><i class="fas fa-folder-open"></i> เอกสารทั้งหมด</h1>
+              <p>ค้นหา กรอง และจัดการเอกสารทั้งหมดในระบบ</p>
+
+              <div class="filter-card">
+                  <div class="filter-header">
+                      <h3><i class="fas fa-filter"></i> เครื่องมือกรอง</h3>
+                      <button id="toggle-filter-btn" class="toggle-filter-btn">ซ่อน</button>
+                  </div>
+                  <div id="advanced-filter-body" class="filter-body">
+                      <div class="filter-grid">
+                          <div class="filter-group">
+                              <label for="search-all-input">ค้นหาทั่วไป:</label>
+                              <input type="text" id="search-all-input" placeholder="ชื่อเอกสาร, ชื่อนศ., รหัสนศ...">
+                          </div>
+                          <div class="filter-group">
+                              <label for="filter-status-all">สถานะ:</label>
+                              <select id="filter-status-all">
+                                  <option value="">ทุกสถานะ</option>
+                                  <option value="รอตรวจ">รอตรวจ</option>
+                                  <option value="อนุมัติแล้ว">อนุมัติแล้ว</option>
+                                  <option value="ไม่อนุมัติ">ไม่อนุมัติ</option>
+                              </select>
+                          </div>
+                          <div class="filter-group">
+                              <label for="filter-type-all">ประเภทเอกสาร:</label>
+                              <select id="filter-type-all">
+                                  <option value="">ทุกประเภท</option>
+                                  </select>
+                          </div>
+                          <div class="filter-group">
+                              <label for="filter-program-all">หลักสูตร:</label>
+                              <select id="filter-program-all">
+                                  <option value="">ทุกหลักสูตร</option>
+                                  </select>
+                          </div>
+
+                          <div class="filter-group">
+                              <label for="filter-date-start">ตั้งแต่วันที่:</label>
+                              <input type="date" id="filter-date-start">
+                          </div>
+                          <div class="filter-group">
+                              <label for="filter-date-end">ถึงวันที่:</label>
+                              <input type="date" id="filter-date-end">
+                          </div>
+                      </div>
+                      <div class="filter-actions">
+                          <button id="reset-filters-btn" class="btn-secondary">ล้างตัวกรอง</button>
+                          <button id="apply-filters-btn" class="btn-primary">ใช้ตัวกรอง</button>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="table-card">
+                  <div class="table-header">
+                      <div class="table-title">
+                          <h2>ผลการค้นหา</h2>
+                          <span id="all-docs-count">พบ 0 รายการ</span>
+                      </div>
+                      <div class="bulk-actions-container" style="display: none;">
+                          <select id="bulk-action-select">
+                              <option value="">-- ดำเนินการที่เลือก --</option>
+                              <option value="approve">เปลี่ยนสถานะเป็น "อนุมัติแล้ว"</option>
+                              <option value="reject">เปลี่ยนสถานะเป็น "ไม่อนุมัติ"</option>
+                          </select>
+                          <button id="bulk-action-apply-btn" class="btn-primary">ยืนยัน</button>
+                      </div>
+                  </div>
+                  <div class="table-container">
+                      <table id="table-all-documents">
+                          <thead>
+                              <tr>
+                                  <th class="checkbox-cell"><input type="checkbox" id="select-all-docs"></th>
+                                  <th>ชื่อเอกสาร</th>
+                                  <th>ประเภท</th>
+                                  <th>รหัสประจำตัว</th>
+                                  <th>ชื่อ-นามสกุล</th>
+                                  <th>สถานะ</th>
+                                  <th>วันที่ดำเนินการล่าสุด</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              </tbody>
+                      </table>
+                  </div>
+                  <div class="pagination-controls" id="pagination-all-documents">
+                      </div>
+              </div>
+          </section>
         </main>
     </div>
 

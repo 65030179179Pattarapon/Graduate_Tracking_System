@@ -431,3 +431,102 @@ table th {
 .tab-content.active {
     display: block; /* Show only the active tab */
 }
+
+/* --- Styles for Advanced Filters (New Horizontal Layout) --- */
+.filter-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.filter-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer; /* ทำให้ส่วนหัวคลิกได้ */
+}
+
+.filter-header h3 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toggle-filter-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.toggle-filter-btn.collapsed::before {
+    content: 'แสดงตัวกรอง ▼';
+}
+
+.toggle-filter-btn:not(.collapsed)::before {
+    content: 'ซ่อนตัวกรอง ▲';
+}
+
+.filter-body {
+    max-height: 1000px; /* ค่าที่สูงพอให้เนื้อหาแสดงได้เต็มที่ */
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+    padding: 20px;
+}
+
+.filter-body.hidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top: none;
+}
+
+.filter-grid {
+    display: grid;
+    /* แบ่งคอลัมน์ให้ยืดหยุ่นตามขนาดหน้าจอ */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px 20px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+    display: block;
+}
+
+.filter-actions {
+    grid-column: 1 / -1; /* ทำให้ส่วนของปุ่มขยายเต็มความกว้างของ grid */
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    margin-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+.bulk-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.table-title {
+    flex-grow: 1;
+}
+
+.table-title #all-docs-count {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-left: 10px;
+}
