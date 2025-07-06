@@ -1,0 +1,433 @@
+/* /Admin_Page/css_admin/home.css */
+
+/* --- Main Layout --- */
+.admin-page-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr; /* Sidebar width and main content */
+    height: calc(100vh - 65px); /* Full height minus navbar */
+}
+
+/* --- Sidebar Styles --- */
+.sidebar {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-btn {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-btn:hover {
+    background-color: #f8f9fa;
+    color: var(--text-primary);
+}
+
+.sidebar-btn.active {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    padding: 30px;
+    overflow-y: auto; /* Allow content to scroll independently */
+}
+
+.content-section {
+    display: none; 
+}
+
+.content-section.active {
+    display: block; 
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.content-section h1 {
+    font-size: 28px;
+    margin-top: 0;
+}
+.content-section > p {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: -15px;
+    margin-bottom: 30px;
+}
+
+/* --- Stats Cards --- */
+.stats-container {
+    display: grid;
+    /* กำหนดให้มี 8 คอลัมน์เท่าๆ กันสำหรับ Layout นี้โดยเฉพาะ */
+    grid-template-columns: repeat(8, 1fr); 
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* ทำให้การ์ดที่มีข้อมูลย่อยกว้างเป็น 2 คอลัมน์ */
+.stat-card.stat-card-double {
+    grid-column: span 2; 
+}
+
+/* ทำให้การ์ดเดี่ยวกว้าง 1 คอลัมน์ */
+.stat-card:not(.stat-card-double) {
+    grid-column: span 1;
+}
+
+.stat-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0 0 8px 0;
+}
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+.stat-sub-values {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 10px;
+}
+.stat-sub-values div {
+    text-align: center;
+}
+.stat-sub-values label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.stat-sub-values span {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* --- Dashboard Layout --- */
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+.dashboard-main-column, .dashboard-side-column {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* --- Table Card --- */
+.table-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.table-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-secondary);
+    position: sticky;
+    top: 0;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+.clickable-row:hover {
+    background-color: #fdf2f7;
+}
+
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.status-badge.approved { background-color: #e6f7ec; color: #0b802c; }
+.status-badge.pending { background-color: #fffbe6; color: #b58105; }
+.status-badge.rejected { background-color: #fff1f0; color: #d4380d; }
+
+/* --- Activity Feed --- */
+.activity-feed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-feed li {
+    display: flex;
+    gap: 15px;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.activity-feed li:last-child {
+    border-bottom: none;
+}
+.activity-icon {
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.activity-icon.approved { background-color: #e6f7ec; color: #0b802c; }
+.activity-icon.pending { background-color: #fffbe6; color: #b58105; }
+.activity-details span {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+}
+.activity-details small {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 1200px) {
+    .dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 768px) {
+    .admin-page-layout {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+}
+
+/* --- Styles for Inline Stat Cards (in Sections) --- */
+.stats-container-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 25px;
+}
+
+.stat-card-inline {
+    flex: 1;
+    min-width: 180px;
+    background: var(--bg-card);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.stat-card-inline:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    border-color: var(--color-primary);
+}
+
+.table-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+}
+
+.table-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table-header h2 {
+    margin: 0;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+}
+
+.filter-controls input,
+.filter-controls select {
+    width: 500%;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.table-container {
+    max-height: 500px; /* or any height you prefer */
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+.clickable-row:hover {
+    background-color: #fdf2f7;
+}
+
+/* Pagination Controls for Section Tables */
+.pagination-controls {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--border-color);
+}
+.pagination-controls .page-info {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.pagination-controls button {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* --- Styles for Tab Navigation --- */
+.tab-nav {
+    display: flex;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 12px 25px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px; /* To align with the container's border */
+}
+
+.tab-btn.active {
+    color: var(--color-primary);
+    font-weight: 600;
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-content {
+    display: none; /* Hide all tabs by default */
+}
+
+.tab-content.active {
+    display: block; /* Show only the active tab */
+}

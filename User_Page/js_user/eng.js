@@ -116,6 +116,7 @@ function renderScoreInputs(examType) {
     container.innerHTML = html;
 }
 
+
 /**
  * แสดงรายการไฟล์ที่เลือก และจัดการการลบไฟล์
  */
@@ -145,6 +146,7 @@ function renderFileList() {
         fileListElement.appendChild(li);
     });
 }
+
 
 // =================================================================
 // ภาค 3: Main Event Listener
@@ -209,6 +211,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+        // Character Counter Logic for Comment Box
+    const commentBox = document.getElementById('student-comment');
+    const charCounter = document.getElementById('char-counter');
+    if(commentBox && charCounter){
+        commentBox.addEventListener('input', () => {
+            const currentLength = commentBox.value.length;
+            charCounter.textContent = `${currentLength} / 250`;
+        });
+    }
+
     // --- Form Submission ---
     const engForm = document.getElementById('eng-form');
     if (engForm) {
@@ -230,12 +242,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert("กรุณาแนบไฟล์หลักฐานผลสอบอย่างน้อย 1 ไฟล์");
                 return;
             }
-            // สามารถเพิ่ม validation ของคะแนนแต่ละช่องได้ตามต้องการ
 
             // --- Construct submission object ---
             const submissionData = {
                 doc_id: `eng_test_${userEmail}_${Date.now()}`,
-                type: "เอกสารอื่นๆ", // ใช้ type กลางๆ เพื่อให้แสดงใน status.js ได้
+                type: "ผลสอบภาษาอังกฤษ", // เปลี่ยน type ให้ตรงกับ case
                 title: `ยื่นผลสอบ ${examType === 'OTHER' ? document.getElementById('other-exam-type-text').value.trim() : examType}`,
                 student_email: userEmail,
                 student_id: document.getElementById('student-id').value,
@@ -245,7 +256,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     exam_date: document.getElementById('exam-date').value,
                     scores: {},
                 },
-                files: selectedFiles.map(f => ({ name: f.name, size: f.size })),
+                files: selectedFiles.map(f => ({ type: 'หลักฐานผลการสอบ', name: f.name, size: f.size })),
+                student_comment: document.getElementById('student-comment')?.value.trim() || "",
                 submitted_date: new Date().toISOString(),
                 status: "รอตรวจ"
             };

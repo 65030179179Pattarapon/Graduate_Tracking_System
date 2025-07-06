@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             executive: "/Executive_Page/html_executive/"
         };
         alert("✅ ลายเซ็นของคุณถูกบันทึกแล้ว");
-        const homePageFile = (role === 'admin') ? "admin_home.html" : "home.html";
+        const homePageFile = (role === 'admin') ? "home.html" : "home.html";
         if (basePath[role]) {
             window.location.href = basePath[role] + homePageFile;
         } else {

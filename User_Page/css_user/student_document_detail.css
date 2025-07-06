@@ -1,143 +1,482 @@
 /* /User_Page/css_user/student_document_detail.css */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
 
-/* 🎨 Theme Variables (อาจจะ import จากไฟล์ common.css) */
+/* 🎨 Theme Variables */
 :root {
-  --color-primary: #ed4988;
-  --color-secondary: #f1592b;
-  --text-primary: #1e2022;
-  --text-secondary: #52575d;
-  --bg-main: #f4f7f6;
-  --bg-card: #ffffff;
-  --border-color: #e9ecef;
-  --approved-color: #28a745;
-  --pending-color: #ffc107;
-  --rejected-color: #dc3545;
+    --color-primary: #ed4988;
+    --color-secondary: #f1592b;
+    --text-primary: #1e2022;
+    --text-secondary: #52575d;
+    --bg-main: #f4f7f6;
+    --bg-card: #ffffff;
+    --border-color: #e9ecef;
+    --rejected-color: #dc3545;
+    --approved-color: #28a745;
+    --pending-color: #ffc107;
 }
 
+/* 🖌️ General Body Styles */
 body {
-  /* ควรจะดึงสไตล์พื้นฐานมาจาก common.css หรือ home.css */
-  font-family: 'Poppins', sans-serif;
-  background: var(--bg-main);
-  padding-top: 65px; /* For fixed navbar */
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg-main);
+    margin: 0; 
+    padding: 0;
+    color: var(--text-primary);
+    padding-top: 65px;
 }
 
-.detail-page-container {
-  max-width: 800px;
-  margin: 30px auto;
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+/* --- Standard Navbar Styles --- */
+nav {
+    background: var(--bg-card);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 15px;
+.logo-link {
+    text-decoration: none;
 }
-.detail-header h1 {
-  font-size: 24px;
-  color: var(--text-primary);
-  margin: 0;
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
+
+.logo img {
+    height: 40px;
+    width: auto;
+}
+
+.logo span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-primary);
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links > li > a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-links > li > a.active {
+    background-color: transparent;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.nav-links > li > a:not(.active):hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background: var(--bg-card);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 8px 0;
+    list-style: none;
+    top: 110%;
+    left: 0;
+    min-width: 220px;
+    white-space: nowrap;
+    z-index: 1001;
+    border: 1px solid var(--border-color);
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu li a {
+    color: var(--text-primary);
+    font-size: 14px;
+    padding: 10px 15px;
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-menu li a:hover,
+.dropdown-menu .active-item {
+    background-color: #f8f9fa;
+    color: var(--color-primary);
+}
+
+.dropdown-menu .dropdown-header {
+    padding: 8px 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-menu .dropdown-divider {
+    height: 1px;
+    margin: 8px 0;
+    overflow: hidden;
+    background-color: var(--border-color);
+}
+
+.user-menu {
+    position: relative;
+}
+
+.user-menu > a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+    cursor: pointer;
+}
+
+.user-menu > a:hover {
+    background-color: #f8f9fa;
+    color: var(--color-primary);
+}
+
+#nav-username {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.user-menu .fas {
+    font-size: 18px;
+}
+
+.user-menu .dropdown-menu {
+    right: 0;
+    left: auto;
+    width: 180px;
+}
+
+/* --- Main Page Layout --- */
+.detail-container {
+    max-width: 1500px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.document-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.document-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    position: sticky;
+    top: 95px; /* 65px (navbar) + 30px (gap) */
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.content-header h1 {
+    font-size: 28px;
+    margin: 0;
+    color: var(--text-primary);
+}
+
 .back-link {
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 }
 .back-link:hover {
-  color: var(--color-primary);
+    color: var(--color-primary);
 }
 
+/* --- Card Styles --- */
+.detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.detail-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.detail-card h3 .fas {
+    color: var(--color-primary);
+}
+.file-sub-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end; /* จัดให้ทุกอย่างชิดขวา */
+}
+
+.file-sub-group .sub-label {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* ระยะห่างระหว่าง "ไทย:" กับชื่อไฟล์ */
+    width: 100%;
+    justify-content: flex-end; /* จัดให้ชิดขวา */
+    color: #666666;
+}
+
+.file-sub-group .sub-label b {
+    flex-shrink: 0; /* ไม่ให้คำว่า "ไทย:" หรือ "อังกฤษ:" ถูกบีบ */
+    width: 150px; /* กำหนดความกว้างให้เท่ากัน เพื่อให้ชื่อไฟล์ตรงกัน */
+    text-align: right;
+}
+
+/* --- Status Highlight Card --- */
 .status-card {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 20px;
-  border-radius: 12px;
-  color: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-left: 5px solid;
 }
-.status-card .status-icon .fas {
-  font-size: 32px;
+.status-card.approved { background-color: #e6f7ec; border-color: var(--approved-color); }
+.status-card.pending { background-color: #fffbe6; border-color: var(--pending-color); }
+.status-card.rejected { background-color: #fff1f0; border-color: var(--rejected-color); }
+
+.status-card .status-icon {
+    font-size: 28px;
 }
+.status-card.approved .status-icon { color: var(--approved-color); }
+.status-card.pending .status-icon { color: var(--pending-color); }
+.status-card.rejected .status-icon { color: var(--rejected-color); }
+
 .status-card .status-text p {
-  margin: 0;
-  font-size: 14px;
-  opacity: 0.9;
+    margin: 0 0 5px 0;
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 .status-card .status-text h2 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 600;
+    margin: 0;
+    font-size: 24px;
 }
 
-/* Status Colors */
-.status-card.approved { background: var(--approved-color); }
-.status-card.pending { background: var(--pending-color); color: #333; }
-.status-card.rejected { background: var(--rejected-color); }
-
-.detail-card {
-  background: var(--bg-card);
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.04);
-  border: 1px solid var(--border-color);
+/* --- Content Styles --- */
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 15px;
 }
-.detail-card h3 {
-  margin: 0 0 15px 0;
-  font-size: 18px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.info-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
 }
-#comment-card p {
-  margin: 0;
-  padding: 15px;
-  background-color: var(--rejected-bg, #fff1f0);
-  border-radius: 6px;
-  color: var(--rejected-text, #d4380d);
-  line-height: 1.6;
+.info-list label {
+    color: var(--text-secondary);
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+.info-list span {
+    font-weight: 600;
+    text-align: right;
 }
 
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-}
-.info-grid div label {
-  font-weight: 500;
-  color: var(--text-secondary);
-  display: block;
-  font-size: 13px;
-  margin-bottom: 3px;
-}
-.info-grid div span {
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 15px;
-}
-.form-specific-container {
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border-color);
+.comment-box {
+    background-color: #f8f9fa;
+    border-left: 4px solid var(--border-color);
+    padding: 15px 20px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    line-height: 1.7;
+    color: var(--text-secondary);
 }
 
-#student-action-section .action-button {
-  display: inline-block;
-  background-color: var(--color-secondary);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s;
+.file-list-detailed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
-#student-action-section .action-button:hover {
-  background-color: #d9481a;
+.file-list-detailed li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.file-list-detailed li:last-child {
+    border-bottom: none;
+}
+.file-list-detailed .file-label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+.file-list-detailed .file-link {
+    text-decoration: none;
+    color: var(--color-primary);
+    font-weight: 500;
+    word-break: break-all;
+}
+.file-list-detailed .file-link:hover {
+    text-decoration: underline;
+}
+
+.loading-text {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 20px;
+}
+
+/* --- Action Buttons --- */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+.action-buttons button {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s;
+    border: 1px solid;
+    cursor: pointer;
+    font-size: 14px;
+}
+.action-buttons .btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+.action-buttons .btn-secondary {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: #ccc;
+}
+.action-buttons .btn-secondary:hover {
+    background-color: #f8f9fa;
+}
+
+/* มาตรฐาน: Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.show .modal-box {
+    transform: scale(1);
+}
+.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
+.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
+.modal-actions { display: flex; justify-content: center; gap: 15px; }
+.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
+.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
+.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
+.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
+.modal-actions .btn-danger:hover { background-color: #c82333; }
+
+/* --- Responsive --- */
+@media (max-width: 992px) {
+    .detail-container {
+        grid-template-columns: 1fr;
+    }
+    .document-sidebar {
+        position: static;
+    }
+}
+
+@media (max-width: 576px) {
+    .content-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .info-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    .info-list span {
+        text-align: left;
+    }
 }

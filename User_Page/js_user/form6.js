@@ -1,4 +1,4 @@
-// /User_Page/js_user/form6.js (Self-Contained Version)
+// /User_Page/js_user/form6.js (Fully Self-Contained Version with Corrected File Handling)
 
 // =================================================================
 // ภาค 1: Helper Functions
@@ -42,6 +42,9 @@ function populateSelectWithOptions(selectElement, dataArray, valueField, textFie
 // =================================================================
 // ภาค 2: Form 6 Specific Logic
 // =================================================================
+
+// --- State Management for Files ---
+const fileStore = {};
 
 /**
  * ดึงข้อมูลทั้งหมดที่จำเป็นมาแสดงผลในฟอร์ม 6
@@ -109,6 +112,35 @@ async function populateForm6() {
     }
 }
 
+/**
+ * จัดการเมื่อมีการเลือกไฟล์
+ * @param {Event} event - The file input change event.
+ */
+function handleFileSelection(event) {
+    const inputId = event.target.id;
+    const file = event.target.files[0];
+    const displayElement = event.target.nextElementSibling;
+    
+    const MAX_FILE_SIZE_MB = 10;
+    const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+    if (file) {
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+            alert(`ไฟล์ ${file.name} มีขนาดใหญ่เกิน ${MAX_FILE_SIZE_MB}MB`);
+            event.target.value = ''; // ล้างค่าที่เลือก
+            if(displayElement) displayElement.textContent = 'ยังไม่ได้เลือกไฟล์';
+            delete fileStore[inputId];
+            return;
+        }
+        fileStore[inputId] = file;
+        if(displayElement) displayElement.textContent = `ไฟล์ที่เลือก: ${file.name}`;
+    } else {
+        delete fileStore[inputId];
+        if(displayElement) displayElement.textContent = 'ยังไม่ได้เลือกไฟล์';
+    }
+}
+
+
 // =================================================================
 // ภาค 3: Main Event Listener
 // =================================================================
@@ -151,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedValues = selects.map(s => s.value).filter(Boolean);
 
         selects.forEach(currentSelect => {
-            // ไม่ต้องอัปเดตตัวเอง
             if (currentSelect === changedSelect) return; 
 
             for (const option of currentSelect.options) {
@@ -176,6 +207,11 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+    
+    // --- File Input Listeners ---
+    document.querySelectorAll('.file-input').forEach(input => {
+        input.addEventListener('change', handleFileSelection);
+    });
 
     // --- Form 6 Submission Logic ---
     const form6 = document.getElementById("form6");
@@ -191,20 +227,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert("กรุณาเลือกประธานกรรมการสอบและกรรมการที่จำเป็น (*) ให้ครบถ้วน");
                 return;
             }
-            const requiredCheckboxes = document.querySelectorAll('input[name="checklist"][required]');
-            const allChecked = Array.from(requiredCheckboxes).every(cb => cb.checked);
-            if (requiredCheckboxes.length > 0 && !allChecked) {
-                alert("กรุณายืนยันการเตรียมเอกสารให้ครบทุกข้อใน Checklist");
+
+            const requiredFileInputs = document.querySelectorAll('input[type="file"][required]');
+            let allFilesAttached = true;
+            for (const input of requiredFileInputs) {
+                if (!fileStore[input.id]) {
+                    allFilesAttached = false;
+                    break;
+                }
+            }
+
+            if (!allFilesAttached) {
+                alert("กรุณาแนบไฟล์ประกอบคำร้องขอสอบให้ครบถ้วนทุกหัวข้อ");
                 return;
             }
 
             // --- Construct submission object ---
+            const filesForSubmission = [
+                { type: 'วิทยานิพนธ์ฉบับสมบูรณ์', name: fileStore['thesis-draft-file'].name },
+                { type: 'บทคัดย่อ (ไทย)', name: fileStore['abstract-th-file'].name },
+                { type: 'บทคัดย่อ (อังกฤษ)', name: fileStore['abstract-en-file'].name },
+                { type: 'สารบัญ (ไทย)', name: fileStore['toc-th-file'].name },
+                { type: 'สารบัญ (อังกฤษ)', name: fileStore['toc-en-file'].name },
+                { type: 'หลักฐานการตอบรับการตีพิมพ์', name: fileStore['publication-proof-file'].name },
+                { type: 'หลักฐานการตรวจสอบผลการเรียน', name: fileStore['grade-check-proof-file'].name }
+            ];
+
             const submissionData = {
                 doc_id: `form6_${userEmail}_${Date.now()}`,
                 type: "ฟอร์ม 6",
                 title: "ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย",
                 student_email: userEmail,
                 student_id: document.getElementById('student-id').value,
+                files: filesForSubmission, // ใช้ข้อมูลไฟล์ชุดใหม่
                 details: {
                     committee: {
                         chair_email: document.getElementById('committee-chair').value,
@@ -212,8 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         member2_id: document.getElementById('committee-member-2').value,
                         reserve_external: document.getElementById('reserve-member-external').value.trim() || null,
                         reserve_internal: document.getElementById('reserve-member-internal').value.trim() || null,
-                    },
-                    checklist_confirmed: true
+                    }
                 },
                 student_comment: document.getElementById('student-comment')?.value.trim() || "",
                 submitted_date: new Date().toISOString(),

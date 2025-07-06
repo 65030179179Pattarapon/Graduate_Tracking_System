@@ -1,244 +1,366 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Home - Graduate Tracker</title>
-  <link rel="stylesheet" href="/Admin_Page/css_admin/admin_home.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>หน้าหลักผู้ดูแลระบบ | Graduate Tracker</title>
+    <link rel="stylesheet" href="/Admin_Page/css_admin/common.css" />
+    <link rel="stylesheet" href="/Admin_Page/css_admin/home.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="icon" href="/assets/images/logo.png">
 </head>
-<body>
-  <nav class="topnav">
-    <div class="logo-section">
-      <img src="/assets/images/logo.png" alt="KMITL Logo" />
-      <h1>Graduate Tracker</h1>
-    </div>
-    <ul class="menu-links">
-      <li><a href="admin_home.html" class="active">🏠 หน้าหลัก</a></li>
-      <li><a href="manage_structure.html">🎓 จัดการภาค/หลักสูตร/แผน</a></li>
-      <li><a href="students.html">👨‍🎓 จัดการนักศึกษา</a></li>
-      <li><a href="manage_advisors.html">👨‍🏫 จัดการอาจารย์ที่ปรึกษา</a></li>
-      <li><a href="manage_professors.html">👥 จัดการผู้ทรงคุณวุฒิภายนอก</a></li>
-      <li><a href="manage_guides.html">📖 จัดการคู่มือ</a></li>
-      <li><a href="manage_documents.html">📂 จัดการเอกสาร</a></li>
-      <li><a href="admin_profile.html">👤 โปรไฟล์</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
-    </ul>
-  </nav>
-
-  <div class="sidebar">
-    <button onclick="showSection('pending')">📄 เอกสารรอตรวจ</button>
-    <button onclick="showSection('due')">⏰ เอกสารใกล้กำหนด</button>
-    <button onclick="showSection('all-documents')">📚 จัดการเอกสารทั้งหมด</button>
-    <button onclick="showSection('approved')">✅ เอกสารอนุมัติแล้ว</button>
-    <button onclick="showSection('rejected')">❌ เอกสารไม่อนุมัติ</button>
-    <button onclick="showSection('students')">👨‍🎓 นักศึกษา (ภาพรวม)</button>
-  </div>
-
-  <main>
-
-    <div class="section" id="section-pending" style="display:none;">
-      <h2>📄 เอกสารรอตรวจ</h2>
-      <div class="stats">
-        <span id="total-docs" onclick="applyTableFilterAndPaginate('pending', 'all-status')">📄 ทั้งหมด: 0</span>
-        <span id="status-pending" onclick="applyTableFilterAndPaginate('pending', 'status', 'รอตรวจ')">⏳ รอตรวจ: 0</span>
-        <span id="status-revised" onclick="applyTableFilterAndPaginate('pending', 'status', 'แก้ไขแล้วส่งกลับ')">📝 แก้ไขแล้วส่งกลับ: 0</span>
-      </div>
-      <div class="filter-group">
-        <select id="filter-category-pending" onchange="applyTableFilterAndPaginate('pending')">
-          <option value="all">ทั้งหมด</option>
-          <option value="title">เรื่อง</option>
-          <option value="student">ผู้ส่ง</option>
-          <option value="status">สถานะ</option>
-          <option value="type">ประเภท</option>
-          <option value="submitted_date">วันที่ส่ง</option>
-        </select>
-        <input type="text" id="filter-input-pending" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('pending')">
-      </div>
-      <div class="table-container">
-        <table id="table-pending">
-          <thead>
-            <tr>
-              <th>เรื่อง</th> <th>ผู้ส่ง</th> <th>สถานะ</th> <th>ประเภท</th> <th>วันที่ส่ง</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="pagination-controls" id="pagination-controls-pending"></div>
-    </div>
-
-    <div class="section" id="section-due" style="display: none;">
-      <h2>⏰ เอกสารใกล้กำหนด</h2>
-      <div class="stats">
-        <span id="due-total" onclick="applyTableFilterAndPaginate('due', 'all-days')">📄 ทั้งหมด: 0</span>
-        <span id="due-3days" onclick="applyTableFilterAndPaginate('due', 'days', '3')">⚠️ น้อยกว่า 3 วัน: 0</span>
-        <span id="due-7days" onclick="applyTableFilterAndPaginate('due', 'days', '7')">⏳ น้อยกว่า 7 วัน: 0</span>
-      </div>
-      <div class="filter-group">
-        <select id="filter-category-due" onchange="applyTableFilterAndPaginate('due')">
-          <option value="all">ทั้งหมด</option>
-          <option value="title">เรื่อง</option> <option value="student">ผู้ส่ง</option>
-          <option value="status">สถานะ</option> <option value="type">ประเภท</option>
-          <option value="days_left">วันคงเหลือ</option>
-        </select>
-        <input type="text" id="filter-input-due" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('due')">
-      </div>
-      <div class="table-container">
-        <table id="table-due">
-          <thead>
-            <tr>
-              <th>เรื่อง</th> <th>ผู้ส่ง</th> <th>สถานะ</th> <th>ประเภท</th> <th>วันคงเหลือ</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="pagination-controls" id="pagination-controls-due"></div>
-    </div>
-
-    <div class="section" id="section-all-documents" style="display: none;">
-      <h2>📚 จัดการเอกสารทั้งหมด</h2>
-      <div class="stats" id="stats-all-documents">
-        <span id="alldocs-total-count">📄 เอกสารในระบบ: 0</span>
-      </div>
-      <div class="filter-group" id="filter-group-all-documents">
-        <div class="filter-row">
-          <label for="alldocs-search-general">🔍 ค้นหาทั่วไป:</label>
-          <input type="text" id="alldocs-search-general" placeholder="ชื่อเอกสาร, ชื่อนศ., อื่นๆ...">
+  <body>
+    <nav>
+        <a href="/Admin_Page/html_admin/home.html" class="logo-link">
+            <div class="logo">
+                <img src="/assets/images/logo.png" alt="KMITL Logo" />
+                <span>Graduate Tracking System (Admin)</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/Admin_Page/html_admin/home.html" class="home-link active"><i class="fas fa-home"></i> หน้าหลัก</a></li>
+            <li><a href="#"><i class="fas fa-users-cog"></i> จัดการผู้ใช้งาน</a></li>
+            <li><a href="#"><i class="fas fa-sitemap"></i> จัดการโครงสร้าง</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> ตั้งค่าระบบ</a></li>
+        </ul>
+        <div class="user-menu dropdown">
+            <a href="#" class="nav-dropdown-toggle" id="user-profile-link">
+                <span id="nav-username">Admin</span>
+                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu user-dropdown-menu">
+                <li><a href="#"><i class="fas fa-user-edit"></i> จัดการโปรไฟล์</a></li>
+                <li><a href="#" id="logout-button"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+            </ul>
         </div>
-        <div class="filter-row">
-          <label for="alldocs-filter-status">สถานะเอกสาร:</label>
-          <select id="alldocs-filter-status">
-            <option value="">-- ทุกสถานะ --</option> <option value="รอตรวจ">รอตรวจ</option>
-            <option value="แก้ไขแล้วส่งกลับ">แก้ไขแล้วส่งกลับ</option> <option value="อนุมัติแล้ว">อนุมัติแล้ว</option>
-            <option value="ไม่อนุมัติ">ไม่อนุมัติ</option> <option value="ใกล้กำหนด">ใกล้กำหนด</option>
-          </select>
-          <label for="alldocs-filter-doctype">ประเภทเอกสาร:</label>
-          <select id="alldocs-filter-doctype">
-            <option value="">-- ทุกประเภท --</option> <option value="ฟอร์ม 1">ฟอร์ม 1</option>
-            <option value="ฟอร์ม 2">ฟอร์ม 2</option><option value="ฟอร์ม 3">ฟอร์ม 3</option>
-            <option value="ฟอร์ม 4">ฟอร์ม 4</option><option value="ฟอร์ม 5">ฟอร์ม 5</option>
-            <option value="รายงานความก้าวหน้า">รายงานความก้าวหน้า</option>
-          </select>
-        </div>
-        <div class="filter-row">
-          <label for="alldocs-filter-degree">ระดับปริญญา:</label>
-          <select id="alldocs-filter-degree">
-            <option value="">-- ทุกระดับ --</option> <option value="ปริญญาโท">ปริญญาโท</option>
-            <option value="ปริญญาเอก">ปริญญาเอก</option>
-          </select>
-          <label for="alldocs-filter-program">หลักสูตร:</label>
-          <select id="alldocs-filter-program"><option value="">-- ทุกหลักสูตร --</option></select>
-          <label for="alldocs-filter-department">ภาควิชา:</label>
-          <select id="alldocs-filter-department"><option value="">-- ทุกภาควิชา --</option></select>
-        </div>
-        <div class="filter-row">
-          <label for="alldocs-filter-date-start">วันที่ส่ง/ดำเนินการ (ตั้งแต่):</label>
-          <input type="date" id="alldocs-filter-date-start" class="filter-date">
-          <label for="alldocs-filter-date-end">วันที่ส่ง/ดำเนินการ (ถึง):</label>
-          <input type="date" id="alldocs-filter-date-end" class="filter-date">
-        </div>
-        <div class="filter-row actions-row">
-            <button type="button" id="alldocs-apply-filters-btn">🔍 ใช้ตัวกรอง</button>
-            <button type="button" id="alldocs-reset-filters-btn">ล้างตัวกรอง</button>
-        </div>
-      </div>
-      <div class="table-container">
-        <table id="table-all-documents">
-          <thead>
-            <tr>
-              <th>ชื่อเอกสาร</th><th>ประเภทเอกสาร</th><th>ชื่อผู้ส่ง (นักศึกษา)</th>
-              <th>สถานะปัจจุบัน</th><th>วันที่ส่ง/ดำเนินการ</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="pagination-controls" id="pagination-controls-all-documents"></div>
+    </nav>
+
+    <div class="admin-page-layout">
+        <aside class="sidebar">
+            <button class="sidebar-btn active" data-section="dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="sidebar-btn" data-section="pending-review">
+                <i class="fas fa-inbox"></i> เอกสารรอตรวจ
+            </button>
+            <button class="sidebar-btn" data-section="pending-advisor">
+                <i class="fas fa-user-tie"></i> อาจารย์ที่ปรึกษาอนุมัติ
+            </button>
+            <button class="sidebar-btn" data-section="pending-external">
+                <i class="fas fa-user-secret"></i> อาจารย์ภายนอกอนุมัติ
+            </button>
+            <button class="sidebar-btn" data-section="pending-executive">
+                <i class="fas fa-user-shield"></i> ผู้บริหารอนุมัติ
+            </button>
+            <button class="sidebar-btn" data-section="all-documents">
+                <i class="fas fa-folder-open"></i> เอกสารทั้งหมด
+            </button>
+        </aside>
+
+        <main class="main-content">
+          <section id="section-dashboard" class="content-section active">
+              <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+              <p>ภาพรวมและสถิติที่สำคัญของระบบ</p>
+
+              <div class="stats-container">
+                  <div class="stat-card">
+                      <p class="stat-title main-stat">เอกสารรอตรวจ</p>
+                      <h2 id="stat-pending-admin" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card stat-card-double">
+                      <p class="stat-title">อาจารย์ที่ปรึกษาอนุมัติ</p>
+                      <div class="stat-sub-values">
+                          <div><label>กำลังดำเนินการ:</label> <span id="stat-waiting-advisor">0</span></div>
+                          <div><label>อนุมัติแล้ว:</label> <span id="stat-approved-advisor">0</span></div>
+                      </div>
+                  </div>
+                  <div class="stat-card stat-card-double">
+                      <p class="stat-title">อาจารย์ภายนอกอนุมัติ</p>
+                      <div class="stat-sub-values">
+                          <div><label>กำลังดำเนินการ:</label> <span id="stat-waiting-external">0</span></div>
+                          <div><label>อนุมัติแล้ว:</label> <span id="stat-approved-external">0</span></div>
+                      </div>
+                  </div>
+                  <div class="stat-card stat-card-double">
+                      <p class="stat-title">ผู้บริหารอนุมัติ</p>
+                      <div class="stat-sub-values">
+                          <div><label>กำลังดำเนินการ:</label> <span id="stat-waiting-executive">0</span></div>
+                          <div><label>อนุมัติแล้ว:</label> <span id="stat-approved-executive">0</span></div>
+                      </div>
+                  </div>
+                  <div class="stat-card">
+                      <p class="stat-title main-stat">เอกสารทั้งหมด</p>
+                      <h2 id="stat-total-docs" class="stat-value">0</h2>
+                  </div>
+              </div>
+
+              <div class="dashboard-layout">
+                  <div class="dashboard-main-column">
+                      <div class="table-card">
+                          <div class="table-header">
+                              <h2><i class="fas fa-inbox"></i> รายการเอกสารล่าสุด</h2>
+                          </div>
+                          <div class="table-container">
+                              <table id="table-dashboard-latest">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>วันที่ส่ง</th>
+                                          <th>สถานะ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+                  <aside class="dashboard-side-column">
+                      <div class="table-card">
+                          <div class="table-header">
+                              <h2><i class="fas fa-history"></i> กิจกรรมล่าสุดของคุณ</h2>
+                          </div>
+                          <ul id="recent-activity-list" class="activity-feed">
+                              </ul>
+                      </div>
+                  </aside>
+              </div>
+          </section>
+
+          <section id="section-pending-review" class="content-section">
+              <h1><i class="fas fa-inbox"></i> เอกสารรอตรวจ</h1>
+              <p>เอกสารที่นักศึกษายื่นเข้ามาและรอการตรวจสอบจากเจ้าหน้าที่</p>
+
+              <div class="stats-container-inline">
+                  <div class="stat-card-inline" data-filter-key="status" data-filter-value="all">
+                      <p class="stat-title">ทั้งหมด</p>
+                      <h2 id="pending-total-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline" data-filter-key="status" data-filter-value="today">
+                      <p class="stat-title">รายการใหม่วันนี้</p>
+                      <h2 id="pending-today-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline" data-filter-key="status" data-filter-value="แก้ไขแล้วส่งกลับ">
+                      <p class="stat-title">ส่งกลับมาแก้ไข</p>
+                      <h2 id="pending-resubmitted-count" class="stat-value">0</h2>
+                  </div>
+              </div>
+
+              <div class="filter-controls">
+                  <input type="text" id="pending-search-input" placeholder="🔍 ค้นหาจากชื่อเอกสาร, ชื่อ หรือรหัสนักศึกษา...">
+              </div>
+
+              <div class="table-card">
+                  <div class="table-container">
+                      <table id="table-pending-review">
+                          <thead>
+                              <tr>
+                                  <th class="checkbox-cell"><input type="checkbox" id="select-all-pending"></th>
+                                  <th>ชื่อเอกสาร</th>
+                                  <th>รหัสนักศึกษา</th>
+                                  <th>ชื่อนักศึกษา</th>
+                                  <th>วันที่ส่ง</th>
+                                  <th>สถานะ</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              </tbody>
+                      </table>
+                  </div>
+                  <div class="pagination-controls" id="pagination-pending-review">
+                      </div>
+              </div>
+          </section>
+            
+          <section id="section-pending-advisor" class="content-section">
+              <h1><i class="fas fa-user-tie"></i> อาจารย์ที่ปรึกษาอนุมัติ</h1>
+              <p>เอกสารที่ถูกส่งต่อไปยังอาจารย์ที่ปรึกษาเพื่อรอการอนุมัติ</p>
+
+              <div class="stats-container-inline">
+                  <div class="stat-card-inline">
+                      <p class="stat-title">กำลังรออนุมัติ</p>
+                      <h2 id="advisor-waiting-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline">
+                      <p class="stat-title">อนุมัติแล้ววันนี้</p>
+                      <h2 id="advisor-approved-today-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline">
+                      <p class="stat-title">ตีกลับวันนี้</p>
+                      <h2 id="advisor-rejected-today-count" class="stat-value">0</h2>
+                  </div>
+              </div>
+
+              <div class="tab-nav">
+                  <button class="tab-btn active" data-tab="waiting">รายการที่กำลังรออนุมัติ</button>
+                  <button class="tab-btn" data-tab="processed">รายการที่ดำเนินการแล้ว</button>
+              </div>
+
+              <div class="tab-content-wrapper">
+                  <div id="tab-waiting" class="tab-content active">
+                      <div class="table-card">
+                          <div class="filter-controls">
+                              <input type="text" id="advisor-waiting-search" placeholder="🔍 ค้นหาจากชื่อเอกสาร, ชื่อนศ., หรือชื่ออาจารย์...">
+                          </div>
+                          <div class="table-container">
+                              <table id="table-advisor-waiting">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>รอการอนุมัติจาก</th>
+                                          <th>วันที่ส่งต่อ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                          <div class="pagination-controls" id="pagination-advisor-waiting"></div>
+                      </div>
+                  </div>
+
+                  <div id="tab-processed" class="tab-content">
+                      <div class="table-card">
+                          <div class="filter-controls">
+                              <input type="text" id="advisor-processed-search" placeholder="🔍 ค้นหา...">
+                              <select id="advisor-processed-filter-status">
+                                  <option value="all">ทุกสถานะ</option>
+                                  <option value="อนุมัติ">อนุมัติ</option>
+                                  <option value="ตีกลับ">ตีกลับ</option>
+                              </select>
+                          </div>
+                          <div class="table-container">
+                              <table id="table-advisor-processed">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>ดำเนินการโดย</th>
+                                          <th>สถานะ</th>
+                                          <th>วันที่ดำเนินการ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                          <div class="pagination-controls" id="pagination-advisor-processed"></div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          <section id="section-pending-external" class="content-section">
+              <h1><i class="fas fa-user-secret"></i> อาจารย์ภายนอกอนุมัติ</h1>
+              <p>เอกสารที่ถูกส่งต่อไปยังอาจารย์ภายนอก/ผู้ทรงคุณวุฒิเพื่อรอการอนุมัติ</p>
+
+              <div class="stats-container-inline">
+                  <div class="stat-card-inline">
+                      <p class="stat-title">กำลังรออนุมัติ</p>
+                      <h2 id="external-waiting-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline">
+                      <p class="stat-title">อนุมัติแล้ววันนี้</p>
+                      <h2 id="external-approved-today-count" class="stat-value">0</h2>
+                  </div>
+                  <div class="stat-card-inline">
+                      <p class="stat-title">ตีกลับวันนี้</p>
+                      <h2 id="external-rejected-today-count" class="stat-value">0</h2>
+                  </div>
+              </div>
+
+              <div class="tab-nav">
+                  <button class="tab-btn active" data-tab="external-waiting">รายการที่กำลังรออนุมัติ</button>
+                  <button class="tab-btn" data-tab="external-processed">รายการที่ดำเนินการแล้ว</button>
+              </div>
+
+              <div class="tab-content-wrapper">
+                  <div id="tab-external-waiting" class="tab-content active">
+                      <div class="table-card">
+                          <div class="filter-controls">
+                              <input type="text" id="external-waiting-search" placeholder="🔍 ค้นหาจากชื่อเอกสาร, ชื่อนศ., หรือชื่ออาจารย์ภายนอก...">
+                          </div>
+                          <div class="table-container">
+                              <table id="table-external-waiting">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>รอการอนุมัติจาก (อ.ภายนอก)</th>
+                                          <th>วันที่ส่งต่อ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                          <div class="pagination-controls" id="pagination-external-waiting"></div>
+                      </div>
+                  </div>
+
+                  <div id="tab-external-processed" class="tab-content">
+                      <div class="table-card">
+                          <div class="filter-controls">
+                              <input type="text" id="external-processed-search" placeholder="🔍 ค้นหา...">
+                              <select id="external-processed-filter-status">
+                                  <option value="all">ทุกสถานะ</option>
+                                  <option value="อนุมัติ">อนุมัติ</option>
+                                  <option value="ตีกลับ">ตีกลับ</option>
+                              </select>
+                          </div>
+                          <div class="table-container">
+                              <table id="table-external-processed">
+                                  <thead>
+                                      <tr>
+                                          <th>ชื่อเอกสาร</th>
+                                          <th>รหัสนักศึกษา</th>
+                                          <th>ชื่อนักศึกษา</th>
+                                          <th>ดำเนินการโดย (อ.ภายนอก)</th>
+                                          <th>สถานะ</th>
+                                          <th>วันที่ดำเนินการ</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      </tbody>
+                              </table>
+                          </div>
+                          <div class="pagination-controls" id="pagination-external-processed"></div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+            
+            <section id="section-pending-executive" class="content-section">
+                 <h1><i class="fas fa-user-shield"></i> ผู้บริหารอนุมัติ</h1>
+                 <p>เอกสารที่ผ่านการอนุมัติจากกรรมการและรอผู้บริหารอนุมัติขั้นสุดท้าย</p>
+            </section>
+
+            <section id="section-all-documents" class="content-section">
+                 <h1><i class="fas fa-folder-open"></i> เอกสารทั้งหมด</h1>
+                 <p>ค้นหาและกรองเอกสารทั้งหมดในระบบ</p>
+            </section>
+        </main>
     </div>
 
-    <div class="section" id="section-approved" style="display: none;">
-      <h2>✅ เอกสารอนุมัติแล้ว</h2>
-      <div class="stats">
-        <span id="approved-total" onclick="applyTableFilterAndPaginate('approved', 'all-type')">📄 ทั้งหมด: 0</span>
-        <span id="approved-form1" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 1')">📝 ฟอร์ม 1: 0</span>
-        <span id="approved-form2" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 2')">📝 ฟอร์ม 2: 0</span>
-        <span id="approved-form3" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 3')">📝 ฟอร์ม 3: 0</span>
-        <span id="approved-form4" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 4')">📝 ฟอร์ม 4: 0</span>
-        <span id="approved-form5" onclick="applyTableFilterAndPaginate('approved', 'type', 'ฟอร์ม 5')">📝 ฟอร์ม 5: 0</span>
-      </div>
-      <div class="filter-group">
-        <select id="filter-category-approved" onchange="applyTableFilterAndPaginate('approved')">
-          <option value="all">ทั้งหมด</option> <option value="title">เรื่อง</option>
-          <option value="student">ผู้ส่ง</option> <option value="type">ประเภท</option>
-          <option value="submitted_date">วันที่อนุมัติ</option>
-        </select>
-        <input type="text" id="filter-input-approved" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('approved')">
-      </div>
-      <div class="table-container">
-        <table id="table-approved">
-          <thead><tr><th>เรื่อง</th><th>ผู้ส่ง</th><th>ประเภท</th><th>วันที่อนุมัติ</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="pagination-controls" id="pagination-controls-approved"></div>
+    <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h3>ยืนยันการออกจากระบบ</h3>
+            <p>คุณต้องการออกจากระบบใช่หรือไม่?</p>
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="btn-secondary">ยกเลิก</button>
+                <button id="modal-confirm-btn" class="btn-danger">ยืนยัน</button>
+            </div>
+        </div>
     </div>
 
-    <div class="section" id="section-rejected" style="display: none;">
-      <h2>❌ เอกสารไม่อนุมัติ</h2>
-      <div class="stats">
-        <span id="rejected-total" onclick="applyTableFilterAndPaginate('rejected', 'all-type')">📄 ทั้งหมด: 0</span>
-        <span id="rejected-form1" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 1')">📝 ฟอร์ม 1: 0</span>
-        <span id="rejected-form2" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 2')">📝 ฟอร์ม 2: 0</span>
-        <span id="rejected-form3" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 3')">📝 ฟอร์ม 3: 0</span>
-        <span id="rejected-form4" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 4')">📝 ฟอร์ม 4: 0</span>
-        <span id="rejected-form5" onclick="applyTableFilterAndPaginate('rejected', 'type', 'ฟอร์ม 5')">📝 ฟอร์ม 5: 0</span>
-      </div>
-      <div class="filter-group">
-        <select id="filter-category-rejected" onchange="applyTableFilterAndPaginate('rejected')">
-          <option value="all">ทั้งหมด</option> <option value="title">เรื่อง</option>
-          <option value="student">ผู้ส่ง</option> <option value="type">ประเภท</option>
-          <option value="comment">หมายเหตุ</option> <option value="rejected_date">วันที่ส่งกลับ</option>
-        </select>
-        <input type="text" id="filter-input-rejected" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('rejected')">
-      </div>
-      <div class="table-container">
-        <table id="table-rejected">
-          <thead><tr><th>เรื่อง</th><th>ผู้ส่ง</th><th>ประเภท</th><th>วันที่ส่งกลับ</th><th>หมายเหตุ</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="pagination-controls" id="pagination-controls-rejected"></div>
-    </div>
-
-    <div class="section" id="section-students" style="display: none;">
-      <h2>👨‍🎓 นักศึกษา (ภาพรวม)</h2>
-      <div class="stats">
-        <span id="students-total" onclick="applyTableFilterAndPaginate('students', 'all-criteria')">👥 ทั้งหมด: 0</span>
-        <span id="students-master" onclick="applyTableFilterAndPaginate('students', 'degree', 'ปริญญาโท')">🎓 ปริญญาโท: 0</span>
-        <span id="students-phd" onclick="applyTableFilterAndPaginate('students', 'degree', 'ปริญญาเอก')">🎓 ปริญญาเอก: 0</span>
-        <span id="students-status-studying" onclick="applyTableFilterAndPaginate('students', 'status', 'กำลังศึกษา')">✅ กำลังศึกษา: 0</span>
-        <span id="students-status-drop" onclick="applyTableFilterAndPaginate('students', 'status', 'พักการเรียน')">⛔ พักการเรียน: 0</span>
-      </div>
-      <div class="filter-group">
-        <select id="filter-category-students" onchange="applyTableFilterAndPaginate('students')">
-          <option value="all">ทั้งหมด</option> <option value="fullName">ชื่อ-นามสกุล</option>
-          <option value="program">หลักสูตร</option> <option value="degree">ระดับ</option>
-          <option value="department">ภาควิชา</option> <option value="plan">แผน</option>
-          <option value="status">สถานะ</option>
-        </select>
-        <input type="text" id="filter-input-students" placeholder="🔍 ค้นหา..." oninput="applyTableFilterAndPaginate('students')">
-      </div>
-      <div class="table-container">
-        <table id="table-students">
-          <thead><tr><th>คำนำหน้า</th><th>ชื่อจริง</th><th>นามสกุล</th><th>หลักสูตร</th><th>ระดับ</th><th>ภาควิชา</th><th>แผน</th><th>สถานะ</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="pagination-controls" id="pagination-controls-students"></div>
-    </div>
-
-  </main>
-  <script src="/Admin_Page/js_admin/admin_home.js"></script>
-</body>
+    <script src="/Admin_Page/js_admin/common.js"></script>
+    <script src="/Admin_Page/js_admin/home.js"></script>
+  </body>
 </html>

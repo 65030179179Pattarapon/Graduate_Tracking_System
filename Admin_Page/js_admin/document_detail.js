@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function goBack() {
   // Assuming admin_home.html is in the same directory or a known relative path
-  window.location.href = 'admin_home.html';
+  window.location.href = 'home.html';
 }
 function logoutFromDetail() { // Simple logout, assuming logout() function might be in a global scope or needs re-definition
     localStorage.clear();

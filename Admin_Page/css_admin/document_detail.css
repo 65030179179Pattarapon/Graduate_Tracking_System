@@ -1,14 +1,85 @@
-/* document_detail.css */
+/* 🎨 Theme Colors */
+:root {
+  --color-primary: #ed4988;
+  --color-secondary: #f1592b;
+  --bg: #fef7ff;
+  --text: #333;
+}
+
 body {
-  /* font-family: 'Poppins', sans-serif; (Assume inherited from admin_home.css if linked) */
-  /* background-color: #fef7ff; (Assume inherited) */
   margin: 0;
-  padding-top: 70px; /* For fixed topnav */
+  font-family: 'Poppins', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* 🔶 Top Navigation */
+.topnav {
+  background: var(--color-primary);
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: nowrap;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-section img {
+  width: 100px;
+  height: auto;
+}
+
+.logo-section h1 {
+  font-size: 14px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.menu-links {
+  list-style: none;
+  display: flex;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap;
+}
+
+.menu-links li a {
+  display: inline-block;
+  padding: 10px 10px;
+  background: rgba(0, 0, 0, 0.1);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-links li a:hover,
+.menu-links li a.active {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .detail-container {
   max-width: 900px;
-  margin: 20px auto;
+  margin: 100px auto;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;

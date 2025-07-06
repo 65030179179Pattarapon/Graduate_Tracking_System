@@ -193,7 +193,7 @@ nav {
 
 /* --- Main Page Styles --- */
 .profile-container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 40px auto;
     padding: 0 20px;
 }
@@ -409,10 +409,14 @@ h1 {
     flex-shrink: 0;
     margin-right: 15px;
 }
-.status-list-detailed span, .file-list a {
+.status-list-detailed span {
     font-weight: 500;
     color: var(--text-primary);
     text-align: right;
+    display: inline-block; /* ทำให้ปรับตำแหน่งได้ */
+    vertical-align: middle; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    min-height: 26px; /* กำหนดความสูงขั้นต่ำให้เท่ากับ badge */
+    line-height: 26px; /* จัดตัวหนังสือให้อยู่กลางความสูง */
 }
 .file-list a {
     text-decoration: none;
@@ -424,14 +428,17 @@ h1 {
 }
 
 .status-badge {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: right;
+    display: inline-block; /* ทำให้ปรับตำแหน่งได้ */
+    vertical-align: middle; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    min-height: 26px; /* กำหนดความสูงขั้นต่ำให้เท่ากับ badge */
+    line-height: 26px; /* จัดตัวหนังสือให้อยู่กลางความสูง */
 }
-.status-badge.approved, .status-badge.ผ่าน, .status-badge.ผ่านเกณฑ์ { background-color: #e6f7ec; color: #0b802c; }
-.status-badge.pending, .status-badge.รอตรวจ, .status-badge.รอตรวจสอบ, .status-badge.ยังไม่ยื่น, .status-badge.- { background-color: #fffbe6; color: #b58105; }
-.status-badge.rejected, .status-badge.ไม่ผ่าน, .status-badge.ไม่ผ่านเกณฑ์ { background-color: #fff1f0; color: #d4380d; }
+.status-badge.approved { background-color: #e6f7ec; color: #0b802c; }
+.status-badge.pending  { background-color: #fffbe6; color: #b58105; }
+.status-badge.rejected { background-color: #fff1f0; color: #d4380d; }
 
 /* --- Image Crop Modal --- */
 .image-crop-box {

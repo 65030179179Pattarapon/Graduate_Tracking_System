@@ -281,15 +281,14 @@ fieldset .info-grid:last-of-type {
     margin-bottom: 20px;
 }
 
-.sub-section .info-grid {
-    margin-bottom: 0;
-}
-
-label {
+.sub-section .info-grid label {
+    font-weight: 500;
     font-size: 14px;
     color: var(--text-secondary);
-    margin-bottom: 5px;
-    display: block;
+}
+
+.sub-section .info-grid {
+    margin-bottom: 0;
 }
 
 input[type="text"], input[type="number"], select, textarea {
