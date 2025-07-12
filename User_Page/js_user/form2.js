@@ -203,7 +203,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 details: {
                     registration_semester: semester,
                     registration_year: year,
-                },
+                }
+                ,
                 student_comment: document.getElementById('student-comment')?.value.trim() || "",
                 submitted_date: new Date().toISOString(),
                 status: "รอตรวจ"

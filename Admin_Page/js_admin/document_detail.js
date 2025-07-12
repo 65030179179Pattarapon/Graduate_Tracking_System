@@ -1,312 +1,333 @@
-// document_detail.js
+// /Admin_Page/js_admin/document_detail.js
 
-// --- Helper function to get student details (simulated) ---
-// In a real app, you might have a common way to fetch student details by ID
-async function getStudentDetailsById(studentId) {
-    if (!studentId) return null;
+// =================================================================
+// ภาค 1: Helper Functions
+// =================================================================
+
+function formatThaiDateTime(isoString) {
+    if (!isoString) return '-';
     try {
-        const response = await fetch('/data/student.json');
-        if (!response.ok) throw new Error('Failed to load student data');
-        const students = await response.json();
-        return students.find(s => s.student_id === studentId);
+        const date = new Date(isoString);
+        return date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Bangkok'
+        }) + ' น.';
     } catch (error) {
-        console.error("Error fetching student details:", error);
-        return null;
+        return 'Invalid Date';
     }
 }
-
-
-async function fetchDocumentDetails(docId, docType) {
-    // This is a simplified fetch. In a real app, you'd ideally have an endpoint:
-    // const response = await fetch(`/api/documents/${docId}?type=${docType}`);
-    // For now, we'll try to find it in the existing JSONs based on type and ID.
-    // This requires documents in JSONs to have a unique 'id' or 'request_id'.
-
-    let docData = null;
-    let studentDataAssociated = null; // To store student data associated with the document
-    const dataFiles = {
-        'pending': '/data/document_pending.json',
-        'due': '/data/document_near_due.json', // Assuming 'due' is a type
-        'approved': '/data/document_approved.json',
-        'rejected': '/data/document_rejected.json',
-        // For specific form types, we might need to know which general file they fall under
-        // or if they have their own data source.
-        // Let's assume forms 1-5 might be found within pending, approved, or rejected lists,
-        // or they might be aggregated in the 'all-documents' logic.
-        // For simplicity, if docType is formX, we might check common lists.
-    };
-
-    let filePath = dataFiles[docType]; // Try specific type first
-
-    if (!filePath) { // If docType is like 'ฟอร์ม 1', it might be within pending, approved etc.
-        // This is a very broad search, not efficient for production.
-        // It assumes docId is unique across all these files.
-        const allPossibleFiles = Object.values(dataFiles);
-        for (const file of allPossibleFiles) {
-            if (!file) continue;
-            try {
-                const response = await fetch(file);
-                if (response.ok) {
-                    const docs = await response.json();
-                    // Assuming docId is a property like 'id' or 'request_id' or a constructed one
-                    docData = docs.find(d => (d.id === docId || d.request_id === docId || (d.title + d.student) === docId) );
-                    if (docData) {
-                        // Try to get student ID from the document data
-                        const studentIdToFetch = docData.student_id || (docData.student && !isNaN(docData.student) ? docData.student : null);
-                        if (studentIdToFetch) {
-                             studentDataAssociated = await getStudentDetailsById(studentIdToFetch);
-                        } else if (docData.student) { // If student name is there, try to find by name (less reliable)
-                            const studentsResponse = await fetch('/data/student.json');
-                            if (studentsResponse.ok) {
-                                const allStudents = await studentsResponse.json();
-                                studentDataAssociated = allStudents.find(s => (s.first_name_th + " " + s.last_name_th) === docData.student);
-                                if (studentDataAssociated) docData.student_id = studentDataAssociated.student_id; // Enrich docData
-                            }
-                        }
-                        break;
-                    }
-                }
-            } catch (err) { console.warn(`Could not load/find in ${file}`, err); }
-        }
-    } else {
-         try {
-            const response = await fetch(filePath);
-            if (response.ok) {
-                const docs = await response.json();
-                docData = docs.find(d => (d.id === docId || d.request_id === docId || (d.title + d.student) === docId));
-                 if (docData) {
-                    const studentIdToFetch = docData.student_id || (docData.student && !isNaN(docData.student) ? docData.student : null);
-                    if (studentIdToFetch) {
-                         studentDataAssociated = await getStudentDetailsById(studentIdToFetch);
-                    } else if (docData.student) {
-                        const studentsResponse = await fetch('/data/student.json');
-                        if (studentsResponse.ok) {
-                            const allStudents = await studentsResponse.json();
-                            studentDataAssociated = allStudents.find(s => (s.first_name_th + " " + s.last_name_th) === docData.student);
-                            if (studentDataAssociated) docData.student_id = studentDataAssociated.student_id;
-                        }
-                    }
-                }
-            }
-        } catch (err) { console.error(`Error fetching from ${filePath}`, err); }
-    }
-    
-    // If docData still not found, try looking in student.json for doc.id related to proposal or final date as a fallback
-    // This part is highly speculative as document IDs might not be in student.json directly
-    if (!docData) {
-        try {
-            const studentsResponse = await fetch('/data/student.json');
-            if (studentsResponse.ok) {
-                const allStudents = await studentsResponse.json();
-                // This is a placeholder, needs specific logic if docId refers to a student's thesis related event
-                // Example: studentDataAssociated = allStudents.find(s => s.proposal_id === docId); 
-                // if (studentDataAssociated) { docData = { title: studentDataAssociated['thesis-title'], ...studentDataAssociated, type: docType }; }
-            }
-        } catch(err) { console.warn("Could not find document in student data either.", err); }
-    }
-
-
-    if (docData) {
-        // Combine student details into docData if found separately
-        if (studentDataAssociated) {
-            docData.student_id = studentDataAssociated.student_id;
-            docData.student_fullname = `${studentDataAssociated.prefix_th || ''}${studentDataAssociated.first_name_th || ''} ${studentDataAssociated.last_name_th || ''}`.trim();
-            docData.student_degree = studentDataAssociated.degree;
-            docData.student_program = studentDataAssociated.program;
-            docData.student_department = studentDataAssociated.department;
-            docData.student_faculty = studentDataAssociated.faculty;
-        } else if (docData.student && !docData.student_fullname) {
-            // If only student name string is available
-             docData.student_fullname = docData.student;
-        }
-        return docData;
-    } else {
-        throw new Error(`Document with ID ${docId} (type: ${docType}) not found.`);
-    }
-}
-
-function renderDocumentDetails(docData, docTypeFromURL) {
-    document.getElementById('doc-main-title').textContent = `รายละเอียด: ${docData.title || docTypeFromURL || 'เอกสาร'}`;
-    document.getElementById('doc-type').textContent = docData.type || docTypeFromURL || 'N/A';
-    document.getElementById('doc-status').textContent = docData.status || 'N/A';
-    document.getElementById('doc-submission-date').textContent = docData.submitted_date || docData.date || docData.proposal_date || 'N/A';
-    document.getElementById('doc-title-detail').textContent = docData.title || '(ไม่มีชื่อเรื่อง)';
-
-    // Student Info
-    document.getElementById('student-fullname').textContent = docData.student_fullname || docData.student || 'N/A';
-    document.getElementById('student-id-detail').textContent = docData.student_id || 'N/A';
-    document.getElementById('student-degree').textContent = docData.student_degree || 'N/A';
-    document.getElementById('student-program').textContent = docData.student_program || 'N/A';
-    document.getElementById('student-department').textContent = docData.student_department || 'N/A';
-    document.getElementById('student-faculty').textContent = docData.student_faculty || 'N/A';
-
-    // Form-Specific Details
-    const formSpecificContainer = document.getElementById('form-specific-details');
-    formSpecificContainer.innerHTML = ''; // Clear previous
-    
-    let formSpecificHTML = `<h3>รายละเอียดเฉพาะของฟอร์ม (${docData.type || docTypeFromURL})</h3>`;
-
-    // --- Example for Form 1: Advisor Certification ---
-    if (docData.type === 'ฟอร์ม 1' || docTypeFromURL === 'ฟอร์ม 1' || (docData.main_advisor && docTypeFromURL.includes('advisor'))) { // Rough check
-        formSpecificHTML += `<div class="form-field-group">
-                                <label>อาจารย์ที่ปรึกษาหลัก:</label>
-                                <span>${docData.main_advisor || docData.thesis_advisor_main || 'ยังไม่ได้ระบุ'}</span>
-                             </div>`;
-        formSpecificHTML += `<div class="form-field-group">
-                                <label>อาจารย์ที่ปรึกษาร่วม (1):</label>
-                                <span>${docData.co_advisor_1 || docData['advisor-co1'] || 'ไม่มี'}</span>
-                             </div>`;
-        formSpecificHTML += `<div class="form-field-group">
-                                <label>อาจารย์ที่ปรึกษาร่วม (2):</label>
-                                <span>${docData.co_advisor_2 || docData['advisor-co2'] || 'ไม่มี'}</span>
-                             </div>`;
-        // Add advisor approval status if available in docData
-    }
-    // --- Example for Form 2: Thesis Proposal (Info, no files yet from form) ---
-    else if (docData.type === 'ฟอร์ม 2' || docTypeFromURL === 'ฟอร์ม 2' || docTypeFromURL.includes('proposal')) {
-        // Assuming docData has 'thesis_title_proposed', 'checklist_items' (array)
-        formSpecificHTML += `<div class="form-field-group">
-                                <label>หัวข้อวิทยานิพนธ์ที่เสนอ:</label>
-                                <p>${docData.thesis_title_proposed || docData['thesis-title'] || 'N/A'}</p>
-                             </div>`;
-        if (docData.checklist_items && docData.checklist_items.length > 0) {
-            formSpecificHTML += `<p><strong>รายการตรวจสอบจากนักศึกษา:</strong></p><ul>`;
-            docData.checklist_items.forEach(item => {
-                formSpecificHTML += `<li>${item.text}: ${item.checked ? '✔️' : '❌'} (ภาค: ${item.semester||''}, ปี: ${item.year||''})</li>`;
-            });
-            formSpecificHTML += `</ul>`;
-        }
-    }
-    // --- Example for Form 3: Topic Document Submission (with files) ---
-    else if (docData.type === 'ฟอร์ม 3' || docTypeFromURL === 'ฟอร์ม 3' || docTypeFromURL.includes('submission')) {
-        formSpecificHTML += `<div class="form-field-group">
-                                <label>หัวข้อวิทยานิพนธ์ (ที่อนุมัติแล้ว):</label>
-                                <p>${docData.thesis_title_approved || docData['thesis-title'] || 'N/A'}</p>
-                             </div>`;
-        formSpecificHTML += `<p><strong>ไฟล์เอกสารที่นำส่ง:</strong></p><div class="file-list">`;
-        if (docData.files && docData.files.length > 0) {
-            docData.files.forEach(file => { // Assuming docData.files = [{name: "เค้าโครง.pdf", url: "...", type: "เค้าโครงวิทยานิพนธ์"}]
-                formSpecificHTML += `<div class="file-list-item">
-                                        <strong>${file.type}:</strong> ${file.name || 'N/A'} 
-                                        <a href="${file.url || '#'}" class="file-link" target="_blank">เปิด/ดาวน์โหลด</a>
-                                     </div>`;
-            });
-        } else {
-            formSpecificHTML += `<p><em>ยังไม่มีการแนบไฟล์สำหรับฟอร์มนี้ หรือรอการอัปเดตจากระบบ</em></p>`;
-            formSpecificHTML += `<p><em>หากนี่คือการนำส่งเค้าโครงวิทยานิพนธ์ ควรมีลิงก์ไปยังไฟล์เค้าโครง, หน้าปก, และสำเนาลงทะเบียน</em></p>`;
-        }
-        formSpecificHTML += `</div>`;
-    }
-    // --- Example for Form 4: Invite Experts ---
-     else if (docData.type === 'ฟอร์ม 4' || docTypeFromURL === 'ฟอร์ม 4' || docTypeFromURL.includes('expert')) {
-        formSpecificHTML += `<div class="form-field-group"><label>จำนวนผู้ทรงคุณวุฒิที่ขอเชิญ:</label><span>${docData.num_evaluators || 'N/A'} ท่าน</span></div>`;
-        formSpecificHTML += `<div class="form-field-group"><label>ประเภทเอกสารที่ให้ประเมิน:</label><span>${(docData.document_types_for_evaluation || []).join(', ') || 'N/A'} ${docData.other_doc_type ? `(อื่นๆ: ${docData.other_doc_type})` : ''}</span></div>`;
-        formSpecificHTML += `<div class="form-field-group"><label>จำนวนหนังสือขออนุญาต:</label><span>${docData.num_docs || 'N/A'} ฉบับ</span></div>`;
-        formSpecificHTML += `<p><strong>รายชื่อผู้ทรงคุณวุฒิ (Admin จัดการ):</strong></p><ul id="expert-list"><li>ยังไม่ได้เพิ่มข้อมูล</li></ul>`; // Admin can add to this list
-    }
-    // --- Example for Form 5: Data Collection Request ---
-    else if (docData.type === 'ฟอร์ม 5' || docTypeFromURL === 'ฟอร์ม 5' || docTypeFromURL.includes('datacollect')) {
-        formSpecificHTML += `<div class="form-field-group"><label>วันที่อนุมัติหัวข้อ:</label><span>${docData.proposal_approval_date || 'N/A'}</span></div>`;
-        formSpecificHTML += `<div class="form-field-group"><label>ประเภทข้อมูล/เครื่องมือที่ใช้เก็บข้อมูล:</label><span>${(docData.data_collection_instruments || []).join(', ') || 'N/A'} ${docData.other_data_instrument ? `(อื่นๆ: ${docData.other_data_instrument})` : ''}</span></div>`;
-        formSpecificHTML += `<div class="form-field-group"><label>จำนวนหนังสือขออนุญาต:</label><span>${docData.num_permission_letters || 'N/A'} ฉบับ</span></div>`;
-        formSpecificHTML += `<p><strong>สถานที่/องค์กร ที่ขอเก็บข้อมูล (Admin จัดการ):</strong></p><ul id="org-list"><li>ยังไม่ได้เพิ่มข้อมูล</li></ul>`;
-    }
-    else {
-        formSpecificHTML += `<p><em>(ไม่มีรายละเอียดเฉพาะสำหรับประเภทเอกสารนี้ หรือรอการพัฒนา)</em></p>`;
-        if(docData.comment) formSpecificHTML += `<div class="form-field-group"><label>หมายเหตุ (ถ้ามี):</label><p>${docData.comment}</p></div>`;
-
-    }
-    formSpecificContainer.innerHTML = formSpecificHTML;
-
-
-    // Admin Actions (Example)
-    const actionContainer = document.getElementById('action-buttons-container');
-    actionContainer.innerHTML = ''; // Clear previous buttons
-
-    if (docData.status === 'รอตรวจ' || docData.status === 'แก้ไขแล้วส่งกลับ') {
-        actionContainer.innerHTML += `<button class="approve-btn" onclick="handleAdminAction('${docData.id}', 'approve')">อนุมัติเอกสาร</button>`;
-        actionContainer.innerHTML += `<button class="reject-btn" onclick="handleAdminAction('${docData.id}', 'reject')">ไม่อนุมัติ</button>`;
-        actionContainer.innerHTML += `<button class="revise-btn" onclick="handleAdminAction('${docData.id}', 'revise')">ส่งกลับให้แก้ไข</button>`;
-    } else if (docData.status === 'รอการรับรองจากอาจารย์ที่ปรึกษา') {
-         actionContainer.innerHTML += `<p><em>รอการดำเนินการจากอาจารย์ที่ปรึกษา</em></p>`;
-    }
-    // Add more actions based on docData.type and docData.status
-
-    // Action History (Placeholder)
-    const historyLog = document.getElementById('history-log');
-    // In real app, fetch and display actual history for docData.id
-    if (docData.history && docData.history.length > 0) {
-        historyLog.innerHTML = docData.history.map(entry => `<li><span class="log-date">[${entry.date}]</span> ${entry.action} โดย ${entry.actor}</li>`).join('');
-    } else {
-        historyLog.innerHTML = '<li>ยังไม่มีประวัติการดำเนินการ</li>';
-    }
-}
-
-function handleAdminAction(docId, action) {
-  const feedbackEl = document.getElementById('action-feedback');
-  feedbackEl.textContent = '';
-  feedbackEl.className = '';
-
-  // Prompt for comments if rejecting or requesting revision
-  let comments = '';
-  if (action === 'reject' || action === 'revise') {
-    comments = prompt(`กรุณาใส่เหตุผล/ความคิดเห็นสำหรับการ "${action}":`);
-    if (comments === null) return; // User cancelled
-  }
-
-  console.log(`Admin action: ${action} on document ID: ${docId}. Comments: ${comments}`);
-  // TODO: Implement actual API call to backend to process this action
-  // For now, simulate success and update UI (this is temporary)
-  feedbackEl.textContent = `ดำเนินการ "${action}" สำหรับเอกสาร ID ${docId} แล้ว (จำลอง).`;
-  feedbackEl.classList.add('success'); // Assuming success class for styling
-
-  // Potentially update document status on the page (would require re-fetching or updating docData)
-  // For example:
-  // const statusEl = document.getElementById('doc-status');
-  // if (action === 'approve' && statusEl) statusEl.textContent = 'อนุมัติแล้ว';
-  // if (action === 'reject' && statusEl) statusEl.textContent = 'ไม่อนุมัติ';
-  // if (action === 'revise' && statusEl) statusEl.textContent = 'รอการแก้ไข';
-  alert(`(จำลอง) ดำเนินการ: ${action} สำหรับเอกสาร ID: ${docId}\nความคิดเห็น: ${comments}`);
-}
-
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const docId = urlParams.get('id');
-  const docType = urlParams.get('type'); // This is the type passed from admin_home.js (e.g., 'pending', 'form1')
-
-  if (docId) {
-    try {
-      const documentData = await fetchDocumentDetails(docId, docType);
-      if (documentData) {
-        renderDocumentDetails(documentData, docType); // Pass docTypeFromURL for context
-      } else {
-        document.querySelector('.detail-container').innerHTML = '<h2>ไม่พบข้อมูลเอกสาร</h2><button onclick="goBack()" class="back-button">ย้อนกลับ</button>';
-      }
-    } catch (error) {
-      console.error("Error displaying document details:", error);
-      document.querySelector('.detail-container').innerHTML = `<h2>เกิดข้อผิดพลาดในการโหลดรายละเอียดเอกสาร</h2><p>${error.message}</p><button onclick="goBack()" class="back-button">ย้อนกลับ</button>`;
-    }
-  } else {
-    document.querySelector('.detail-container').innerHTML = '<h2>ไม่ได้ระบุ ID ของเอกสาร</h2><button onclick="goBack()" class="back-button">ย้อนกลับ</button>';
-  }
-
-  const saveNoteBtn = document.getElementById('save-admin-note-btn');
-  if(saveNoteBtn) {
-    saveNoteBtn.addEventListener('click', () => {
-        const note = document.getElementById('admin-internal-notes').value;
-        console.log("Admin note to save:", note, "for doc ID:", docId);
-        // TODO: API call to save note
-        alert("บันทึกโน้ตแล้ว (จำลอง)");
-    });
-  }
-});
 
 function goBack() {
-  // Assuming admin_home.html is in the same directory or a known relative path
-  window.location.href = 'home.html';
+    window.location.href = '/Admin_Page/html_admin/home.html';
 }
-function logoutFromDetail() { // Simple logout, assuming logout() function might be in a global scope or needs re-definition
-    localStorage.clear();
-    window.location.href = "/login/index.html";
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
 }
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// =================================================================
+// ภาค 2: Document Detail Page Logic
+// =================================================================
+
+async function loadDocumentDetail() {
+    const params = new URLSearchParams(window.location.search);
+    const docId = params.get('id');
+
+    if (!docId) {
+        document.querySelector('main.detail-container').innerHTML = '<h1>ไม่พบ ID ของเอกสาร</h1>';
+        return;
+    }
+
+    try {
+        const [
+            students, dbPending, dbApproved, dbRejected,
+            advisors, externalProfessors, programs, departments, executives
+        ] = await Promise.all([
+            fetch("/data/student.json").then(res => res.json()),
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]')),
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]')),
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]')),
+            fetch("/data/advisor.json").then(res => res.json()),
+            fetch("/data/external_professor.json").then(res => res.json()),
+            fetch("/data/structures/programs.json").then(res => res.json()),
+            fetch("/data/structures/departments.json").then(res => res.json()),
+            fetch("/data/executive.json").then(res => res.json())
+        ]);
+
+        const allDocuments = [...dbPending, ...dbApproved, ...dbRejected];
+        const documentData = allDocuments.find(doc => doc.doc_id === docId);
+
+        if (!documentData) {
+            document.querySelector('main.detail-container').innerHTML = '<h1>ไม่พบข้อมูลเอกสาร</h1>';
+            return;
+        }
+        
+        const currentUser = students.find(s => s.email === documentData.student_email);
+        
+        const fullDataPayload = {
+            doc: documentData,
+            user: currentUser,
+            advisors,
+            externalProfessors,
+            programs,
+            departments,
+            executives
+        };
+
+        renderHeader(fullDataPayload);
+        renderSidebar(fullDataPayload);
+        renderMainContent(fullDataPayload);
+        renderActionPanel(fullDataPayload);
+        renderHistory(fullDataPayload);
+
+    } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลเอกสาร:", error);
+        document.querySelector('main.detail-container').innerHTML = `<h1>เกิดข้อผิดพลาด: ${error.message}</h1>`;
+    }
+}
+
+function renderHeader({ doc }) {
+    document.getElementById('doc-title-heading').textContent = doc.title || 'รายละเอียดเอกสาร';
+}
+
+function renderSidebar({ doc, user }) {
+    const statusCard = document.getElementById('status-highlight-card');
+    const statusIcon = document.getElementById('status-icon');
+    const statusText = document.getElementById('doc-status-main');
+    
+    let statusClass = 'pending';
+    if (doc.status === 'อนุมัติแล้ว') statusClass = 'approved';
+    else if (['ไม่อนุมัติ', 'ตีกลับ', 'ส่งกลับให้แก้ไข'].includes(doc.status)) statusClass = 'rejected';
+    
+    statusText.textContent = doc.status;
+    statusCard.className = `status-card ${statusClass}`;
+    
+    if (statusClass === 'approved') statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+    else if (statusClass === 'rejected') statusIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+    else statusIcon.innerHTML = '<i class="fas fa-hourglass-half"></i>';
+
+    if (user) {
+        document.getElementById('sidebar-student-id').textContent = user.student_id;
+        document.getElementById('sidebar-fullname').textContent = `${user.prefix_th}${user.first_name_th} ${user.last_name_th}`.trim();
+        document.getElementById('sidebar-email').textContent = user.email;
+    }
+
+    document.getElementById('doc-type').textContent = doc.type || 'N/A';
+    document.getElementById('doc-submission-date').textContent = formatThaiDateTime(doc.submitted_date);
+    document.getElementById('doc-action-date').textContent = formatThaiDateTime(doc.last_action_date || doc.submitted_date);
+}
+
+function renderMainContent(payload) {
+    const { doc } = payload;
+    const specificContentContainer = document.getElementById('form-specific-content');
+    specificContentContainer.innerHTML = generateFormSpecificHTML(payload);
+
+    const filesList = document.getElementById('attached-files-list');
+    filesList.innerHTML = '';
+    if (doc.files && doc.files.length > 0) {
+        doc.files.forEach(file => {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="file-label">${file.type || 'ไฟล์แนบ'}:</span> <a href="#" class="file-link">${file.name || 'ไม่พบชื่อไฟล์'}</a>`;
+            filesList.appendChild(li);
+        });
+    } else {
+        filesList.innerHTML = `<li class="loading-text">ไม่มีไฟล์แนบ</li>`;
+    }
+    
+    const studentCommentDisplay = document.getElementById('student-comment-display');
+    studentCommentDisplay.textContent = doc.student_comment || 'ไม่มีความคิดเห็นเพิ่มเติม';
+}
+
+function generateFormSpecificHTML({ doc, user, advisors, programs, departments }) {
+    let html = '';
+    const details = doc.details || {};
+    const programName = user ? programs.find(p => p.id === user.program_id)?.name || '-' : '-';
+    const departmentName = user ? departments.find(d => d.id === user.department_id)?.name || '-' : '-';
+
+    switch(doc.type) {
+        case 'ฟอร์ม 1':
+            const mainAdvisorForm1 = advisors.find(a => a.advisor_id === doc.selected_main_advisor_id);
+            const coAdvisorForm1 = advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
+            html = `
+                <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
+                <ul class="info-list">
+                    <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
+                    <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
+                    <li><label>ระดับการศึกษา:</label> <span>${user.degree || '-'}</span></li>
+                    <li><label>หลักสูตร:</label> <span>${programName}</span></li>
+                    <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
+                    <li><label>คณะ:</label> <span>${user.faculty || '-'}</span></li>
+                    <li><label>แผนการเรียน:</label> <span>${user.plan || '-'}</span></li>
+                    <li><label>เบอร์โทรศัพท์:</label> <span>${user.phone || '-'}</span></li>
+                    <li><label>อีเมล:</label> <span>${user.email || '-'}</span></li>
+                </ul>
+                <hr class="subtle-divider">
+                <h4>อาจารย์ที่ปรึกษาที่เลือก</h4>
+                <ul class="info-list">
+                    <li><label>ที่ปรึกษาหลัก:</label> <span>${mainAdvisorForm1 ? `${mainAdvisorForm1.prefix_th}${mainAdvisorForm1.first_name_th} ${mainAdvisorForm1.last_name_th}`.trim() : '-'}</span></li>
+                    <li><label>ที่ปรึกษาร่วม:</label> <span>${coAdvisorForm1 ? `${coAdvisorForm1.prefix_th}${coAdvisorForm1.first_name_th} ${coAdvisorForm1.last_name_th}`.trim() : '-'}</span></li>
+                </ul>`;
+            break;
+        default:
+            html = `<p class="loading-text">ไม่มีรายละเอียดสำหรับเอกสารประเภทนี้</p>`;
+    }
+    return html;
+}
+
+function renderHistory({ doc }) {
+    const historyLog = document.getElementById('history-log');
+    historyLog.innerHTML = '';
+    const history = doc.history || [{ date: doc.submitted_date, action: "นักศึกษายื่นเอกสาร", actor: "นักศึกษา" }];
+
+    if (history.length === 0) {
+        historyLog.innerHTML = '<li>ยังไม่มีประวัติ</li>';
+        return;
+    }
+
+    history.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(log => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span class="log-action">${log.action}</span>
+            <span class="log-actor">โดย: ${log.actor}</span>
+            <span class="log-date">${formatThaiDateTime(log.date)}</span>
+            ${log.comment ? `<p class="log-comment"><b>เหตุผล:</b> ${log.comment}</p>` : ''}
+        `;
+        historyLog.appendChild(li);
+    });
+}
+
+// =================================================================
+// ภาค 3: Action Panel & Workflow Logic
+// =================================================================
+
+function renderActionPanel(payload) {
+    const { doc, advisors, executives } = payload;
+    const actionContainer = document.getElementById('action-panel');
+    const timelineContainer = document.getElementById('workflow-timeline');
+    actionContainer.innerHTML = '';
+    timelineContainer.innerHTML = '';
+
+    const workflows = {
+        'ฟอร์ม 1': [
+            { name: 'ยื่นเอกสาร', status: 'รอตรวจ' },
+            { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ' },
+            { name: 'ผู้บริหารอนุมัติ', status: 'รอผู้บริหารอนุมัติ' },
+            { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว' }
+        ]
+    };
+
+    const currentWorkflow = workflows[doc.type] || [];
+    const currentStepIndex = currentWorkflow.findIndex(step => step.status === doc.status);
+
+    currentWorkflow.forEach((step, index) => {
+        const stepElement = document.createElement('div');
+        stepElement.className = 'timeline-step';
+        if (index < currentStepIndex) {
+            stepElement.classList.add('completed');
+        } else if (index === currentStepIndex) {
+            stepElement.classList.add('active');
+        }
+        stepElement.innerHTML = `
+            <div class="timeline-icon"></div>
+            <div class="timeline-label">
+                <span>${step.name}</span>
+                <small>โดย: ${step.actor || 'N/A'}</small>
+            </div>
+        `;
+        timelineContainer.appendChild(stepElement);
+    });
+
+    let actionHTML = '';
+
+    if (doc.status === 'รอตรวจ') {
+        const mainAdvisor = advisors.find(a => a.advisor_id === doc.selected_main_advisor_id);
+        const coAdvisor = advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
+        actionHTML = `
+            <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
+            <ul class="actor-list">
+                ${mainAdvisor ? `<li><b>หลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}</li>` : ''}
+                ${coAdvisor ? `<li><b>ร่วม:</b> ${coAdvisor.prefix_th}${coAdvisor.first_name_th} ${coAdvisor.last_name_th}</li>` : ''}
+            </ul>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
+                <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+            </div>`;
+    } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
+        actionHTML = `<p class="waiting-info">กำลังรอการอนุมัติจากอาจารย์ที่ปรึกษา...</p>`;
+    } else if (doc.status === 'รอผู้บริหารอนุมัติ') {
+        const executive = executives.find(e => e.role === 'คณบดี');
+        actionHTML = `
+            <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ ผู้บริหาร</p>
+            <ul class="actor-list">
+                ${executive ? `<li><b>ผู้รับผิดชอบ:</b> ${executive.name} (${executive.role})</li>` : ''}
+            </ul>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_executive', 'รอผู้บริหารอนุมัติ')">ส่งต่อ</button>
+                <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+            </div>`;
+    } else if (doc.status === 'อนุมัติแล้ว' || doc.status === 'ไม่อนุมัติ') {
+        actionHTML = `<p class="waiting-info">เอกสารนี้ดำเนินการเสร็จสิ้นแล้ว</p>`;
+    }
+
+    actionContainer.innerHTML = actionHTML;
+    
+    // ผูก Event ให้กับปุ่มใน Modal
+    document.getElementById('confirm-rejection-btn').onclick = () => handleAdminAction(doc.doc_id, 'reject', 'ส่งกลับให้แก้ไข');
+}
+
+function handleAdminAction(docId, action, nextStatus) {
+    const comment = document.getElementById('rejection-comment').value;
+
+    if (action === 'reject' && !comment) {
+        alert('กรุณาใส่เหตุผลในการส่งกลับ');
+        return;
+    }
+
+    const confirmationMessage = action === 'reject' 
+        ? 'คุณแน่ใจหรือไม่ว่าต้องการส่งเอกสารกลับไปแก้ไข?'
+        : `คุณแน่ใจหรือไม่ว่าต้องการส่งต่อเอกสาร?`;
+
+    if (confirm(confirmationMessage)) {
+        // --- ส่วนจำลองการอัปเดตข้อมูลใน localStorage ---
+        const pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+        const docIndex = pendingDocs.findIndex(d => d.doc_id === docId);
+
+        if (docIndex !== -1) {
+            const docToUpdate = pendingDocs[docIndex];
+            
+            // เพิ่มประวัติการดำเนินการ
+            if (!docToUpdate.history) {
+                docToUpdate.history = [{ date: docToUpdate.submitted_date, action: "นักศึกษายื่นเอกสาร", actor: "นักศึกษา" }];
+            }
+            docToUpdate.history.push({
+                date: new Date().toISOString(),
+                action: action === 'reject' ? 'ส่งกลับให้แก้ไข' : `ส่งต่อไปยัง ${nextStatus}`,
+                actor: 'เจ้าหน้าที่',
+                comment: comment || ''
+            });
+
+            // อัปเดตสถานะ
+            docToUpdate.status = nextStatus;
+            docToUpdate.last_action_date = new Date().toISOString();
+
+            localStorage.setItem('localStorage_pendingDocs', JSON.stringify(pendingDocs));
+        }
+        
+        closeModal('rejection-modal');
+        alert('ดำเนินการสำเร็จ!');
+        window.location.reload();
+    }
+}
+
+// =================================================================
+// ภาค 4: Main Execution
+// =================================================================
+document.addEventListener('DOMContentLoaded', loadDocumentDetail);
