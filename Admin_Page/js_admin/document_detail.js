@@ -22,15 +22,8 @@ function formatThaiDateTime(isoString) {
 }
 
 function goBack() {
-    window.location.href = '/Admin_Page/html_admin/home.html';
-}
-
-function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'flex';
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
+    // ใช้ history.back() เพื่อกลับไปยังหน้าที่แล้วในประวัติการเข้าชม
+    window.history.back();
 }
 
 // =================================================================
@@ -49,12 +42,16 @@ async function loadDocumentDetail() {
     try {
         const [
             students, dbPending, dbApproved, dbRejected,
+            // --- เพิ่มบรรทัดนี้ ---
+            dbWaitingAdvisor, 
             advisors, externalProfessors, programs, departments, executives
         ] = await Promise.all([
             fetch("/data/student.json").then(res => res.json()),
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]')),
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]')),
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]')),
+            // --- และเพิ่มบรรทัดนี้ ---
+            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_waitingAdvisorDocs') || '[]')),
             fetch("/data/advisor.json").then(res => res.json()),
             fetch("/data/external_professor.json").then(res => res.json()),
             fetch("/data/structures/programs.json").then(res => res.json()),
@@ -62,7 +59,8 @@ async function loadDocumentDetail() {
             fetch("/data/executive.json").then(res => res.json())
         ]);
 
-        const allDocuments = [...dbPending, ...dbApproved, ...dbRejected];
+        // --- และแก้ไขบรรทัดนี้ ---
+        const allDocuments = [...dbPending, ...dbApproved, ...dbRejected, ...dbWaitingAdvisor];
         const documentData = allDocuments.find(doc => doc.doc_id === docId);
 
         if (!documentData) {
@@ -85,7 +83,7 @@ async function loadDocumentDetail() {
         renderHeader(fullDataPayload);
         renderSidebar(fullDataPayload);
         renderMainContent(fullDataPayload);
-        renderActionPanel(fullDataPayload);
+        renderActionPanelAndTimeline(fullDataPayload);
         renderHistory(fullDataPayload);
 
     } catch (error) {
@@ -154,6 +152,7 @@ function generateFormSpecificHTML({ doc, user, advisors, programs, departments }
 
     switch(doc.type) {
         case 'ฟอร์ม 1':
+            // แก้ไข: อ้างอิงจาก doc.selected_... แทน doc.details
             const mainAdvisorForm1 = advisors.find(a => a.advisor_id === doc.selected_main_advisor_id);
             const coAdvisorForm1 = advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
             html = `
@@ -176,6 +175,44 @@ function generateFormSpecificHTML({ doc, user, advisors, programs, departments }
                     <li><label>ที่ปรึกษาร่วม:</label> <span>${coAdvisorForm1 ? `${coAdvisorForm1.prefix_th}${coAdvisorForm1.first_name_th} ${coAdvisorForm1.last_name_th}`.trim() : '-'}</span></li>
                 </ul>`;
             break;
+
+            case 'ฟอร์ม 2':
+        const mainAdvisorForm2 = advisors.find(a => a.advisor_id === user.main_advisor_id);
+        const coAdvisor1Form2 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+        const coAdvisor2Form2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
+        
+        html = `
+            <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
+            <ul class="info-list">
+                <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
+                <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
+                <li><label>ระดับปริญญา:</label> <span>${user.degree || '-'}</span></li>
+                <li><label>หลักสูตรและสาขาวิชา:</label> <span>${programName}</span></li>
+                <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
+                <li><label>เบอร์โทรศัพท์:</label> <span>${user.phone || '-'}</span></li>
+            </ul>
+            <hr class="subtle-divider">
+            <h4>หัวข้อวิทยานิพนธ์</h4>
+            <ul class="info-list">
+                <li><label>ชื่อเรื่อง (ภาษาไทย):</label> <span>${doc.thesis_title_th || '-'}</span></li>
+                <li><label>ชื่อเรื่อง (ภาษาอังกฤษ):</label> <span>${doc.thesis_title_en || '-'}</span></li>
+            </ul>
+            <hr class="subtle-divider">
+            <h4>ข้อมูลการลงทะเบียน</h4>
+            <ul class="info-list">
+                <li><label>ภาคการศึกษาที่:</label> <span>${details.registration_semester || '-'}</span></li>
+                <li><label>ปีการศึกษา:</label> <span>${details.registration_year || '-'}</span></li>
+            </ul>
+            <hr class="subtle-divider">
+            <h4>อาจารย์ที่ปรึกษา</h4>
+            <ul class="info-list">
+                <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorForm2 ? `${mainAdvisorForm2.prefix_th}${mainAdvisorForm2.first_name_th} ${mainAdvisorForm2.last_name_th}`.trim() : '-'}</span></li>
+                <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Form2 ? `${coAdvisor1Form2.prefix_th}${coAdvisor1Form2.first_name_th} ${coAdvisor1Form2.last_name_th}`.trim() : '-'}</span></li>
+                <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Form2 ? `${coAdvisor2Form2.prefix_th}${coAdvisor2Form2.first_name_th} ${coAdvisor2Form2.last_name_th}`.trim() : '-'}</span></li>
+            </ul>
+        `;
+        break;
+        
         default:
             html = `<p class="loading-text">ไม่มีรายละเอียดสำหรับเอกสารประเภทนี้</p>`;
     }
@@ -208,23 +245,99 @@ function renderHistory({ doc }) {
 // ภาค 3: Action Panel & Workflow Logic
 // =================================================================
 
-function renderActionPanel(payload) {
-    const { doc, advisors, executives } = payload;
+function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
     const actionContainer = document.getElementById('action-panel');
     const timelineContainer = document.getElementById('workflow-timeline');
     actionContainer.innerHTML = '';
     timelineContainer.innerHTML = '';
 
-    const workflows = {
-        'ฟอร์ม 1': [
-            { name: 'ยื่นเอกสาร', status: 'รอตรวจ' },
-            { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ' },
-            { name: 'ผู้บริหารอนุมัติ', status: 'รอผู้บริหารอนุมัติ' },
-            { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว' }
-        ]
-    };
+    let currentWorkflow = [];
+    let actionHTML = '';
 
-    const currentWorkflow = workflows[doc.type] || [];
+    if (doc.type === 'ฟอร์ม 1') {
+        const mainAdvisor = advisors.find(a => a.advisor_id === doc.selected_main_advisor_id);
+        const coAdvisor = advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
+        const executive = executives.find(e => e.role === 'ผู้ช่วยคณบดีฝ่ายวิชาการ');
+
+        let advisorNames = [
+            mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
+            coAdvisor ? `${coAdvisor.prefix_th}${coAdvisor.first_name_th}` : null
+        ].filter(Boolean).join(', ');
+
+        currentWorkflow = [
+            { name: 'ยื่นเอกสาร', actor: `${user.prefix_th}${user.first_name_th} ${user.last_name_th}` },
+            { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ', actor: advisorNames || 'N/A' },
+            { name: 'ผู้บริหารอนุมัติ', status: 'รอผู้บริหารอนุมัติ', actor: executive?.name || 'N/A' },
+            { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว', actor: 'เจ้าหน้าที่' }
+        ];
+
+        if (doc.status === 'รอตรวจ') {
+            actionHTML = `
+                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
+                <ul class="actor-list">
+                    ${mainAdvisor ? `<li><b>ที่ปรึกษาหลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th} (${mainAdvisor.email})</li>` : ''}
+                    ${coAdvisor ? `<li><b>ที่ปรึกษาร่วม:</b> ${coAdvisor.prefix_th}${coAdvisor.first_name_th} ${coAdvisor.last_name_th} (${coAdvisor.email})</li>` : ''}
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                </div>`;
+        } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
+            actionHTML = `<p class="waiting-info">กำลังรอการอนุมัติจากอาจารย์ที่ปรึกษา...</p>`;
+        } else if (doc.status === 'รอผู้บริหารอนุมัติ') {
+            actionHTML = `
+                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ ผู้บริหาร</p>
+                <ul class="actor-list">
+                    ${executive ? `<li><b>ผู้รับผิดชอบ:</b> ${executive.name} (${executive.role})</li>` : ''}
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_executive', 'อนุมัติแล้ว')">อนุมัติขั้นสุดท้าย</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                </div>`;
+        }
+    } else if (doc.type === 'ฟอร์ม 2') {
+    const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
+    const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+    const coAdvisor2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
+    
+    const programChair = executives.find(e => e.role === 'ประธานหลักสูตร');
+    const deptHead = executives.find(e => e.role === 'หัวหน้าภาควิชา');
+    const asstDean = executives.find(e => e.role === 'ผู้ช่วยคณบดีงานบัณฑิตศึกษาและวิจัย');
+    const dean = executives.find(e => e.role === 'คณบดี');
+
+    let advisorNames = [
+        mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
+        coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th}` : null,
+        coAdvisor2 ? `${coAdvisor2.prefix_th}${coAdvisor2.first_name_th}` : null
+    ].filter(Boolean).join(', ');
+
+    currentWorkflow = [
+        { name: 'ยื่นเอกสาร', status: 'รอตรวจ', actor: `${user.first_name_th} ${user.last_name_th}` },
+        { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ', actor: advisorNames || 'N/A' },
+        { name: 'ประธานหลักสูตรอนุมัติ', status: 'รอประธานหลักสูตรอนุมัติ', actor: programChair?.name },
+        { name: 'หัวหน้าภาควิชาอนุมัติ', status: 'รอหัวหน้าภาควิชาอนุมัติ', actor: deptHead?.name },
+        { name: 'ผู้ช่วยคณบดีฯ อนุมัติ', status: 'รอผู้ช่วยคณบดีฯ อนุมัติ', actor: asstDean?.name },
+        { name: 'คณบดีอนุมัติ', status: 'รอคณบดีอนุมัติ', actor: dean?.name },
+        { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว', actor: 'เจ้าหน้าที่' }
+    ];
+
+    if (doc.status === 'รอตรวจ') {
+        actionHTML = `
+            <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
+            <ul class="actor-list">
+                ${mainAdvisor ? `<li><b>ที่ปรึกษาหลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th} (${mainAdvisor.email})</li>` : ''}
+                ${coAdvisor1 ? `<li><b>ที่ปรึกษาร่วม 1:</b> ${coAdvisor1.prefix_th}${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th} (${coAdvisor1.email})</li>` : ''}
+                ${coAdvisor2 ? `<li><b>ที่ปรึกษาร่วม 2:</b> ${coAdvisor2.prefix_th}${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th} (${coAdvisor2.email})</li>` : ''}
+            </ul>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
+                <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+            </div>`;
+        } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
+            actionHTML = `<p class="waiting-info">กำลังรอการอนุมัติจากอาจารย์ที่ปรึกษา...</p>`;
+        }
+    }
+    
     const currentStepIndex = currentWorkflow.findIndex(step => step.status === doc.status);
 
     currentWorkflow.forEach((step, index) => {
@@ -244,50 +357,25 @@ function renderActionPanel(payload) {
         `;
         timelineContainer.appendChild(stepElement);
     });
-
-    let actionHTML = '';
-
-    if (doc.status === 'รอตรวจ') {
-        const mainAdvisor = advisors.find(a => a.advisor_id === doc.selected_main_advisor_id);
-        const coAdvisor = advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
-        actionHTML = `
-            <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
-            <ul class="actor-list">
-                ${mainAdvisor ? `<li><b>หลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}</li>` : ''}
-                ${coAdvisor ? `<li><b>ร่วม:</b> ${coAdvisor.prefix_th}${coAdvisor.first_name_th} ${coAdvisor.last_name_th}</li>` : ''}
-            </ul>
-            <div class="action-buttons">
-                <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
-                <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
-            </div>`;
-    } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
-        actionHTML = `<p class="waiting-info">กำลังรอการอนุมัติจากอาจารย์ที่ปรึกษา...</p>`;
-    } else if (doc.status === 'รอผู้บริหารอนุมัติ') {
-        const executive = executives.find(e => e.role === 'คณบดี');
-        actionHTML = `
-            <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ ผู้บริหาร</p>
-            <ul class="actor-list">
-                ${executive ? `<li><b>ผู้รับผิดชอบ:</b> ${executive.name} (${executive.role})</li>` : ''}
-            </ul>
-            <div class="action-buttons">
-                <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_executive', 'รอผู้บริหารอนุมัติ')">ส่งต่อ</button>
-                <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
-            </div>`;
-    } else if (doc.status === 'อนุมัติแล้ว' || doc.status === 'ไม่อนุมัติ') {
-        actionHTML = `<p class="waiting-info">เอกสารนี้ดำเนินการเสร็จสิ้นแล้ว</p>`;
+    
+    if (!actionHTML) {
+        if (['อนุมัติแล้ว', 'ไม่อนุมัติ', 'ส่งกลับให้แก้ไข'].includes(doc.status)) {
+            actionHTML = `<p class="waiting-info">เอกสารนี้ดำเนินการเสร็จสิ้นแล้ว</p>`;
+        } else {
+            actionHTML = `<p class="waiting-info">กำลังรอการดำเนินการจากฝ่ายอื่น...</p>`;
+        }
     }
-
     actionContainer.innerHTML = actionHTML;
     
-    // ผูก Event ให้กับปุ่มใน Modal
     document.getElementById('confirm-rejection-btn').onclick = () => handleAdminAction(doc.doc_id, 'reject', 'ส่งกลับให้แก้ไข');
 }
 
 function handleAdminAction(docId, action, nextStatus) {
-    const comment = document.getElementById('rejection-comment').value;
+    const comment = document.getElementById('rejection-comment')?.value || 
+                    document.getElementById('admin-comment-input')?.value || '';
 
     if (action === 'reject' && !comment) {
-        alert('กรุณาใส่เหตุผลในการส่งกลับ');
+        alert('กรุณาใส่เหตุผล/ความคิดเห็นในการส่งกลับ');
         return;
     }
 
@@ -296,34 +384,52 @@ function handleAdminAction(docId, action, nextStatus) {
         : `คุณแน่ใจหรือไม่ว่าต้องการส่งต่อเอกสาร?`;
 
     if (confirm(confirmationMessage)) {
-        // --- ส่วนจำลองการอัปเดตข้อมูลใน localStorage ---
-        const pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
-        const docIndex = pendingDocs.findIndex(d => d.doc_id === docId);
+        // 1. ดึงข้อมูลเอกสารทั้งหมดจาก localStorage
+        let pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+        let waitingAdvisorDocs = JSON.parse(localStorage.getItem('localStorage_waitingAdvisorDocs') || '[]');
+        let rejectedDocs = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
 
-        if (docIndex !== -1) {
-            const docToUpdate = pendingDocs[docIndex];
-            
-            // เพิ่มประวัติการดำเนินการ
-            if (!docToUpdate.history) {
-                docToUpdate.history = [{ date: docToUpdate.submitted_date, action: "นักศึกษายื่นเอกสาร", actor: "นักศึกษา" }];
-            }
-            docToUpdate.history.push({
-                date: new Date().toISOString(),
-                action: action === 'reject' ? 'ส่งกลับให้แก้ไข' : `ส่งต่อไปยัง ${nextStatus}`,
-                actor: 'เจ้าหน้าที่',
-                comment: comment || ''
-            });
+        // 2. ค้นหาเอกสารที่ต้องการดำเนินการ
+        let docIndex = pendingDocs.findIndex(d => d.doc_id === docId);
+        if (docIndex === -1) {
+            alert('ไม่พบเอกสารที่ต้องการดำเนินการ หรือเอกสารถูกดำเนินการไปแล้ว');
+            return;
+        }
 
-            // อัปเดตสถานะ
-            docToUpdate.status = nextStatus;
-            docToUpdate.last_action_date = new Date().toISOString();
+        const docToUpdate = pendingDocs[docIndex];
 
-            localStorage.setItem('localStorage_pendingDocs', JSON.stringify(pendingDocs));
+        // 3. เพิ่มประวัติการดำเนินการ
+        if (!docToUpdate.history) {
+            docToUpdate.history = [{ date: docToUpdate.submitted_date, action: "นักศึกษายื่นเอกสาร", actor: docToUpdate.student_email }];
+        }
+        docToUpdate.history.push({
+            date: new Date().toISOString(),
+            action: action === 'reject' ? 'ส่งกลับให้แก้ไข' : `ส่งต่อไปยัง ${nextStatus}`,
+            actor: 'เจ้าหน้าที่',
+            comment: comment || ''
+        });
+
+        // 4. อัปเดตสถานะและย้ายข้อมูล
+        docToUpdate.status = nextStatus;
+        docToUpdate.last_action_date = new Date().toISOString();
+
+        if (action === 'reject') {
+            rejectedDocs.push(docToUpdate); // ย้ายไป Rejected
+        } else {
+            waitingAdvisorDocs.push(docToUpdate); // ย้ายไป Waiting for Advisor
         }
         
-        closeModal('rejection-modal');
+        // ลบออกจาก Pending
+        pendingDocs.splice(docIndex, 1);
+
+        // 5. บันทึกข้อมูลกลับลง localStorage
+        localStorage.setItem('localStorage_pendingDocs', JSON.stringify(pendingDocs));
+        localStorage.setItem('localStorage_waitingAdvisorDocs', JSON.stringify(waitingAdvisorDocs));
+        localStorage.setItem('localStorage_rejectedDocs', JSON.stringify(rejectedDocs));
+        
+        closeModal('rejection-modal'); // ปิด modal (ถ้ามี)
         alert('ดำเนินการสำเร็จ!');
-        window.location.reload();
+        window.location.href = '/Admin_Page/html_admin/home.html'; // กลับไปหน้าหลักเพื่อดูผลลัพธ์
     }
 }
 

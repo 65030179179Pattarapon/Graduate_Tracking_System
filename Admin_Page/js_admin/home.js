@@ -60,6 +60,11 @@ function formatDate(isoString) {
     }
 }
 
+function goBack() {
+    // ใช้ history.back() เพื่อกลับไปยังหน้าที่แล้วในประวัติการเข้าชม
+    window.history.back();
+}
+
 // =================================================================
 // ภาค 3: Navigation
 // =================================================================
@@ -354,16 +359,16 @@ function setupPendingReviewFilters() {
 }
 
 // =================================================================
-// ภาค 7: Advisor Approval Section Logic
+// ภาค 7: Advisor Approval Section Logic (ฉบับแก้ไข)
 // =================================================================
 
 function loadAdvisorApprovalData() {
-    // ในระบบจริง ข้อมูลส่วนนี้จะมาจากฐานข้อมูลที่มีสถานะ 'รออาจารย์อนุมัติ'
-    const waitingData = []; // Placeholder
+    const waitingData = JSON.parse(localStorage.getItem('localStorage_waitingAdvisorDocs') || '[]');
     const processedData = []; // Placeholder
-    
-    pageState.pendingAdvisor.fullData = { waiting: waitingData, processed: processedData };
 
+    pageState.pendingAdvisor.fullData = { waiting: waitingData, processed: processedData };
+    pageState.pendingAdvisor.filteredData = waitingData;
+    
     document.getElementById('advisor-waiting-count').textContent = waitingData.length;
     document.getElementById('advisor-approved-today-count').textContent = "0";
     document.getElementById('advisor-rejected-today-count').textContent = "0";
@@ -375,6 +380,7 @@ function displayAdvisorApprovalPage(tab, page) {
     pageState.pendingAdvisor.currentTab = tab;
     pageState.pendingAdvisor.currentPage = page;
 
+    // สลับ Active Class ของปุ่ม Tab และเนื้อหา
     document.querySelectorAll('#section-pending-advisor .tab-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tab);
     });
@@ -386,6 +392,7 @@ function displayAdvisorApprovalPage(tab, page) {
     pageState.pendingAdvisor.filteredData = dataForTab;
 
     const tableBody = document.querySelector(`#table-advisor-${tab} tbody`);
+    if (!tableBody) return;
     tableBody.innerHTML = '';
 
     const start = (page - 1) * pageState.pendingAdvisor.rowsPerPage;
@@ -393,11 +400,45 @@ function displayAdvisorApprovalPage(tab, page) {
     const paginatedItems = pageState.pendingAdvisor.filteredData.slice(start, end);
     
     if (paginatedItems.length === 0) {
-        const colspan = (tab === 'waiting') ? 4 : 5;
+        const colspan = (tab === 'waiting') ? 5 : 6;
         tableBody.innerHTML = `<tr><td colspan="${colspan}" class="loading-text">ไม่มีข้อมูลในรายการนี้</td></tr>`;
     } else {
         paginatedItems.forEach(doc => {
-            // (เพิ่ม Logic สร้างแถวในตารางที่นี่)
+            const student = masterDataCache.students.find(s => s.email === doc.student_email);
+            const studentName = student ? `${student.first_name_th} ${student.last_name_th}` : doc.student_email;
+            
+            const tr = document.createElement('tr');
+            tr.className = 'clickable-row';
+            tr.onclick = () => viewDocumentDetail(doc.doc_id, doc.type);
+
+            if (tab === 'waiting') {
+                const mainAdvisor = masterDataCache.advisors.find(a => a.advisor_id === doc.selected_main_advisor_id);
+                const coAdvisor = masterDataCache.advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
+                const waitingFor = [mainAdvisor, coAdvisor].filter(Boolean).map(a => a.first_name_th).join(', ');
+                
+                tr.innerHTML = `
+                    <td>${doc.title}</td>
+                    <td>${doc.student_id}</td>
+                    <td>${studentName}</td>
+                    <td>${doc.student_email}</td>
+                    <td>${waitingFor || 'N/A'}</td>
+                    <td>${formatDate(doc.last_action_date)}</td>
+                `;
+            } else { // processed tab
+                const advisor = masterDataCache.advisors.find(a => a.advisor_id === doc.processor_id);
+                const advisorName = advisor ? `${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}`.trim() : 'N/A';
+                const statusClass = doc.status.includes('อนุมัติ') ? 'approved' : 'rejected';
+
+                tr.innerHTML = `
+                    <td>${doc.title}</td>
+                    <td>${doc.student_id}</td>
+                    <td>${studentName}</td>
+                    <td>${advisorName}</td>
+                    <td><span class="status-badge ${statusClass}">${doc.status}</span></td>
+                    <td>${formatDate(doc.processed_date)}</td>
+                `;
+            }
+            tableBody.appendChild(tr);
         });
     }
     updateAdvisorApprovalPagination();
@@ -431,16 +472,25 @@ function setupAdvisorApprovalFilters() {
     const waitingSearch = document.getElementById('advisor-waiting-search');
     const processedSearch = document.getElementById('advisor-processed-search');
     const processedStatusFilter = document.getElementById('advisor-processed-filter-status');
-    const processedTypeFilter = document.getElementById('advisor-processed-filter-type'); // <<< ตัวแปรใหม่
+    const processedTypeFilter = document.getElementById('advisor-processed-filter-type');
 
     const applyFilter = () => {
         const state = pageState.pendingAdvisor;
         const tab = state.currentTab;
         const sourceData = state.fullData[tab] || [];
 
-        const searchTerm = (tab === 'waiting' ? waitingSearch.value : processedSearch.value).toLowerCase();
-        const statusFilter = (tab === 'processed') ? processedStatusFilter.value : 'all';
-        const typeFilterValue = (tab === 'processed') ? processedTypeFilter.value : 'all'; // <<< ดึงค่าจาก Dropdown ใหม่
+        let searchTerm = '';
+        let typeFilter = 'all';
+        let statusFilter = 'all';
+
+        if (tab === 'waiting') {
+            searchTerm = waitingSearch.value.toLowerCase();
+            typeFilter = document.getElementById('advisor-waiting-filter-type').value;
+        } else { // processed
+            searchTerm = processedSearch.value.toLowerCase();
+            typeFilter = processedTypeFilter.value;
+            statusFilter = processedStatusFilter.value;
+        }
 
         state.filteredData = sourceData.filter(doc => {
             const student = masterDataCache.students.find(s => s.email === doc.student_email);
@@ -449,7 +499,7 @@ function setupAdvisorApprovalFilters() {
             // ตรวจสอบเงื่อนไขทั้งหมด
             const searchMatch = !searchTerm || doc.title.toLowerCase().includes(searchTerm) || studentName.includes(searchTerm);
             const statusMatch = (statusFilter === 'all') || doc.status === statusFilter;
-            const typeMatch = (typeFilterValue === 'all') || doc.type === typeFilterValue; // <<< ตรวจสอบเงื่อนไขใหม่
+            const typeMatch = (typeFilter === 'all') || doc.type === typeFilter;
 
             return searchMatch && statusMatch && typeMatch;
         });
@@ -457,9 +507,10 @@ function setupAdvisorApprovalFilters() {
     };
 
     waitingSearch?.addEventListener('input', applyFilter);
+    document.getElementById('advisor-waiting-filter-type')?.addEventListener('change', applyFilter);
     processedSearch?.addEventListener('input', applyFilter);
     processedStatusFilter?.addEventListener('change', applyFilter);
-    processedTypeFilter?.addEventListener('change', applyFilter); // <<< ผูก Event ให้ Dropdown ใหม่
+    processedTypeFilter?.addEventListener('change', applyFilter);
 }
 
 // =================================================================

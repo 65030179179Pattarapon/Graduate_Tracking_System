@@ -189,20 +189,20 @@
               <h1><i class="fas fa-user-tie"></i> อาจารย์ที่ปรึกษาอนุมัติ</h1>
               <p>เอกสารที่ถูกส่งต่อไปยังอาจารย์ที่ปรึกษาเพื่อรอการอนุมัติ</p>
 
-              <div class="stats-container-inline">
-                  <div class="stat-card-inline">
-                      <p class="stat-title">กำลังรออนุมัติ</p>
-                      <h2 id="advisor-waiting-count" class="stat-value">0</h2>
-                  </div>
-                  <div class="stat-card-inline">
-                      <p class="stat-title">อนุมัติแล้ววันนี้</p>
-                      <h2 id="advisor-approved-today-count" class="stat-value">0</h2>
-                  </div>
-                  <div class="stat-card-inline">
-                      <p class="stat-title">ตีกลับวันนี้</p>
-                      <h2 id="advisor-rejected-today-count" class="stat-value">0</h2>
-                  </div>
-              </div>
+            <div class="stats-container-inline">
+                <div class="stat-card-inline" data-filter-key="status" data-filter-value="all">
+                    <p class="stat-title">กำลังรออนุมัติ</p>
+                    <h2 id="advisor-waiting-count" class="stat-value">0</h2>
+                </div>
+                <div class="stat-card-inline" data-filter-key="status" data-filter-value="today-approved">
+                    <p class="stat-title">อนุมัติแล้ววันนี้</p>
+                    <h2 id="advisor-approved-today-count" class="stat-value">0</h2>
+                </div>
+                <div class="stat-card-inline" data-filter-key="status" data-filter-value="today-rejected">
+                    <p class="stat-title">ตีกลับวันนี้</p>
+                    <h2 id="advisor-rejected-today-count" class="stat-value">0</h2>
+                </div>
+            </div>
 
               <div class="tab-nav">
                   <button class="tab-btn active" data-tab="waiting">รายการที่กำลังรออนุมัติ</button>
@@ -210,11 +210,11 @@
               </div>
 
               <div class="tab-content-wrapper">
-                  <div id="tab-waiting" class="tab-content active">
-                      <div class="table-card">
-                <div class="filter-controls">
-                    <input type="text" id="advisor-processed-search" placeholder="🔍 ค้นหา...">
-                    <select id="advisor-processed-filter-type">
+                <div id="tab-waiting" class="tab-content active">
+                    <div class="table-card">
+                        <div class="filter-controls">
+                            <input type="text" id="advisor-waiting-search" placeholder="🔍 ค้นหาจากชื่อเอกสาร, ชื่อนศ., หรือชื่ออาจารย์...">
+                        <select id="advisor-waiting-filter-type">
                         <option value="all">ทุกประเภทฟอร์ม</option>
                         <option value="ฟอร์ม 1">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</option>
                         <option value="ฟอร์ม 2">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</option>
@@ -245,12 +245,11 @@
                       </div>
                   </div>
 
-                  <div id="tab-processed" class="tab-content">
-                      <div class="table-card">
-                      <div class="table-card">
-                        <div class="filter-controls">
-                            <input type="text" id="advisor-processed-search" placeholder="🔍 ค้นหา...">
-                            <select id="advisor-processed-filter-type">
+                    <div id="tab-processed" class="tab-content">
+                        <div class="table-card">
+                            <div class="filter-controls">
+                                <input type="text" id="advisor-waiting-search" placeholder="🔍 ค้นหา...">
+                            <select id="advisor-waiting-filter-type">
                                 <option value="all">ทุกประเภทฟอร์ม</option>
                                 <option value="ฟอร์ม 1">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</option>
                                 <option value="ฟอร์ม 2">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</option>
@@ -259,11 +258,6 @@
                                 <option value="ฟอร์ม 5">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</option>
                                 <option value="ฟอร์ม 6">บันทึกข้อความ: ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</option>
                                 <option value="ผลสอบภาษาอังกฤษ">ยื่นผลสอบภาษาอังกฤษ</option>
-                            </select>
-                            <select id="advisor-processed-filter-status">
-                                <option value="all">ทุกสถานะ</option>
-                                <option value="อนุมัติ">อนุมัติ</option>
-                                <option value="ตีกลับ">ตีกลับ</option>
                             </select>
                         </div>
                           <div class="table-container">

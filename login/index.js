@@ -1,3 +1,5 @@
+// /login/index.js (Corrected Version)
+
 document.addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -53,8 +55,13 @@ document.addEventListener("submit", async function (e) {
         return;
     }
 
+    // --- ส่วนที่แก้ไข: บันทึกข้อมูลที่จำเป็นทั้งหมดลง localStorage ---
     localStorage.setItem("current_user", email);
     localStorage.setItem("role", users[email].role);
+    // เพิ่มการบันทึกชื่อ-นามสกุล เพื่อนำไปใช้ในอนาคตได้
+    const userFullName = `${users[email].prefix_th || ''}${users[email].first_name_th || users[email].fullname || ''} ${users[email].last_name_th || ''}`.trim();
+    localStorage.setItem("current_user_name", userFullName);
+
 
     const hasSigned = localStorage.getItem(`${email}_signed`) === "true";
 
@@ -62,12 +69,14 @@ document.addEventListener("submit", async function (e) {
         student: "/User_Page/html_user/",
         admin: "/Admin_Page/html_admin/",
         advisor: "/Advisor_Page/html_advisor/",
-        external_professor: "/Professor_Page/html_professor/",
-        executive: "/Executive_Page/html_executive/"
+        // (เพิ่ม path สำหรับ role อื่นๆ ถ้ามี)
     };
 
     const userRole = users[email].role;
-    let redirectTo = hasSigned ? (userRole === 'admin' ? "admin_home.html" : "home.html") : "signature.html";
+    
+    // --- ส่วนที่แก้ไข: ทำให้ Logic การ Redirect ง่ายและถูกต้อง ---
+    let homePage = "home.html"; // ทุกบทบาทใช้ home.html เป็นหน้าหลัก
+    let redirectTo = hasSigned ? homePage : "signature.html";
     
     if (basePath[userRole]) {
         window.location.href = basePath[userRole] + redirectTo;
