@@ -21,9 +21,32 @@ function formatThaiDateTime(isoString) {
     }
 }
 
+function formatDate(isoString) {
+    if (!isoString) return '-';
+    try {
+        const date = new Date(isoString);
+        return date.toLocaleDateString('th-TH', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'Asia/Bangkok'
+        });
+    } catch (error) {
+        return 'Invalid Date';
+    }
+}
+
 function goBack() {
     // ใช้ history.back() เพื่อกลับไปยังหน้าที่แล้วในประวัติการเข้าชม
     window.history.back();
+}
+
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
 }
 
 // =================================================================
@@ -176,43 +199,76 @@ function generateFormSpecificHTML({ doc, user, advisors, programs, departments }
                 </ul>`;
             break;
 
-            case 'ฟอร์ม 2':
-        const mainAdvisorForm2 = advisors.find(a => a.advisor_id === user.main_advisor_id);
-        const coAdvisor1Form2 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
-        const coAdvisor2Form2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
+        case 'ฟอร์ม 2':
+            const mainAdvisorForm2 = advisors.find(a => a.advisor_id === user.main_advisor_id);
+            const coAdvisor1Form2 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+            const coAdvisor2Form2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
+            
+            html = `
+                <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
+                <ul class="info-list">
+                    <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
+                    <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
+                    <li><label>ระดับปริญญา:</label> <span>${user.degree || '-'}</span></li>
+                    <li><label>หลักสูตรและสาขาวิชา:</label> <span>${programName}</span></li>
+                    <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
+                    <li><label>เบอร์โทรศัพท์:</label> <span>${user.phone || '-'}</span></li>
+                </ul>
+                <hr class="subtle-divider">
+                <h4>หัวข้อวิทยานิพนธ์</h4>
+                <ul class="info-list">
+                    <li><label>ชื่อเรื่อง (ภาษาไทย):</label> <span>${doc.thesis_title_th || '-'}</span></li>
+                    <li><label>ชื่อเรื่อง (ภาษาอังกฤษ):</label> <span>${doc.thesis_title_en || '-'}</span></li>
+                </ul>
+                <hr class="subtle-divider">
+                <h4>ข้อมูลการลงทะเบียน</h4>
+                <ul class="info-list">
+                    <li><label>ภาคการศึกษาที่:</label> <span>${details.registration_semester || '-'}</span></li>
+                    <li><label>ปีการศึกษา:</label> <span>${details.registration_year || '-'}</span></li>
+                </ul>
+                <hr class="subtle-divider">
+                <h4>อาจารย์ที่ปรึกษา</h4>
+                <ul class="info-list">
+                    <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorForm2 ? `${mainAdvisorForm2.prefix_th}${mainAdvisorForm2.first_name_th} ${mainAdvisorForm2.last_name_th}`.trim() : '-'}</span></li>
+                    <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Form2 ? `${coAdvisor1Form2.prefix_th}${coAdvisor1Form2.first_name_th} ${coAdvisor1Form2.last_name_th}`.trim() : '-'}</span></li>
+                    <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Form2 ? `${coAdvisor2Form2.prefix_th}${coAdvisor2Form2.first_name_th} ${coAdvisor2Form2.last_name_th}`.trim() : '-'}</span></li>
+                </ul>
+            `;
+            break;
         
-        html = `
-            <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
-            <ul class="info-list">
-                <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
-                <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
-                <li><label>ระดับปริญญา:</label> <span>${user.degree || '-'}</span></li>
-                <li><label>หลักสูตรและสาขาวิชา:</label> <span>${programName}</span></li>
-                <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
-                <li><label>เบอร์โทรศัพท์:</label> <span>${user.phone || '-'}</span></li>
-            </ul>
-            <hr class="subtle-divider">
-            <h4>หัวข้อวิทยานิพนธ์</h4>
-            <ul class="info-list">
-                <li><label>ชื่อเรื่อง (ภาษาไทย):</label> <span>${doc.thesis_title_th || '-'}</span></li>
-                <li><label>ชื่อเรื่อง (ภาษาอังกฤษ):</label> <span>${doc.thesis_title_en || '-'}</span></li>
-            </ul>
-            <hr class="subtle-divider">
-            <h4>ข้อมูลการลงทะเบียน</h4>
-            <ul class="info-list">
-                <li><label>ภาคการศึกษาที่:</label> <span>${details.registration_semester || '-'}</span></li>
-                <li><label>ปีการศึกษา:</label> <span>${details.registration_year || '-'}</span></li>
-            </ul>
-            <hr class="subtle-divider">
-            <h4>อาจารย์ที่ปรึกษา</h4>
-            <ul class="info-list">
-                <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorForm2 ? `${mainAdvisorForm2.prefix_th}${mainAdvisorForm2.first_name_th} ${mainAdvisorForm2.last_name_th}`.trim() : '-'}</span></li>
-                <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Form2 ? `${coAdvisor1Form2.prefix_th}${coAdvisor1Form2.first_name_th} ${coAdvisor1Form2.last_name_th}`.trim() : '-'}</span></li>
-                <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Form2 ? `${coAdvisor2Form2.prefix_th}${coAdvisor2Form2.first_name_th} ${coAdvisor2Form2.last_name_th}`.trim() : '-'}</span></li>
-            </ul>
-        `;
-        break;
-        
+        case 'ฟอร์ม 3':
+            // --- เพิ่มส่วนนี้เข้ามาเพื่อค้นหาข้อมูลอาจารย์ทั้งหมด ---
+            const mainAdvisorForm3 = advisors.find(a => a.advisor_id === user.main_advisor_id);
+            const coAdvisor1Form3 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+            // ดึงข้อมูล อ.ที่ปรึกษาร่วม 2 จากรายละเอียดของเอกสาร (เหมือนฟอร์ม 2)
+            const coAdvisor2Form3 = advisors.find(a => a.advisor_id === doc.details?.co_advisor2_id);
+            
+            html = `
+                <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
+                <ul class="info-list">
+                    <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
+                    <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
+                    <li><label>ระดับปริญญา:</label> <span>${user.degree || '-'}</span></li>
+                    <li><label>หลักสูตรและสาขาวิชา:</label> <span>${programName}</span></li>
+                    <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
+                </ul>
+                <hr class="subtle-divider">
+                <h4>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
+                <ul class="info-list">
+                    <li><label>วันที่อนุมัติหัวข้อ:</label> <span>${formatDate(user.proposal_approval_date)}</span></li>
+                    <li><label>ชื่อเรื่อง (ภาษาไทย):</label> <span>${user.thesis_title_th || '-'}</span></li>
+                    <li><label>ชื่อเรื่อง (ภาษาอังกฤษ):</label> <span>${user.thesis_title_en || '-'}</span></li>
+                </ul>
+
+                <hr class="subtle-divider">
+                <h4>อาจารย์ที่ปรึกษา</h4>
+                <ul class="info-list">
+                    <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorForm3 ? `${mainAdvisorForm3.prefix_th}${mainAdvisorForm3.first_name_th} ${mainAdvisorForm3.last_name_th}`.trim() : '-'}</span></li>
+                    <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Form3 ? `${coAdvisor1Form3.prefix_th}${coAdvisor1Form3.first_name_th} ${coAdvisor1Form3.last_name_th}`.trim() : '-'}</span></li>
+                    <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Form3 ? `${coAdvisor2Form3.prefix_th}${coAdvisor2Form3.first_name_th} ${coAdvisor2Form3.last_name_th}`.trim() : '(ไม่มี)'}</span></li>
+                </ul>
+            `;
+            break;
         default:
             html = `<p class="loading-text">ไม่มีรายละเอียดสำหรับเอกสารประเภทนี้</p>`;
     }
@@ -296,45 +352,93 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
                 </div>`;
         }
     } else if (doc.type === 'ฟอร์ม 2') {
-    const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
-    const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
-    const coAdvisor2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
-    
-    const programChair = executives.find(e => e.role === 'ประธานหลักสูตร');
-    const deptHead = executives.find(e => e.role === 'หัวหน้าภาควิชา');
-    const asstDean = executives.find(e => e.role === 'ผู้ช่วยคณบดีงานบัณฑิตศึกษาและวิจัย');
-    const dean = executives.find(e => e.role === 'คณบดี');
+        const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
+        const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+        const coAdvisor2 = advisors.find(a => a.advisor_id === doc.details.co_advisor2_id);
+        
+        const programChair = executives.find(e => e.role === 'ประธานหลักสูตร');
+        const deptHead = executives.find(e => e.role === 'หัวหน้าภาควิชา');
+        const asstDean = executives.find(e => e.role === 'ผู้ช่วยคณบดีงานบัณฑิตศึกษาและวิจัย');
+        const dean = executives.find(e => e.role === 'คณบดี');
 
-    let advisorNames = [
-        mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
-        coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th}` : null,
-        coAdvisor2 ? `${coAdvisor2.prefix_th}${coAdvisor2.first_name_th}` : null
-    ].filter(Boolean).join(', ');
+        let advisorNames = [
+            mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
+            coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th}` : null,
+            coAdvisor2 ? `${coAdvisor2.prefix_th}${coAdvisor2.first_name_th}` : null
+        ].filter(Boolean).join(', ');
 
-    currentWorkflow = [
-        { name: 'ยื่นเอกสาร', status: 'รอตรวจ', actor: `${user.first_name_th} ${user.last_name_th}` },
-        { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ', actor: advisorNames || 'N/A' },
-        { name: 'ประธานหลักสูตรอนุมัติ', status: 'รอประธานหลักสูตรอนุมัติ', actor: programChair?.name },
-        { name: 'หัวหน้าภาควิชาอนุมัติ', status: 'รอหัวหน้าภาควิชาอนุมัติ', actor: deptHead?.name },
-        { name: 'ผู้ช่วยคณบดีฯ อนุมัติ', status: 'รอผู้ช่วยคณบดีฯ อนุมัติ', actor: asstDean?.name },
-        { name: 'คณบดีอนุมัติ', status: 'รอคณบดีอนุมัติ', actor: dean?.name },
-        { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว', actor: 'เจ้าหน้าที่' }
-    ];
+        currentWorkflow = [
+            { name: 'ยื่นเอกสาร', status: 'รอตรวจ', actor: `${user.first_name_th} ${user.last_name_th}` },
+            { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ', actor: advisorNames || 'N/A' },
+            { name: 'ประธานหลักสูตรอนุมัติ', status: 'รอประธานหลักสูตรอนุมัติ', actor: programChair?.name },
+            { name: 'หัวหน้าภาควิชาอนุมัติ', status: 'รอหัวหน้าภาควิชาอนุมัติ', actor: deptHead?.name },
+            { name: 'ผู้ช่วยคณบดีฯ อนุมัติ', status: 'รอผู้ช่วยคณบดีฯ อนุมัติ', actor: asstDean?.name },
+            { name: 'คณบดีอนุมัติ', status: 'รอคณบดีอนุมัติ', actor: dean?.name },
+            { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว', actor: 'เจ้าหน้าที่' }
+        ];
 
-    if (doc.status === 'รอตรวจ') {
-        actionHTML = `
-            <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
-            <ul class="actor-list">
-                ${mainAdvisor ? `<li><b>ที่ปรึกษาหลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th} (${mainAdvisor.email})</li>` : ''}
-                ${coAdvisor1 ? `<li><b>ที่ปรึกษาร่วม 1:</b> ${coAdvisor1.prefix_th}${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th} (${coAdvisor1.email})</li>` : ''}
-                ${coAdvisor2 ? `<li><b>ที่ปรึกษาร่วม 2:</b> ${coAdvisor2.prefix_th}${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th} (${coAdvisor2.email})</li>` : ''}
-            </ul>
-            <div class="action-buttons">
-                <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
-                <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
-            </div>`;
+        if (doc.status === 'รอตรวจ') {
+            actionHTML = `
+                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
+                <ul class="actor-list">
+                    ${mainAdvisor ? `<li><b>ที่ปรึกษาหลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th} (${mainAdvisor.email})</li>` : ''}
+                    ${coAdvisor1 ? `<li><b>ที่ปรึกษาร่วม 1:</b> ${coAdvisor1.prefix_th}${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th} (${coAdvisor1.email})</li>` : ''}
+                    ${coAdvisor2 ? `<li><b>ที่ปรึกษาร่วม 2:</b> ${coAdvisor2.prefix_th}${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th} (${coAdvisor2.email})</li>` : ''}
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                </div>`;
         } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
             actionHTML = `<p class="waiting-info">กำลังรอการอนุมัติจากอาจารย์ที่ปรึกษา...</p>`;
+        }
+    } 
+    // --- วางโค้ดส่วนนี้ต่อจากปีกกาของฟอร์ม 2 ---
+    else if (doc.type === 'ฟอร์ม 3') {
+        const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
+        const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+        const committeeChair = executives.find(e => e.role === 'ประธานกรรมการพิจารณาหัวข้อและเค้าโครงวิทยานิพนธ์');
+
+        let advisorNames = [
+            mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
+            coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th}` : null
+        ].filter(Boolean).join(', ');
+
+        currentWorkflow = [
+            { name: 'ยื่นเอกสาร', status: 'รอตรวจ', actor: `${user.first_name_th}` },
+            { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ', actor: advisorNames || 'N/A' },
+            { name: 'ประธานกรรมการฯ อนุมัติ', status: 'รอประธานกรรมการฯ อนุมัติ', actor: committeeChair?.name || 'N/A' },
+            { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว', actor: 'เจ้าหน้าที่' }
+        ];
+
+        if (doc.status === 'รอตรวจ') {
+            actionHTML = `
+                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษาทั้งหมด</p>
+                <ul class="actor-list">
+                    ${mainAdvisor ? `<li><b>หลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}</li>` : ''}
+                    ${coAdvisor1 ? `<li><b>ร่วม 1:</b> ${coAdvisor1.prefix_th}${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th}</li>` : ''}
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                </div>`;
+        } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
+            actionHTML = `
+                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ ประธานกรรมการฯ</p>
+                <ul class="actor-list">
+                    ${committeeChair ? `<li><b>ผู้รับผิดชอบ:</b> ${committeeChair.name}</li>` : '<li>ไม่พบข้อมูลประธานกรรมการฯ</li>'}
+                </ul>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_committee_chair', 'รอประธานกรรมการฯ อนุมัติ')">ส่งต่อ</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                </div>`;
+        } else if (doc.status === 'รอประธานกรรมการฯ อนุมัติ') {
+            actionHTML = `
+                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ยืนยันการอนุมัติขั้นสุดท้าย</p>
+                <div class="action-buttons">
+                    <button class="btn-approve" onclick="handleAdminAction('${doc.doc_id}', 'final_approve', 'อนุมัติแล้ว')">อนุมัติขั้นสุดท้าย</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                </div>`;
         }
     }
     
@@ -414,6 +518,8 @@ function handleAdminAction(docId, action, nextStatus) {
         docToUpdate.last_action_date = new Date().toISOString();
 
         if (action === 'reject') {
+            docToUpdate.status = 'ส่งกลับให้แก้ไข'; // อัปเดตสถานะให้ถูกต้อง
+            docToUpdate.comment = comment; // เพิ่มความคิดเห็นเข้าไปในเอกสาร
             rejectedDocs.push(docToUpdate); // ย้ายไป Rejected
         } else {
             waitingAdvisorDocs.push(docToUpdate); // ย้ายไป Waiting for Advisor
