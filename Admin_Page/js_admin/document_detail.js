@@ -237,11 +237,9 @@ function generateFormSpecificHTML({ doc, user, advisors, programs, departments }
             break;
         
         case 'ฟอร์ม 3':
-            // --- เพิ่มส่วนนี้เข้ามาเพื่อค้นหาข้อมูลอาจารย์ทั้งหมด ---
             const mainAdvisorForm3 = advisors.find(a => a.advisor_id === user.main_advisor_id);
             const coAdvisor1Form3 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
-            // ดึงข้อมูล อ.ที่ปรึกษาร่วม 2 จากรายละเอียดของเอกสาร (เหมือนฟอร์ม 2)
-            const coAdvisor2Form3 = advisors.find(a => a.advisor_id === doc.details?.co_advisor2_id);
+            const coAdvisor2Form3 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
             
             html = `
                 <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
@@ -259,13 +257,12 @@ function generateFormSpecificHTML({ doc, user, advisors, programs, departments }
                     <li><label>ชื่อเรื่อง (ภาษาไทย):</label> <span>${user.thesis_title_th || '-'}</span></li>
                     <li><label>ชื่อเรื่อง (ภาษาอังกฤษ):</label> <span>${user.thesis_title_en || '-'}</span></li>
                 </ul>
-
                 <hr class="subtle-divider">
                 <h4>อาจารย์ที่ปรึกษา</h4>
                 <ul class="info-list">
                     <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorForm3 ? `${mainAdvisorForm3.prefix_th}${mainAdvisorForm3.first_name_th} ${mainAdvisorForm3.last_name_th}`.trim() : '-'}</span></li>
                     <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Form3 ? `${coAdvisor1Form3.prefix_th}${coAdvisor1Form3.first_name_th} ${coAdvisor1Form3.last_name_th}`.trim() : '-'}</span></li>
-                    <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Form3 ? `${coAdvisor2Form3.prefix_th}${coAdvisor2Form3.first_name_th} ${coAdvisor2Form3.last_name_th}`.trim() : '(ไม่มี)'}</span></li>
+                    <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Form3 ? `${coAdvisor2Form3.prefix_th}${coAdvisor2Form3.first_name_th} ${coAdvisor2Form3.last_name_th}`.trim() : '-'}</span></li>
                 </ul>
             `;
             break;
@@ -354,7 +351,7 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
     } else if (doc.type === 'ฟอร์ม 2') {
         const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
         const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
-        const coAdvisor2 = advisors.find(a => a.advisor_id === doc.details.co_advisor2_id);
+        const coAdvisor2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
         
         const programChair = executives.find(e => e.role === 'ประธานหลักสูตร');
         const deptHead = executives.find(e => e.role === 'หัวหน้าภาควิชา');
@@ -397,11 +394,13 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
     else if (doc.type === 'ฟอร์ม 3') {
         const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
         const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+        const coAdvisor2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
         const committeeChair = executives.find(e => e.role === 'ประธานกรรมการพิจารณาหัวข้อและเค้าโครงวิทยานิพนธ์');
 
         let advisorNames = [
             mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
-            coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th}` : null
+            coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th}` : null,
+            coAdvisor2 ? `${coAdvisor2.prefix_th}${coAdvisor2.first_name_th}` : null,
         ].filter(Boolean).join(', ');
 
         currentWorkflow = [
@@ -417,6 +416,7 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
                 <ul class="actor-list">
                     ${mainAdvisor ? `<li><b>หลัก:</b> ${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}</li>` : ''}
                     ${coAdvisor1 ? `<li><b>ร่วม 1:</b> ${coAdvisor1.prefix_th}${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th}</li>` : ''}
+                    ${coAdvisor2 ? `<li><b>ร่วม 2:</b> ${coAdvisor2.prefix_th}${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th}</li>` : ''}
                 </ul>
                 <div class="action-buttons">
                     <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
