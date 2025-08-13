@@ -1,16 +1,12 @@
-const { response } = require("express"); 
-const {Pool} = require("pg"); 
-// ตั้งค่าการเชื่อมต่อ PostgreSQL
+import pkg from 'pg';
+const { Pool } = pkg;
+
 const pool = new Pool({
-    user: 'postgres',     
+user: 'postgres',     
     host: 'localhost',      
     database: 'LastProject',   
     password: '1234',      
-    port: 5432,                 
-  });
+    port: 5432,        
+});
 
-  pool.connect()
-  .then(() => console.log('Connected to PostgreSQL'))
-  .catch(err => console.error('PostgreSQL connection error:', err.message));
-
-module.exports = pool;
+export default pool;
