@@ -1,87 +1,40 @@
-// /login/index.js (Corrected Version)
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-document.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const errorMsg = document.getElementById("error-msg");
 
-    const email = document.getElementById("email").value.toLowerCase().trim();
-    const password = document.getElementById("password").value;
-    const errorMsg = document.getElementById("error-msg");
-    errorMsg.textContent = ""; // Clear previous error messages
+  try {
+    const response = await fetch('http://localhost:5000/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
 
-    async function fetchAllUsers() {
-        const roles = [
-            { file: "student.json", role: "student" },
-            { file: "admin.json", role: "admin" },
-            { file: "advisor.json", role: "advisor" },
-            { file: "external_professor.json", role: "external_professor" },
-            { file: "executive.json", role: "executive" }
-        ];
+    const data = await response.json();
 
-        const allUsers = {};
-        for (const roleItem of roles) {
-            try {
-                const response = await fetch(`/data/${roleItem.file}`);
-                if (!response.ok) {
-                    console.warn(`Could not fetch ${roleItem.file}: ${response.status}`);
-                    continue; 
-                }
-                const data = await response.json();
-                data.forEach(user => {
-                    if (user && typeof user.email === 'string') {
-                        allUsers[user.email.toLowerCase()] = { ...user, role: roleItem.role };
-                    }
-                });
-            } catch (error) {
-                console.error(`Error processing ${roleItem.file}:`, error);
-            }
-        }
-        return allUsers;
+    if (!response.ok) {
+      errorMsg.textContent = data.message;
+      return;
     }
 
-    const users = await fetchAllUsers();
+    // บันทึกข้อมูลลง localStorage
+    localStorage.setItem('user_id', data.id);
+    localStorage.setItem('current_user', data.email);
+    localStorage.setItem('role', data.role);
 
-    if (Object.keys(users).length === 0 && !email) {
-        errorMsg.textContent = "⚠️ ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาลองอีกครั้ง";
-        return;
-    }
+    // Redirect ตาม role
+    let redirectPath = '/';
+    if (data.role === 'student') redirectPath = '/User_Page/html_user/home.html';
+    else if (data.role === 'admin') redirectPath = '/Admin_Page/html_admin/home.html';
+    else if (data.role === 'advisor') redirectPath = '/Advisor_Page/html_advisor/home.html';
+    else if (data.role === 'executive') redirectPath = '/Executive_Page/html_executive/home.html';
 
-    if (!users[email]) {
-        errorMsg.textContent = "❌ ไม่พบบัญชีนี้ในระบบ!";
-        return;
-    }
+    window.location.href = redirectPath;
 
-    if (users[email].password !== password) {
-        errorMsg.textContent = "❌ รหัสผ่านไม่ถูกต้อง!";
-        return;
-    }
-
-    // --- ส่วนที่แก้ไข: บันทึกข้อมูลที่จำเป็นทั้งหมดลง localStorage ---
-    localStorage.setItem("current_user", email);
-    localStorage.setItem("role", users[email].role);
-    // เพิ่มการบันทึกชื่อ-นามสกุล เพื่อนำไปใช้ในอนาคตได้
-    const userFullName = `${users[email].prefix_th || ''}${users[email].first_name_th || users[email].fullname || ''} ${users[email].last_name_th || ''}`.trim();
-    localStorage.setItem("current_user_name", userFullName);
-
-
-    const hasSigned = localStorage.getItem(`${email}_signed`) === "true";
-
-    const basePath = {
-        student: "/User_Page/html_user/",
-        admin: "/Admin_Page/html_admin/",
-        advisor: "/Advisor_Page/html_advisor/",
-        // (เพิ่ม path สำหรับ role อื่นๆ ถ้ามี)
-    };
-
-    const userRole = users[email].role;
-    
-    // --- ส่วนที่แก้ไข: ทำให้ Logic การ Redirect ง่ายและถูกต้อง ---
-    let homePage = "home.html"; // ทุกบทบาทใช้ home.html เป็นหน้าหลัก
-    let redirectTo = hasSigned ? homePage : "signature.html";
-    
-    if (basePath[userRole]) {
-        window.location.href = basePath[userRole] + redirectTo;
-    } else {
-        console.error(`No base path defined for role: ${userRole}`);
-        errorMsg.textContent = "เกิดข้อผิดพลาด: ไม่สามารถกำหนดหน้าถัดไปสำหรับบทบาทนี้ได้";
-    }
+  } catch (err) {
+    console.error(err);
+    errorMsg.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์";
+  }
 });

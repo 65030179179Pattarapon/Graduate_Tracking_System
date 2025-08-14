@@ -94,3 +94,36 @@ export const getStudentById = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+// อัปโหลดรูปโปรไฟล์
+export const uploadProfileImage = async (req, res) => {
+  try {
+    const student_id = req.params.student_id;
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+
+    const profile_image_url = `/uploads/profile_images/${req.file.filename}`;
+    await pool.query('UPDATE students SET profile_image_url = $1 WHERE student_id = $2', [profile_image_url, student_id]);
+
+    res.json({ message: 'Profile image uploaded', url: profile_image_url });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// อัปโหลดลายเซ็น
+export const uploadSignatureFile = async (req, res) => {
+  try {
+    const student_id = req.params.student_id;
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+
+    const signature_url = `/uploads/signatures/${req.file.filename}`;
+    await pool.query('UPDATE students SET signature_base64 = $1 WHERE student_id = $2', [signature_url, student_id]);
+
+    res.json({ message: 'Signature uploaded', url: signature_url });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
