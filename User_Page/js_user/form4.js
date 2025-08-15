@@ -102,6 +102,57 @@ async function populateForm4() {
     }
 }
 
+/**
+ * [ฟังก์ชันใหม่] สร้างฟอร์มกรอกข้อมูลผู้ทรงคุณวุฒิแบบไดนามิก
+ * @param {number} count - จำนวนฟอร์มที่ต้องการสร้าง
+ */
+function generateEvaluatorForms(count) {
+    const container = document.getElementById('evaluators-container');
+    if (!container) return;
+
+    container.innerHTML = ''; // ล้างข้อมูลเก่าทิ้งทุกครั้ง
+
+    if (count > 0 && count <= 10) {
+        let formsHtml = '';
+        for (let i = 1; i <= count; i++) {
+            formsHtml += `
+                <div class="evaluator-card">
+                    <h4>ข้อมูลผู้ทรงคุณวุฒิ คนที่ ${i}</h4>
+                    <div class="form-group">
+                        <label for="evaluator-prefix-${i}">คำนำหน้า/ยศ/ตำแหน่ง*</label>
+                        <input type="text" id="evaluator-prefix-${i}" placeholder="เช่น ศาสตราจารย์ ดร., รองศาสตราจารย์, นาย" required>
+                    </div>
+                    <div class="info-grid">
+                        <div>
+                            <label for="evaluator-firstname-${i}">ชื่อ*</label>
+                            <input type="text" id="evaluator-firstname-${i}" placeholder="ชื่อจริง" required>
+                        </div>
+                        <div>
+                            <label for="evaluator-lastname-${i}">นามสกุล*</label>
+                            <input type="text" id="evaluator-lastname-${i}" placeholder="นามสกุล" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="evaluator-affiliation-${i}">สถาบัน/หน่วยงาน*</label>
+                        <input type="text" id="evaluator-affiliation-${i}" placeholder="เช่น สถาบันเทคโนโลยีพระจอมเกล้าเจ้าคุณทหารลาดกระบัง" required>
+                    </div>
+                    <div class="info-grid">
+                        <div>
+                            <label for="evaluator-phone-${i}">เบอร์โทรศัพท์*</label>
+                            <input type="tel" id="evaluator-phone-${i}" placeholder="08XXXXXXXX" required>
+                        </div>
+                        <div>
+                            <label for="evaluator-email-${i}">อีเมล*</label>
+                            <input type="email" id="evaluator-email-${i}" placeholder="example@email.com" required>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = formsHtml;
+    }
+}
+
 // =================================================================
 // ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมด)
 // =================================================================
@@ -148,19 +199,40 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Interactive "Other" Checkbox Logic ---
-    const otherCheckbox = document.getElementById('other-checkbox');
-    const otherDocText = document.getElementById('other-doc-text');
-    if (otherCheckbox && otherDocText) {
-        otherCheckbox.addEventListener('change', function() {
-            otherDocText.disabled = !this.checked;
-            if (!this.checked) {
-                otherDocText.value = '';
+ // --- [แก้ไข] Interactive Checkbox Logic (สำหรับช่องจำนวน) ---
+    const docTypeCheckboxes = document.querySelectorAll('input[name="document-type"]');
+    docTypeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            let quantityInput;
+            if (this.id === 'other-checkbox') {
+                const otherText = document.getElementById('other-doc-text');
+                otherText.disabled = !this.checked;
+                 if (!this.checked) otherText.value = '';
+                quantityInput = this.closest('.checkbox-item').querySelector('.quantity-input');
+            } else {
+                quantityInput = this.closest('.checkbox-item').querySelector('.quantity-input');
             }
+
+            if(quantityInput) {
+                quantityInput.disabled = !this.checked;
+                if (!this.checked) {
+                    quantityInput.value = '1';
+                }
+            }
+        });
+    });
+
+
+     // --- [Logic ใหม่] Event Listener สำหรับสร้างฟอร์มไดนามิก ---
+    const numEvaluatorsInput = document.getElementById('num-evaluators');
+    if (numEvaluatorsInput) {
+        numEvaluatorsInput.addEventListener('input', () => {
+            const count = parseInt(numEvaluatorsInput.value, 10);
+            generateEvaluatorForms(count);
         });
     }
 
-    // --- Form 4 Submission Logic ---
+ // --- [แก้ไข] Form 4 Submission Logic ---
     const form4 = document.getElementById("form4");
     if (form4) {
         form4.addEventListener("submit", (e) => {
@@ -169,23 +241,33 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // --- Collect form data ---
             const numEvaluators = document.getElementById('num-evaluators').value;
-            const numDocs = document.getElementById('num-docs').value;
             const studentComment = document.getElementById('student-comment')?.value.trim() || "";
-            const selectedDocTypes = Array.from(document.querySelectorAll('input[name="document-type"]:checked'))
-                .map(cb => {
-                    if (cb.id === 'other-checkbox') {
-                        const otherText = document.getElementById('other-doc-text').value.trim();
-                        return otherText ? `อื่นๆ: ${otherText}` : null;
-                    }
-                    return cb.value;
-                }).filter(Boolean); // กรองค่า null หรือ empty string ออกไป
+            
+            // --- [Logic ใหม่] Collect data from checkboxes and quantity inputs ---
+            const documentTypesData = [];
+            const checkedBoxes = document.querySelectorAll('input[name="document-type"]:checked');
+            checkedBoxes.forEach(cb => {
+                const itemWrapper = cb.closest('.checkbox-item');
+                const quantityInput = itemWrapper.querySelector('.quantity-input');
+                const quantity = parseInt(quantityInput.value, 10) || 1;
 
-            // --- Validation ---
-            if (!numEvaluators || numEvaluators < 1) {
-                alert("กรุณาระบุจำนวนผู้ทรงคุณวุฒิ");
-                return;
-            }
-            if (selectedDocTypes.length === 0) {
+                let type = cb.value;
+                if (cb.id === 'other-checkbox') {
+                    const otherText = document.getElementById('other-doc-text').value.trim();
+                    if (otherText) {
+                        type = `อื่นๆ: ${otherText}`;
+                    } else {
+                        type = null; // ตั้งค่าเป็น null ถ้า "อื่นๆ" ถูกติ๊กแต่ไม่มีข้อความ
+                    }
+                }
+                
+                if (type) { // เพิ่ม object ต่อเมื่อมี type ที่ถูกต้องเท่านั้น
+                    documentTypesData.push({ type, quantity });
+                }
+            });
+
+            // --- Validation (ปรับปรุงใหม่) ---
+            if (documentTypesData.length === 0) {
                 alert("กรุณาเลือกประเภทของเครื่องมือที่ต้องการประเมินอย่างน้อย 1 รายการ");
                 return;
             }
@@ -193,12 +275,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert("กรุณาระบุรายละเอียดในช่อง 'อื่นๆ'");
                 return;
             }
-            if (!numDocs || numDocs < 1) {
-                alert("กรุณาระบุจำนวนหนังสือขอเชิญที่ต้องการ");
+            if (!numEvaluators || numEvaluators < 1) {
+                alert("กรุณาระบุจำนวนผู้ทรงคุณวุฒิ");
                 return;
             }
 
-            // --- Construct submission object ---
+            // --- Collect data from dynamic forms and validate ---
+            const evaluatorsData = [];
+            for (let i = 1; i <= numEvaluators; i++) {
+                const prefix = document.getElementById(`evaluator-prefix-${i}`).value.trim();
+                const firstname = document.getElementById(`evaluator-firstname-${i}`).value.trim();
+                const lastname = document.getElementById(`evaluator-lastname-${i}`).value.trim();
+                const affiliation = document.getElementById(`evaluator-affiliation-${i}`).value.trim();
+                const phone = document.getElementById(`evaluator-phone-${i}`).value.trim();
+                const email = document.getElementById(`evaluator-email-${i}`).value.trim();
+                if (!prefix || !firstname || !lastname || !affiliation || !phone || !email) {
+                    alert(`กรุณากรอกข้อมูลผู้ทรงคุณวุฒิคนที่ ${i} ให้ครบถ้วน`);
+                    return;
+                }
+                evaluatorsData.push({ prefix, firstName: firstname, lastName: lastname, affiliation, phone, email });
+            }
+
+            // --- Construct submission object (ปรับปรุงใหม่) ---
             const submissionData = {
                 doc_id: `form4_${userEmail}_${Date.now()}`,
                 type: "ฟอร์ม 4",
@@ -206,9 +304,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 student_email: userEmail,
                 student_id: document.getElementById('student-id').value,
                 details: {
-                    num_evaluators: parseInt(numEvaluators, 10),
-                    num_letters: parseInt(numDocs, 10),
-                    document_types: selectedDocTypes
+                    document_types: documentTypesData, // **ส่งข้อมูลใหม่**
+                    evaluators: evaluatorsData
                 },
                 student_comment: studentComment,
                 submitted_date: new Date().toISOString(),
@@ -220,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
             existingPendingDocs.push(submissionData);
             localStorage.setItem('localStorage_pendingDocs', JSON.stringify(existingPendingDocs));
             
-            console.log("Form 4 Submission Data:", submissionData);
+            console.log("Form 4 Submission Data (Latest):", submissionData);
             alert("✅ ยืนยันและส่งแบบฟอร์มเรียบร้อยแล้ว!");
             window.location.href = "/User_Page/html_user/status.html";
         });
