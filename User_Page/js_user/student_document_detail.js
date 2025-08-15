@@ -100,8 +100,7 @@ async function loadDocumentDetail() {
             advisors,
             externalProfessors,
             programs,
-            departments,
-            allDocs // ส่ง allDocs ไปด้วยเพื่อใช้ค้นหา Form 2
+            departments
         };
 
         // แสดงผลข้อมูลในส่วนต่างๆ
@@ -134,7 +133,7 @@ function renderSidebar({ doc }) {
     const statusText = document.getElementById('doc-status-main');
     
     const statusClass = (doc.status === 'อนุมัติแล้ว') ? 'approved' : 
-                          (doc.status === 'ไม่อนุมัติ' || doc.status === 'ตีกลับ') ? 'rejected' : 'pending';
+                        (doc.status === 'ไม่อนุมัติ' || doc.status === 'ตีกลับ') ? 'rejected' : 'pending';
     
     statusText.textContent = doc.status;
     statusCard.className = `status-card ${statusClass}`;
@@ -160,7 +159,7 @@ function renderSidebar({ doc }) {
 }
 
 /**
- * แสดงผลเนื้อหาหลักในคอลัมน์ซ้าย
+ * แสดงผลเนื้อหาหลักในคอลัมน์ซ้าย (ส่วนที่แก้ไข)
  */
 function renderMainContent(payload) {
     const { doc } = payload;
@@ -175,6 +174,7 @@ function renderMainContent(payload) {
     if (filesToRender.length > 0 && doc.type === 'ฟอร์ม 6') {
         const fileMap = {};
         
+        // --- ส่วนที่แก้ไข: เปลี่ยนจาก if/else if เป็น if แยกกัน ---
         filesToRender.forEach(f => {
             if (f.type.includes('วิทยานิพนธ์ฉบับสมบูรณ์')) fileMap['thesisDraft'] = f;
             if (f.type.includes('บทคัดย่อ (ไทย)')) fileMap['abstractTh'] = f;
@@ -188,7 +188,10 @@ function renderMainContent(payload) {
         const createFileHTML = (file) => file ? `<a href="#" class="file-link" onclick="alert('Open ${file.name}')">${file.name}</a>` : '<span>-</span>';
 
         filesList.innerHTML = `
-            <li><label>วิทยานิพนธ์ฉบับสมบูรณ์:</label>${createFileHTML(fileMap.thesisDraft)}</li>
+            <li>
+                <label>วิทยานิพนธ์ฉบับสมบูรณ์:</label>
+                ${createFileHTML(fileMap.thesisDraft)}
+            </li>
             <li>
                 <label>บทคัดย่อ (Abstract):</label>
                 <div class="file-sub-group">
@@ -203,10 +206,17 @@ function renderMainContent(payload) {
                     <span class="sub-label"><b>ไฟล์ภาษาอังกฤษ:</b> ${createFileHTML(fileMap.tocEn)}</span>
                 </div>
             </li>
-            <li><label>หลักฐานการตอบรับการตีพิมพ์:</label>${createFileHTML(fileMap.publicationProof)}</li>
-            <li><label>หลักฐานการตรวจสอบผลการเรียน:</label>${createFileHTML(fileMap.gradeCheckProof)}</li>
+            <li>
+                <label>หลักฐานการตอบรับการตีพิมพ์:</label>
+                ${createFileHTML(fileMap.publicationProof)}
+            </li>
+            <li>
+                <label>หลักฐานการตรวจสอบผลการเรียน:</label>
+                ${createFileHTML(fileMap.gradeCheckProof)}
+            </li>
         `;
     } else if (filesToRender.length > 0) {
+        // Logic เดิมสำหรับฟอร์มอื่นๆ
         filesToRender.forEach(file => {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -226,14 +236,15 @@ function renderMainContent(payload) {
 /**
  * สร้าง HTML สำหรับแสดงรายละเอียดตามประเภทฟอร์ม (ฉบับสมบูรณ์)
  */
-//              V V V V V V V V V V V V V V V V V V V V V V V V V V V
-// --- [จุดที่แก้ไข] เพิ่ม externalProfessors เข้าไปในรายการ ---
 function generateFormSpecificHTML({ doc, user, programs, departments, advisors, allDocs, externalProfessors }) {
+    if (!user) {
+        return '<h4><i class="fas fa-exclamation-triangle"></i> ไม่สามารถแสดงข้อมูลได้</h4><p>ไม่พบข้อมูลผู้ใช้งานที่เชื่อมโยงกับเอกสารนี้</p>';
+    }
+
     let html = '';
     const details = doc.details || {};
-
-    const programName = user ? programs.find(p => p.id === user.program_id)?.name || '-' : '-';
-    const departmentName = user ? departments.find(d => d.id === user.department_id)?.name || '-' : '-';
+    const programName = programs.find(p => p.id === user.program_id)?.name || '-';
+    const departmentName = departments.find(d => d.id === user.department_id)?.name || '-';
 
     switch(doc.type) {
         case 'ฟอร์ม 1': {
@@ -265,7 +276,6 @@ function generateFormSpecificHTML({ doc, user, programs, departments, advisors, 
             const mainAdvisorForm2 = advisors.find(a => a.advisor_id === user.main_advisor_id);
             const coAdvisor1Form2 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
             const coAdvisor2Form2 = advisors.find(a => a.advisor_id === doc.selected_co_advisor2_id);
-            
             html = `
                 <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
                 <ul class="info-list">
@@ -299,46 +309,56 @@ function generateFormSpecificHTML({ doc, user, programs, departments, advisors, 
         }
 
         case 'ฟอร์ม 3': {
-            const chairId = doc.approvers?.program_chair_id;
-            const chair = advisors.find(a => a.advisor_id === chairId);
-            const chairName = chair ? `${chair.prefix_th} ${chair.first_name_th} ${chair.last_name_th}`.trim() : 'ยังไม่ได้ระบุ';
-            const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
-            const mainAdvisorName = mainAdvisor ? `${mainAdvisor.prefix_th} ${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}`.trim() : 'ไม่มีข้อมูล';
-            const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
-            const coAdvisor1Name = coAdvisor1 ? `${coAdvisor1.prefix_th} ${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th}`.trim() : 'ไม่มี';
-            const approvedForm2 = allDocs.find(d => d.student_email === user.email && d.type === 'ฟอร์ม 2' && d.status !== 'รอตรวจ');
-            let coAdvisor2Name = 'ไม่มี';
-            if (approvedForm2 && approvedForm2.selected_co_advisor2_id) {
-                const coAdvisor2 = advisors.find(a => a.advisor_id === approvedForm2.selected_co_advisor2_id);
-                if (coAdvisor2) {
-                    coAdvisor2Name = `${coAdvisor2.prefix_th} ${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th}`.trim();
+            try {
+                // ค้นหาข้อมูลโดยมีการป้องกันค่า null/undefined ในทุกขั้นตอน
+                const chairId = doc.approvers?.program_chair_id;
+                const chair = (advisors || []).find(a => a?.advisor_id === chairId);
+                const chairName = chair ? `${chair.prefix_th || ''} ${chair.first_name_th || ''} ${chair.last_name_th || ''}`.trim() : 'ยังไม่ได้ระบุ';
+
+                const mainAdvisor = (advisors || []).find(a => a?.advisor_id === user.main_advisor_id);
+                const mainAdvisorName = mainAdvisor ? `${mainAdvisor.prefix_th || ''} ${mainAdvisor.first_name_th || ''} ${mainAdvisor.last_name_th || ''}`.trim() : 'ไม่มีข้อมูล';
+
+                const coAdvisor1 = (advisors || []).find(a => a?.advisor_id === user.co_advisor1_id);
+                const coAdvisor1Name = coAdvisor1 ? `${coAdvisor1.prefix_th || ''} ${coAdvisor1.first_name_th || ''} ${coAdvisor1.last_name_th || ''}`.trim() : 'ไม่มี';
+
+                const approvedForm2 = (allDocs || []).find(d => d?.student_email === user.email && d?.type === 'ฟอร์ม 2' && d?.status !== 'รอตรวจ');
+                let coAdvisor2Name = 'ไม่มี';
+                if (approvedForm2 && approvedForm2.selected_co_advisor2_id) {
+                    const coAdvisor2 = (advisors || []).find(a => a?.advisor_id === approvedForm2.selected_co_advisor2_id);
+                    if (coAdvisor2) {
+                        coAdvisor2Name = `${coAdvisor2.prefix_th || ''} ${coAdvisor2.first_name_th || ''} ${coAdvisor2.last_name_th || ''}`.trim();
+                    }
                 }
+
+                html = `
+                    <h4><i class="fas fa-user icon-prefix"></i>ข้อมูลผู้ยื่นคำร้อง</h4>
+                    <ul class="info-list">
+                        <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th || ''} ${user.first_name_th || ''} ${user.last_name_th || ''}</span></li>
+                        <li><label>รหัสนักศึกษา:</label> <span>${user.student_id || '-'}</span></li>
+                        <li><label>ระดับการศึกษา:</label> <span>${user.degree || '-'}</span></li>
+                        <li><label>หลักสูตร:</label> <span>${programName}</span></li>
+                        <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
+                    </ul>
+                    <hr class="subtle-divider">
+                    <h4><i class="fas fa-book icon-prefix"></i>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
+                    <ul class="info-list">
+                        <li><label>วันที่อนุมัติ:</label> <span>${formatThaiDateTime(user.proposal_approval_date)}</span></li>
+                        <li><label>ภาษาไทย:</label> <span class="thesis-title">${user.thesis_title_th || '-'}</span></li>
+                        <li><label>ภาษาอังกฤษ:</label> <span class="thesis-title">${user.thesis_title_en || '-'}</span></li>
+                    </ul>
+                    <hr class="subtle-divider">
+                    <h4><i class="fas fa-users icon-prefix"></i>อาจารย์ผู้รับผิดชอบ</h4>
+                    <ul class="info-list">
+                        <li><label>ประธานหลักสูตร:</label> <span>${chairName}</span></li>
+                        <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorName}</span></li>
+                        <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Name}</span></li>
+                        <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Name}</span></li>
+                    </ul>
+                `;
+            } catch (e) {
+                console.error("CRITICAL ERROR inside 'case ฟอร์ม 3':", e);
+                html = `<h4>เกิดข้อผิดพลาดร้ายแรงในการแสดงผลฟอร์ม 3</h4><p>กรุณาตรวจสอบ Console (F12) เพื่อดูรายละเอียดปัญหา</p>`;
             }
-            html = `
-                <h4><i class="fas fa-user icon-prefix"></i>ข้อมูลผู้ยื่นคำร้อง</h4>
-                <ul class="info-list">
-                    <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
-                    <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
-                    <li><label>ระดับการศึกษา:</label> <span>${user.degree || '-'}</span></li>
-                    <li><label>หลักสูตร:</label> <span>${programName}</span></li>
-                    <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
-                </ul>
-                <hr class="subtle-divider">
-                <h4><i class="fas fa-book icon-prefix"></i>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
-                <ul class="info-list">
-                    <li><label>วันที่อนุมัติ:</label> <span>${formatThaiDateTime(user.proposal_approval_date)}</span></li>
-                    <li><label>ภาษาไทย:</label> <span class="thesis-title">${user.thesis_title_th || '-'}</span></li>
-                    <li><label>ภาษาอังกฤษ:</label> <span class="thesis-title">${user.thesis_title_en || '-'}</span></li>
-                </ul>
-                <hr class="subtle-divider">
-                <h4><i class="fas fa-users icon-prefix"></i>อาจารย์ผู้รับผิดชอบ</h4>
-                <ul class="info-list">
-                    <li><label>ประธานหลักสูตร:</label> <span>${chairName}</span></li>
-                    <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorName}</span></li>
-                    <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Name}</span></li>
-                    <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Name}</span></li>
-                </ul>
-            `;
             break;
         }
 
@@ -392,7 +412,7 @@ function generateFormSpecificHTML({ doc, user, programs, departments, advisors, 
             break;
         }
             
-        case 'ฟอร์ม 5': {
+        case 'ฟอร์ม 5':
             html = `
                 <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
                 <ul class="info-list">
@@ -417,9 +437,8 @@ function generateFormSpecificHTML({ doc, user, programs, departments, advisors, 
                     <li><label>จำนวนหนังสือขออนุญาต:</label> <span>${details.num_letters || '-'} ฉบับ</span></li>
                 </ul>`;
             break;
-        }
 
-        case 'ฟอร์ม 6': {
+        case 'ฟอร์ม 6':
             const chair = externalProfessors.find(p => p.email === details.committee?.chair_email);
             const member1 = advisors.find(a => a.advisor_id === details.committee?.member1_id);
             const member2 = advisors.find(a => a.advisor_id === details.committee?.member2_id);
@@ -461,9 +480,8 @@ function generateFormSpecificHTML({ doc, user, programs, departments, advisors, 
                 </ul>
             `;
             break;
-        }
             
-        case 'ผลสอบภาษาอังกฤษ': {
+        case 'ผลสอบภาษาอังกฤษ':
             html = `
                 <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
                 <ul class="info-list">
@@ -489,8 +507,6 @@ function generateFormSpecificHTML({ doc, user, programs, departments, advisors, 
                 </ul>
             `;
             break;
-        }
-
         default:
             html = `<p class="loading-text">ไม่มีรายละเอียดเพิ่มเติมสำหรับเอกสารประเภทนี้</p>`;
     }
@@ -515,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dropdownMenu) dropdownMenu.classList.toggle('show');
         });
     });
-
+ 
     window.addEventListener('click', function(event) {
         if (!event.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown-menu.show').forEach(menu => {

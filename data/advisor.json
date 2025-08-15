@@ -205,7 +205,8 @@
     "supervising_levels": ["ปริญญาโท"],
     "profile_image_url": "/assets/images/advisors/adv008.png",
     "research_interests": ["Educational Multimedia", "Web-based Learning Platforms"],
-    "publications_link": "https://example.com/duangporn_pubs"
+    "publications_link": "https://example.com/duangporn_pubs",
+    "position": "ประธานหลักสูตร"
   },
   {
     "email": "nattapong.s@kmitl.ac.th",
@@ -231,7 +232,8 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv009.png",
     "research_interests": ["Curriculum Development", "Instructional Design"],
-    "publications_link": ""
+    "publications_link": "",
+    "position": "ประธานหลักสูตร"
   },
   {
     "email": "siriporn.c@kmitl.ac.th",
@@ -257,6 +259,7 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv010.png",
     "research_interests": ["Agricultural Biotechnology", "Plant Genetic Engineering for Education"],
-    "publications_link": "https://example.com/siriporn_pubs"
+    "publications_link": "https://example.com/siriporn_pubs",
+    "position": "ประธานหลักสูตร"
   }
 ]
