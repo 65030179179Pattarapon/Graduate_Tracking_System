@@ -100,7 +100,8 @@ async function loadDocumentDetail() {
             advisors,
             externalProfessors,
             programs,
-            departments
+            departments,
+            allDocs // ส่ง allDocs ไปด้วยเพื่อใช้ค้นหา Form 2
         };
 
         // แสดงผลข้อมูลในส่วนต่างๆ
@@ -133,7 +134,7 @@ function renderSidebar({ doc }) {
     const statusText = document.getElementById('doc-status-main');
     
     const statusClass = (doc.status === 'อนุมัติแล้ว') ? 'approved' : 
-                        (doc.status === 'ไม่อนุมัติ' || doc.status === 'ตีกลับ') ? 'rejected' : 'pending';
+                          (doc.status === 'ไม่อนุมัติ' || doc.status === 'ตีกลับ') ? 'rejected' : 'pending';
     
     statusText.textContent = doc.status;
     statusCard.className = `status-card ${statusClass}`;
@@ -159,7 +160,7 @@ function renderSidebar({ doc }) {
 }
 
 /**
- * แสดงผลเนื้อหาหลักในคอลัมน์ซ้าย (ส่วนที่แก้ไข)
+ * แสดงผลเนื้อหาหลักในคอลัมน์ซ้าย
  */
 function renderMainContent(payload) {
     const { doc } = payload;
@@ -171,52 +172,7 @@ function renderMainContent(payload) {
     filesList.innerHTML = '';
     const filesToRender = doc.files || [];
 
-    if (filesToRender.length > 0 && doc.type === 'ฟอร์ม 6') {
-        const fileMap = {};
-        
-        // --- ส่วนที่แก้ไข: เปลี่ยนจาก if/else if เป็น if แยกกัน ---
-        filesToRender.forEach(f => {
-            if (f.type.includes('วิทยานิพนธ์ฉบับสมบูรณ์')) fileMap['thesisDraft'] = f;
-            if (f.type.includes('บทคัดย่อ (ไทย)')) fileMap['abstractTh'] = f;
-            if (f.type.includes('บทคัดย่อ (อังกฤษ)')) fileMap['abstractEn'] = f;
-            if (f.type.includes('สารบัญ (ไทย)')) fileMap['tocTh'] = f;
-            if (f.type.includes('สารบัญ (อังกฤษ)')) fileMap['tocEn'] = f;
-            if (f.type.includes('หลักฐานการตอบรับการตีพิมพ์')) fileMap['publicationProof'] = f;
-            if (f.type.includes('หลักฐานการตรวจสอบผลการเรียน')) fileMap['gradeCheckProof'] = f;
-        });
-
-        const createFileHTML = (file) => file ? `<a href="#" class="file-link" onclick="alert('Open ${file.name}')">${file.name}</a>` : '<span>-</span>';
-
-        filesList.innerHTML = `
-            <li>
-                <label>วิทยานิพนธ์ฉบับสมบูรณ์:</label>
-                ${createFileHTML(fileMap.thesisDraft)}
-            </li>
-            <li>
-                <label>บทคัดย่อ (Abstract):</label>
-                <div class="file-sub-group">
-                    <span class="sub-label"><b>ไฟล์ภาษาไทย:</b> ${createFileHTML(fileMap.abstractTh)}</span>
-                    <span class="sub-label"><b>ไฟล์ภาษาอังกฤษ:</b> ${createFileHTML(fileMap.abstractEn)}</span>
-                </div>
-            </li>
-            <li>
-                <label>สารบัญทั้งหมด:</label>
-                <div class="file-sub-group">
-                    <span class="sub-label"><b>ไฟล์ภาษาไทย:</b> ${createFileHTML(fileMap.tocTh)}</span>
-                    <span class="sub-label"><b>ไฟล์ภาษาอังกฤษ:</b> ${createFileHTML(fileMap.tocEn)}</span>
-                </div>
-            </li>
-            <li>
-                <label>หลักฐานการตอบรับการตีพิมพ์:</label>
-                ${createFileHTML(fileMap.publicationProof)}
-            </li>
-            <li>
-                <label>หลักฐานการตรวจสอบผลการเรียน:</label>
-                ${createFileHTML(fileMap.gradeCheckProof)}
-            </li>
-        `;
-    } else if (filesToRender.length > 0) {
-        // Logic เดิมสำหรับฟอร์มอื่นๆ
+    if (filesToRender.length > 0) {
         filesToRender.forEach(file => {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -236,11 +192,11 @@ function renderMainContent(payload) {
 /**
  * สร้าง HTML สำหรับแสดงรายละเอียดตามประเภทฟอร์ม (ฉบับสมบูรณ์)
  */
-function generateFormSpecificHTML({ doc, user, advisors, externalProfessors, programs, departments }) {
+function generateFormSpecificHTML({ doc, user, programs, departments, advisors, allDocs }) {
     let html = '';
     const details = doc.details || {};
 
-    // ข้อมูลพื้นฐานจะถูกสร้างใหม่ในแต่ละ case เพื่อความยืดหยุ่น
+    // ดึงชื่อ program และ department มาเตรียมไว้
     const programName = user ? programs.find(p => p.id === user.program_id)?.name || '-' : '-';
     const departmentName = user ? departments.find(d => d.id === user.department_id)?.name || '-' : '-';
 
@@ -306,27 +262,87 @@ function generateFormSpecificHTML({ doc, user, advisors, externalProfessors, pro
             break;
 
         case 'ฟอร์ม 3':
-            html = `
-                <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
-                <ul class="info-list">
-                    <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
-                    <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
-                    <li><label>ระดับการศึกษา:</label> <span>${user.degree || '-'}</span></li>
-                    <li><label>หลักสูตร:</label> <span>${programName}</span></li>
-                    <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
-                </ul>
-                <hr class="subtle-divider">
-                <h4>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
-                <ul class="info-list">
-                    <li><label>วันที่อนุมัติ:</label> <span>${formatThaiDateTime(user.proposal_approval_date)}</span></li>
-                    <li><label>ภาษาไทย:</label> <span>${user.thesis_title_th || '-'}</span></li>
-                    <li><label>ภาษาอังกฤษ:</label> <span>${user.thesis_title_en || '-'}</span></li>
-                </ul>`;
-            break;
+                    // 1. ค้นหาประธานหลักสูตร
+                    const chairId = doc.approvers?.program_chair_id;
+                    const chair = advisors.find(a => a.advisor_id === chairId);
+                    const chairName = chair ? `${chair.prefix_th} ${chair.first_name_th} ${chair.last_name_th}`.trim() : 'ยังไม่ได้ระบุ';
+
+                    // 2. ค้นหาอาจารย์ที่ปรึกษาหลัก
+                    const mainAdvisor = advisors.find(a => a.advisor_id === user.main_advisor_id);
+                    const mainAdvisorName = mainAdvisor ? `${mainAdvisor.prefix_th} ${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}`.trim() : 'ไม่มีข้อมูล';
+
+                    // 3. ค้นหาอาจารย์ที่ปรึกษาร่วม 1
+                    const coAdvisor1 = advisors.find(a => a.advisor_id === user.co_advisor1_id);
+                    const coAdvisor1Name = coAdvisor1 ? `${coAdvisor1.prefix_th} ${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th}`.trim() : 'ไม่มี';
+
+                    // 4. ค้นหาอาจารย์ที่ปรึกษาร่วม 2 (จากฟอร์ม 2)
+                    const approvedForm2 = allDocs.find(d => d.student_email === user.email && d.type === 'ฟอร์ม 2' && d.status !== 'รอตรวจ');
+                    let coAdvisor2Name = 'ไม่มี';
+                    if (approvedForm2 && approvedForm2.selected_co_advisor2_id) {
+                        const coAdvisor2 = advisors.find(a => a.advisor_id === approvedForm2.selected_co_advisor2_id);
+                        if (coAdvisor2) {
+                            coAdvisor2Name = `${coAdvisor2.prefix_th} ${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th}`.trim();
+                        }
+                    }
+
+                    html = `
+                        <h4><i class="fas fa-user icon-prefix"></i>ข้อมูลผู้ยื่นคำร้อง</h4>
+                        <ul class="info-list">
+                            <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
+                            <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
+                            <li><label>ระดับการศึกษา:</label> <span>${user.degree || '-'}</span></li>
+                            <li><label>หลักสูตร:</label> <span>${programName}</span></li>
+                            <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
+                        </ul>
+                        <hr class="subtle-divider">
+
+                        <h4><i class="fas fa-book icon-prefix"></i>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
+                        <ul class="info-list">
+                            <li><label>วันที่อนุมัติ:</label> <span>${formatThaiDateTime(user.proposal_approval_date)}</span></li>
+                            <li><label>ภาษาไทย:</label> <span class="thesis-title">${user.thesis_title_th || '-'}</span></li>
+                            <li><label>ภาษาอังกฤษ:</label> <span class="thesis-title">${user.thesis_title_en || '-'}</span></li>
+                        </ul>
+                        <hr class="subtle-divider">
+
+                        <h4><i class="fas fa-users icon-prefix"></i>อาจารย์ผู้รับผิดชอบ</h4>
+                        <ul class="info-list">
+                            <li><label>ประธานหลักสูตร:</label> <span>${chairName}</span></li>
+                            <li><label>อาจารย์ที่ปรึกษาหลัก:</label> <span>${mainAdvisorName}</span></li>
+                            <li><label>อาจารย์ที่ปรึกษาร่วม 1:</label> <span>${coAdvisor1Name}</span></li>
+                            <li><label>อาจารย์ที่ปรึกษาร่วม 2:</label> <span>${coAdvisor2Name}</span></li>
+                        </ul>
+                    `;
+                    break;
 
         case 'ฟอร์ม 4':
-             html = `
-                <h4>ข้อมูลผู้ยื่นคำร้อง</h4>
+            // === [ส่วนที่แก้ไข] สร้าง HTML สำหรับแสดงรายการเครื่องมือพร้อมจำนวน ===
+            let docTypesHtml = '<p>ไม่มีข้อมูล</p>';
+            if (details.document_types && Array.isArray(details.document_types) && details.document_types.length > 0) {
+                docTypesHtml = details.document_types.map(item => 
+                    `<li><label>${item.type}:</label> <span>${item.quantity} ฉบับ</span></li>`
+                ).join('');
+            }
+
+            // === [ส่วนที่แก้ไข] สร้าง HTML สำหรับแสดงรายชื่อผู้ทรงคุณวุฒิ ===
+            let evaluatorsHtml = '';
+            if (details.evaluators && Array.isArray(details.evaluators) && details.evaluators.length > 0) {
+                evaluatorsHtml = details.evaluators.map((evaluator, index) => `
+                    <div class="evaluator-detail-card">
+                        <h5>ผู้ทรงคุณวุฒิคนที่ ${index + 1}</h5>
+                        <ul class="info-list compact">
+                            <li><label>คำนำหน้า/ยศ/ตำแหน่ง:</label> <span>${evaluator.prefix}</span></li>
+                            <li><label>ชื่อ-สกุล:</label> <span>${evaluator.firstName} ${evaluator.lastName}</span></li>
+                            <li><label>สถาบัน/หน่วยงาน:</label> <span>${evaluator.affiliation}</span></li>
+                            <li><label>เบอร์โทรศัพท์:</label> <span>${evaluator.phone}</span></li>
+                            <li><label>อีเมล:</label> <span>${evaluator.email}</span></li>
+                        </ul>
+                    </div>
+                `).join('');
+            }
+
+            // --- ประกอบร่าง HTML ทั้งหมดสำหรับฟอร์ม 4 ---
+            html = `
+                <h4><i class="fas fa-user icon-prefix"></i>ข้อมูลผู้ยื่นคำร้อง</h4>
                 <ul class="info-list">
                     <li><label>ชื่อ-นามสกุล:</label> <span>${user.prefix_th} ${user.first_name_th} ${user.last_name_th}</span></li>
                     <li><label>รหัสนักศึกษา:</label> <span>${user.student_id}</span></li>
@@ -335,19 +351,25 @@ function generateFormSpecificHTML({ doc, user, advisors, externalProfessors, pro
                     <li><label>ภาควิชา:</label> <span>${departmentName}</span></li>
                 </ul>
                 <hr class="subtle-divider">
-                <h4>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
+
+                <h4><i class="fas fa-book icon-prefix"></i>ข้อมูลหัวข้อวิทยานิพนธ์ (ที่ได้รับอนุมัติ)</h4>
                 <ul class="info-list">
                     <li><label>วันที่อนุมัติ:</label> <span>${formatThaiDateTime(user.proposal_approval_date)}</span></li>
-                    <li><label>ภาษาไทย:</label> <span>${user.thesis_title_th || '-'}</span></li>
-                    <li><label>ภาษาอังกฤษ:</label> <span>${user.thesis_title_en || '-'}</span></li>
+                    <li><label>ภาษาไทย:</label> <span class="thesis-title">${user.thesis_title_th || '-'}</span></li>
+                    <li><label>ภาษาอังกฤษ:</label> <span class="thesis-title">${user.thesis_title_en || '-'}</span></li>
                 </ul>
                 <hr class="subtle-divider">
-                <h4>รายละเอียดการขอเชิญ</h4>
-                <ul class="info-list">
-                    <li><label>จำนวนผู้ทรงคุณวุฒิ:</label> <span>${details.num_evaluators || '-'} คน</span></li>
-                    <li><label>จำนวนหนังสือขอเชิญ:</label> <span>${details.num_letters || '-'} ฉบับ</span></li>
-                    <li><label>ประเภทเครื่องมือ:</label> <span>${details.document_types?.join(', ') || '-'}</span></li>
-                </ul>`;
+
+                <h4><i class="fas fa-tasks icon-prefix"></i>รายละเอียดการขอเชิญ</h4>
+                <div class="subsection">
+                    <h5>ประเภทเครื่องมือที่ต้องการประเมิน</h5>
+                    <ul class="info-list compact">${docTypesHtml}</ul>
+                </div>
+                <div class="subsection">
+                    <h5>รายชื่อผู้ทรงคุณวุฒิที่เสนอเชิญ</h5>
+                    ${evaluatorsHtml || '<p>ยังไม่มีข้อมูลผู้ทรงคุณวุฒิ</p>'}
+                </div>
+            `;
             break;
             
         case 'ฟอร์ม 5':
