@@ -28,7 +28,7 @@
             <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
             <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
             <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
-              
+            
           <li class="dropdown-divider"></li> <li class="dropdown-header">ขั้นการสอบวิทยานิพนธ์ขั้นสุดท้าย</li>
             <li><a href="/User_Page/html_user/form6.html">บันทึกข้อความ เรื่อง ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</a></li>
         </ul>
@@ -49,7 +49,6 @@
       </ul>
     </div>
   </nav>
-
 
   <div class="form-container">
     <h2>📑 แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</h2>
@@ -84,54 +83,107 @@
             <textarea id="thesis-title-en" rows="3" placeholder="กรอกชื่อเรื่องวิทยานิพนธ์ภาษาอังกฤษ..." required></textarea>
         </div>
       </fieldset>
+      
+      <fieldset>
+        <legend>👨‍🏫 อาจารย์ที่ปรึกษาและคณะกรรมการสอบ</legend>
+
+        <div class="sub-section">
+            <label class="sub-section-label">รายชื่ออาจารย์ที่ปรึกษา</label>
+            <div class="info-grid">
+              <div><label>อาจารย์ที่ปรึกษาหลัก:</label><input type="text" id="main-advisor" disabled></div>
+              <div><label>อาจารย์ที่ปรึกษาร่วม 1:</label><input type="text" id="co-advisor-1" disabled></div>
+            </div>
+        </div>
+
+        <div class="sub-section">
+            <label class="sub-section-label">เสนอชื่อคณะกรรมการสอบ*</label>
+            <div class="form-group">
+                <label for="committee-chair">ประธานกรรมการสอบ*</label>
+                <select id="committee-chair" required>
+                    <option value="">-- กรุณาเลือกประธานกรรมการสอบ --</option>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="co-advisor-2">กรรมการ (ที่ปรึกษาร่วม 2)*</label>
+                <select id="co-advisor-2" required>
+                    <option value="">-- กรุณาเลือกอาจารย์ที่ปรึกษาร่วม 2 --</option>
+                     </select>
+            </div>
+             <div class="form-group">
+                <label for="committee-member-5">กรรมการสอบ (คนที่ 5)*</label>
+                <select id="committee-member-5" required>
+                    <option value="">-- กรุณาเลือกกรรมการสอบ --</option>
+                     </select>
+            </div>
+        </div>
+
+        <div class="sub-section">
+            <label class="sub-section-label">เสนอชื่อกรรมการสำรอง*</label>
+            <div class="info-grid">
+                <div class="form-group">
+                    <label for="reserve-external">กรรมการสำรอง (จากภายนอก)*</label>
+                    <select id="reserve-external" required>
+                        <option value="">-- กรุณาเลือกกรรมการสำรอง (ภายนอก) --</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="reserve-internal">กรรมการสำรอง (จากภายใน)*</label>
+                    <select id="reserve-internal" required>
+                        <option value="">-- กรุณาเลือกกรรมการสำรอง (ภายใน) --</option>
+                        </select>
+                </div>
+            </div>
+        </div>
+      </fieldset>
 
       <fieldset>
         <legend>📎 แนบเอกสารประกอบ</legend>
         <div class="form-group sub-section">
           <label for="proposal-file">1. ไฟล์หัวข้อและเค้าโครงวิทยานิพนธ์* (.pdf, .docx ไม่เกิน 10MB)</label>
+          
+          <small class="file-naming-instruction">
+            *กรุณาตั้งชื่อไฟล์เป็น: รหัสนักศึกษา_F2_PROPOSAL_DD-MM-YYYY.pdf (ปีเป็น พ.ศ.)
+          </small>
+
           <input type="file" id="proposal-file" class="file-input" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
           <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
         <div class="form-group sub-section">
           <label for="cover-page-file">2. ไฟล์หน้าปกของหัวข้อและเค้าโครง* (.pdf, .docx)</label>
+          
+          <small class="file-naming-instruction">
+            *กรุณาตั้งชื่อไฟล์เป็น: รหัสนักศึกษา_F2_COVER_DDMMYYYY.pdf (ปีเป็น พ.ศ.)
+          </small>
+
           <input type="file" id="cover-page-file" class="file-input" accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
           <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
         <div class="form-group sub-section">
           <label for="registration-proof-file">3. ไฟล์สำเนาการลงทะเบียนภาคการศึกษาล่าสุด* (.pdf, .jpg, .png)</label>
-        <div class="inline-select-group">
-            <label for="registration-semester">ภาคการศึกษาที่:</label>
-            <select id="registration-semester" class="inline-select" required>
-                <option value="">เลือก</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="ภาคฤดูร้อน">ภาคพิเศษ</option>
-            </select>
-            
-            <label for="registration-year">ปีการศึกษา:</label>
-            <select id="registration-year" class="inline-select" required>
-                <option value="">เลือกปี</option>
-                </select>
-        </div>
+
+          <small class="file-naming-instruction">
+            *กรุณาตั้งชื่อไฟล์เป็น: รหัสนักศึกษา_F2_REGIS_DDMMYYYY.jpg (ปีเป็น พ.ศ.)
+          </small>
+
+          <div class="inline-select-group">
+              <label for="registration-semester">ภาคการศึกษาที่:</label>
+              <select id="registration-semester" class="inline-select" required>
+                  <option value="">เลือก</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="ภาคฤดูร้อน">ภาคพิเศษ</option>
+              </select>
+              
+              <label for="registration-year">ปีการศึกษา:</label>
+              <select id="registration-year" class="inline-select" required>
+                  <option value="">เลือกปี</option>
+              </select>
+          </div>
           <input type="file" id="registration-proof-file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" required>
           <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
       </fieldset>
       
-      <fieldset>
-        <legend>👨‍🏫 อาจารย์ที่ปรึกษา</legend>
-        <div class="info-grid">
-          <div><label>อาจารย์ที่ปรึกษาหลัก:</label><input type="text" id="main-advisor" disabled></div>
-          <div><label>อาจารย์ที่ปรึกษาร่วม 1:</label><input type="text" id="co-advisor-1" disabled></div>
-        </div>
-        <div class="form-group">
-            <label for="co-advisor-2">อาจารย์ที่ปรึกษาร่วม 2 (ถ้ามี):</label>
-            <select id="co-advisor-2">
-              <option value="">-- เลือกอาจารย์ (ถ้ามี) --</option>
-            </select>
-        </div>
-      </fieldset>
-
       <fieldset>
         <legend>📝 ความคิดเห็นเพิ่มเติม (ถ้ามี)</legend>
         <div class="form-group">

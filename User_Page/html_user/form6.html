@@ -23,14 +23,14 @@
         <a href="#" class="nav-dropdown-toggle"><i class="fas fa-edit"></i> กรอกแบบฟอร์ม <i class="fas fa-caret-down"></i></a>
         <ul class="dropdown-menu">
           <li class="dropdown-header">ขั้นการสอบหัวข้อและเค้าโครง</li>
-            <li><a href="/User_Page/html_user/form1.html">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</a></li>
-            <li><a href="/User_Page/html_user/form2.html">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</a></li>
-            <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
-            <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
-            <li><a href="/User_Page/html_user/form5.html" class="active">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
-              
-          <li class="dropdown-divider"></li> <li class="dropdown-header">ขั้นการสอบวิทยานิพนธ์ขั้นสุดท้าย</li>
-            <li><a href="/User_Page/html_user/form6.html">บันทึกข้อความ เรื่อง ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</a></li>
+          <li><a href="/User_Page/html_user/form1.html">แบบฟอร์มขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</a></li>
+          <li><a href="/User_Page/html_user/form2.html">แบบเสนอหัวข้อและเค้าโครงวิทยานิพนธ์ ระดับบัณฑิตศึกษา</a></li>
+          <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
+          <li><a href="/User_Page/html_user/form4.html">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
+          <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
+          <li class="dropdown-divider"></li>
+          <li class="dropdown-header">ขั้นการสอบวิทยานิพนธ์ขั้นสุดท้าย</li>
+          <li><a href="/User_Page/html_user/form6.html" class="active">บันทึกข้อความ เรื่อง ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</a></li>
         </ul>
       </li>
       <li><a href="/User_Page/html_user/eng.html"><i class="fas fa-language"></i> ยื่นผลสอบอังกฤษ</a></li>
@@ -85,22 +85,55 @@
       </fieldset>
 
       <fieldset>
-        <legend>👨‍🏫 เสนอรายชื่อคณะกรรมการสอบวิทยานิพนธ์</legend>
-        <p class="fieldset-description">กรุณาเลือก/กรอกรายชื่อบุคคลสำหรับตำแหน่งต่างๆ ในคณะกรรมการ</p>
-        <div class="form-group"><label for="committee-chair">ประธานกรรมการสอบ (ผู้ทรงคุณวุฒิภายนอก)*</label><select id="committee-chair" required><option value="">-- กรุณาเลือก --</option></select></div>
-        <div class="form-group"><label>กรรมการ (โดยตำแหน่ง):</label><input type="text" id="main-advisor" disabled></div>
-        <div class="form-group"><label>กรรมการ (โดยตำแหน่ง):</label><input type="text" id="co-advisor-1" disabled></div>
-        <div class="form-group"><label for="committee-member-1">กรรมการ (อาจารย์ภายในคณะ)*</label><select id="committee-member-1" required><option value="">-- กรุณาเลือก --</option></select></div>
-        <div class="form-group"><label for="committee-member-2">กรรมการ (อาจารย์ภายในคณะ)*</label><select id="committee-member-2" required><option value="">-- กรุณาเลือก --</option></select></div>
-        <hr class="subtle-divider">
-        <p class="fieldset-description">รายชื่อกรรมการสำรอง (ถ้ามี)</p>
-        <div class="form-group">
-          <label for="reserve-member-external">กรรมการสำรอง (อาจารย์บัณฑิตพิเศษภายนอก):</label>
-          <input type="text" id="reserve-member-external" placeholder="ระบุคำนำหน้าชื่อ, ชื่อ-นามสกุล (ถ้ามี)">
+        <legend>👨‍🏫 คณะกรรมการสอบและอาจารย์ที่ปรึกษา</legend>
+        <p class="fieldset-description">ข้อมูลคณะกรรมการจะถูกดึงมาจากฟอร์ม 2 ที่อนุมัติแล้วโดยอัตโนมัติ และคุณสามารถแก้ไขรายชื่อได้ (ยกเว้นอาจารย์ที่ปรึกษา)</p>
+
+        <div class="sub-section">
+            <label class="sub-section-label">อาจารย์ที่ปรึกษา (ข้อมูลจากระบบ)</label>
+            <div class="info-grid">
+              <div><label>อาจารย์ที่ปรึกษาหลัก:</label><input type="text" id="main-advisor" disabled></div>
+              <div><label>อาจารย์ที่ปรึกษาร่วม 1:</label><input type="text" id="co-advisor-1" disabled></div>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="reserve-member-internal">กรรมการสำรอง (อาจารย์บัณฑิตประจำภายใน):</label>
-          <input type="text" id="reserve-member-internal" placeholder="ระบุคำนำหน้าชื่อ, ชื่อ-นามสกุล (ถ้ามี)">
+
+        <div class="sub-section">
+            <label class="sub-section-label">คณะกรรมการสอบ (สามารถแก้ไขได้)*</label>
+            <div class="form-group">
+                <label for="committee-chair">ประธานกรรมการสอบ*</label>
+                <select id="committee-chair" required>
+                    <option value="">-- กรุณาเลือกประธานกรรมการสอบ --</option>
+                    </select>
+            </div>
+            <div class="form-group">
+                <label for="co-advisor-2">กรรมการ (ที่ปรึกษาร่วม 2)*</label>
+                <select id="co-advisor-2" required>
+                    <option value="">-- กรุณาเลือกอาจารย์ที่ปรึกษาร่วม 2 --</option>
+                     </select>
+            </div>
+             <div class="form-group">
+                <label for="committee-member-5">กรรมการสอบ (คนที่ 5)*</label>
+                <select id="committee-member-5" required>
+                    <option value="">-- กรุณาเลือกกรรมการสอบ --</option>
+                     </select>
+            </div>
+        </div>
+
+        <div class="sub-section">
+            <label class="sub-section-label">กรรมการสำรอง (สามารถแก้ไขได้)*</label>
+            <div class="info-grid">
+                <div class="form-group">
+                    <label for="reserve-external">กรรมการสำรอง (จากภายนอก)*</label>
+                    <select id="reserve-external" required>
+                        <option value="">-- กรุณาเลือกกรรมการสำรอง (ภายนอก) --</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="reserve-internal">กรรมการสำรอง (จากภายใน)*</label>
+                    <select id="reserve-internal" required>
+                        <option value="">-- กรุณาเลือกกรรมการสำรอง (ภายใน) --</option>
+                        </select>
+                </div>
+            </div>
         </div>
       </fieldset>
 
@@ -110,6 +143,11 @@
         
         <div class="form-group sub-section">
           <label class="sub-section-label">1. วิทยานิพนธ์ฉบับสมบูรณ์* (.pdf เท่านั้น)</label>
+          
+          <small class="file-naming-instruction">
+            *กรุณาตั้งชื่อไฟล์เป็น: รหัสนักศึกษา_F6_THESIS_FINAL_DDMMYYYY.pdf (ปีเป็น พ.ศ.)
+          </small>
+
           <input type="file" id="thesis-draft-file" class="file-input" accept=".pdf" required>
           <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
@@ -119,11 +157,21 @@
           <div class="info-grid two-cols">
             <div>
                 <label for="abstract-th-file">ไฟล์ภาษาไทย (.pdf)</label>
+
+                <small class="file-naming-instruction">
+                  *ตั้งชื่อไฟล์: รหัสนักศึกษา_F6_ABSTRACT_TH_DDMMYYYY.pdf (ปีเป็น พ.ศ.)
+                </small>
+
                 <input type="file" id="abstract-th-file" class="file-input" accept=".pdf" required>
                 <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
             </div>
             <div>
                 <label for="abstract-en-file">ไฟล์ภาษาอังกฤษ (.pdf)</label>
+
+                <small class="file-naming-instruction">
+                  *ตั้งชื่อไฟล์: รหัสนักศึกษา_F6_ABSTRACT_EN_DDMMYYYY.pdf (ปีเป็น พ.ศ.)
+                </small>
+
                 <input type="file" id="abstract-en-file" class="file-input" accept=".pdf" required>
                 <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
             </div>
@@ -135,11 +183,21 @@
           <div class="info-grid two-cols">
             <div>
                 <label for="toc-th-file">ไฟล์ภาษาไทย (.pdf)</label>
+
+                <small class="file-naming-instruction">
+                  *ตั้งชื่อไฟล์: รหัสนักศึกษา_F6_TOC_TH_DDMMYYYY.pdf (ปีเป็น พ.ศ.)
+                </small>
+
                 <input type="file" id="toc-th-file" class="file-input" accept=".pdf" required>
                 <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
             </div>
             <div>
                 <label for="toc-en-file">ไฟล์ภาษาอังกฤษ (.pdf)</label>
+
+                <small class="file-naming-instruction">
+                  *ตั้งชื่อไฟล์: รหัสนักศึกษา_F6_TOC_EN_DDMMYYYY.pdf (ปีเป็น พ.ศ.)
+                </small>
+
                 <input type="file" id="toc-en-file" class="file-input" accept=".pdf" required>
                 <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
             </div>
@@ -148,12 +206,22 @@
 
         <div class="form-group sub-section">
           <label class="sub-section-label">4. หลักฐานการตอบรับการตีพิมพ์/นำเสนอผลงาน* (.pdf, .jpg, .png)</label>
+          
+          <small class="file-naming-instruction">
+            *กรุณาตั้งชื่อไฟล์เป็น: รหัสนักศึกษา_F6_PUBLISH_PROOF_DDMMYYYY.pdf/jpg/png (ปีเป็น พ.ศ.)
+          </small>
+
           <input type="file" id="publication-proof-file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" required>
           <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>
 
         <div class="form-group sub-section">
           <label class="sub-section-label">5. หลักฐานการตรวจสอบผลการเรียน* (.pdf, .jpg, .png)</label>
+          
+          <small class="file-naming-instruction">
+            *กรุณาตั้งชื่อไฟล์เป็น: รหัสนักศึกษา_F6_GRADE_PROOF_DDMMYYYY.pdf/jpg/png (ปีเป็น พ.ศ.)
+          </small>
+
           <input type="file" id="grade-check-proof-file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" required>
           <span class="file-name-display">ยังไม่ได้เลือกไฟล์</span>
         </div>

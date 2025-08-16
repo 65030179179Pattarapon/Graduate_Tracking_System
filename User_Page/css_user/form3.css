@@ -345,6 +345,17 @@ fieldset .info-grid:last-of-type {
     font-style: italic;
 }
 
+.file-naming-instruction {
+    display: block;
+    font-size: 13px;
+    color: #e74c3c; /* สีแดงอ่อนๆ เพื่อให้เด่นขึ้น */
+    margin-bottom: 10px;
+    background-color: #fef5f5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-style: italic;
+}
+
 /* มาตรฐาน: Submit Button */
 button[type="submit"] {
     width: 100%;

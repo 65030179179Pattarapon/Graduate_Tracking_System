@@ -1,4 +1,4 @@
-// /User_Page/js_user/status.js (Corrected Version)
+// /User_Page/js_user/status.js (Corrected Version with Proper Sorting)
 
 // =================================================================
 // ภาค 1: Helper Functions
@@ -24,12 +24,15 @@ function formatDate(isoString) {
     if (!isoString) return 'N/A';
     try {
         const date = new Date(isoString);
+        // [ส่วนที่แก้ไข] เพิ่ม hour, minute และปรับ timeZone
         return date.toLocaleDateString('th-TH', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-            timeZone: 'UTC'
-        });
+            hour: '2-digit',   // <-- เพิ่มบรรทัดนี้
+            minute: '2-digit', // <-- เพิ่มบรรทัดนี้
+            timeZone: 'Asia/Bangkok' // <-- ปรับเป็นเวลาประเทศไทย
+        }) + ' น.'; // <-- เพิ่ม " น." ต่อท้ายเพื่อความสวยงาม
     } catch (error) {
         return 'Invalid Date';
     }
@@ -61,12 +64,10 @@ async function loadStatusData() {
             fetch("/data/document_rejected.json").then(res => res.json())
         ]);
 
-        // ดึงข้อมูลจาก Local Storage
         const localStoragePending = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
         const localStorageApproved = JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]');
         const localStorageRejected = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
 
-        // รวมข้อมูลจากสองแหล่ง
         const combinedPending = [...dbPending, ...localStoragePending];
         const combinedApproved = [...dbApproved, ...localStorageApproved];
         const combinedRejected = [...dbRejected, ...localStorageRejected];
@@ -77,18 +78,22 @@ async function loadStatusData() {
             return;
         }
 
-        // อัปเดตชื่อผู้ใช้ใน Navbar
         const navUsername = document.getElementById('nav-username');
         if (navUsername) navUsername.textContent = currentUser.email;
 
         const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
         const studentId = currentUser.student_id;
         
-        // กรองข้อมูลเฉพาะของนักศึกษาที่ล็อคอินอยู่
         paginationState.approved.data = combinedApproved.filter(doc => doc.student_id === studentId || doc.student_email === userEmail);
         paginationState.pending.data = combinedPending.filter(doc => doc.student_id === studentId || doc.student_email === userEmail);
         paginationState.rejected.data = combinedRejected.filter(doc => doc.student_id === studentId || doc.student_email === userEmail);
 
+        // --- [จุดที่แก้ไขที่ 1] ---
+        // ทำการจัดเรียงข้อมูลทั้งหมดทันทีหลังจากกรองเสร็จ
+        paginationState.approved.data.sort((a, b) => new Date(b.submitted_date || 0) - new Date(a.submitted_date || 0));
+        paginationState.pending.data.sort((a, b) => new Date(b.submitted_date || 0) - new Date(a.submitted_date || 0));
+        paginationState.rejected.data.sort((a, b) => new Date(b.submitted_date || 0) - new Date(a.submitted_date || 0));
+        
         // แสดงผลหน้าแรกของแต่ละสถานะ
         displayPageForStatus('approved', 1);
         displayPageForStatus('pending', 1);
@@ -107,6 +112,7 @@ function displayPageForStatus(statusKey, page) {
     state.currentPage = page;
     const listElement = document.getElementById(`${statusKey}-list`);
     
+    // ทำการแบ่งหน้า (Slice) จากข้อมูลที่ถูกจัดเรียงไว้แล้ว
     const start = (page - 1) * ROWS_PER_PAGE;
     const end = start + ROWS_PER_PAGE;
     const paginatedItems = state.data.slice(start, end);
@@ -150,7 +156,9 @@ function renderDocumentList(listElement, documents, statusType) {
         return;
     }
     
-    documents.sort((a, b) => new Date(b.submitted_date || 0) - new Date(a.submitted_date || 0));
+    // --- [จุดที่แก้ไขที่ 2] ---
+    // ลบการจัดเรียง (sort) ออกจากฟังก์ชันนี้ เพราะเราได้ทำไปแล้วในขั้นตอนที่ถูกต้อง
+    // documents.sort((a, b) => new Date(b.submitted_date || 0) - new Date(a.submitted_date || 0));
 
     documents.forEach(doc => {
         const li = document.createElement('li');
@@ -185,7 +193,7 @@ function renderDocumentList(listElement, documents, statusType) {
 // ภาค 3: Main Event Listener
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Navbar & Logout Logic ---
+    // --- Navbar & Modal Logic ---
     const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
     dropdownToggles.forEach(toggle => {
         toggle.addEventListener('click', function(event) {
@@ -197,7 +205,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dropdownMenu) dropdownMenu.classList.toggle('show');
         });
     });
- 
     window.addEventListener('click', function(event) {
         if (!event.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
@@ -205,25 +212,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-
     const logoutButton = document.getElementById("logout-button");
     const modal = document.getElementById('logout-confirm-modal');
     const cancelBtn = document.getElementById('modal-cancel-btn');
     const confirmBtn = document.getElementById('modal-confirm-btn');
-
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); showLogoutModal(); });
+    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
     if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = "/login/index.html";
-        });
-    }
-    if(modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-    }
+    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
+    if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
     
     // --- Load data for the status page ---
     loadStatusData();

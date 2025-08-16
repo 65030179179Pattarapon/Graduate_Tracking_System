@@ -23,7 +23,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv001.png",
     "research_interests": ["IoT for Education", "Embedded Systems in Learning"],
-    "publications_link": "https://example.com/surachai_pubs"
+    "publications_link": "https://example.com/surachai_pubs",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR"]
   },
   {
     "email": "phongkiat.j@kmitl.ac.th",
@@ -49,7 +51,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv002.png",
     "research_interests": ["Sustainable Design", "UX/UI for Educational Tools"],
-    "publications_link": "https://example.com/phongkiat_pubs"
+    "publications_link": "https://example.com/phongkiat_pubs",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR"]
   },
   {
     "email": "paiboon.p@kmitl.ac.th",
@@ -75,7 +79,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv003.png",
     "research_interests": ["Educational Technology Management", "Learning Analytics"],
-    "publications_link": ""
+    "publications_link": "",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR"]
   },
   {
     "email": "amphon.t@kmitl.ac.th",
@@ -101,7 +107,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv004.png",
     "research_interests": ["AI in Education", "Computer Graphics for Learning"],
-    "publications_link": "https://example.com/amphon_pubs"
+    "publications_link": "https://example.com/amphon_pubs",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR"]
   },
   {
     "email": "kosol.t@kmitl.ac.th",
@@ -127,7 +135,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv005.png",
     "research_interests": ["Smart Farming Education", "Agricultural Drone Technology"],
-    "publications_link": ""
+    "publications_link": "",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR", "COMMITTEE_MEMBER"]
   },
   {
     "email": "somchai.p@kmitl.ac.th",
@@ -153,7 +163,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv006.png",
     "research_interests": ["Educational Measurement", "Quantitative Research Methods"],
-    "publications_link": "https://example.com/somchai_pubs"
+    "publications_link": "https://example.com/somchai_pubs",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR", "COMMITTEE_MEMBER"]
   },
   {
     "email": "pannee.j@kmitl.ac.th",
@@ -179,7 +191,9 @@
     "supervising_levels": ["ปริญญาโท", "ปริญญาเอก"],
     "profile_image_url": "/assets/images/advisors/adv007.png",
     "research_interests": ["Learning Space Design", "Educational Ergonomics"],
-    "publications_link": ""
+    "publications_link": "",
+    "position": "อาจารย์ประจำ",
+    "roles": ["CO_ADVISOR", "COMMITTEE_MEMBER"]
   },
   {
     "email": "duangporn.i@kmitl.ac.th",
@@ -206,7 +220,8 @@
     "profile_image_url": "/assets/images/advisors/adv008.png",
     "research_interests": ["Educational Multimedia", "Web-based Learning Platforms"],
     "publications_link": "https://example.com/duangporn_pubs",
-    "position": "ประธานหลักสูตร"
+    "position": "ประธานหลักสูตร",
+    "roles": ["COMMITTEE_CHAIR", "CO_ADVISOR"]
   },
   {
     "email": "nattapong.s@kmitl.ac.th",
@@ -233,7 +248,8 @@
     "profile_image_url": "/assets/images/advisors/adv009.png",
     "research_interests": ["Curriculum Development", "Instructional Design"],
     "publications_link": "",
-    "position": "ประธานหลักสูตร"
+    "position": "ประธานหลักสูตร",
+    "roles": ["COMMITTEE_CHAIR", "CO_ADVISOR"]
   },
   {
     "email": "siriporn.c@kmitl.ac.th",
@@ -260,6 +276,7 @@
     "profile_image_url": "/assets/images/advisors/adv010.png",
     "research_interests": ["Agricultural Biotechnology", "Plant Genetic Engineering for Education"],
     "publications_link": "https://example.com/siriporn_pubs",
-    "position": "ประธานหลักสูตร"
+    "position": "ประธานหลักสูตร",
+    "roles": ["COMMITTEE_CHAIR", "CO_ADVISOR"]
   }
 ]

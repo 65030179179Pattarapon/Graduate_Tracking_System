@@ -1,9 +1,46 @@
 [
   {
-    "email": "prof1@kmitl.ac.th",
-    "password": "123456",
-    "fullname": "ศ.ดร. ประทีป ภายนอก",
+    "ext_prof_id": "EXT001",
+    "email": "vichakarn.l@someuni.ac.th",
+    "password": "ext_pass_123",
+    "prefix_th": "ศาสตราจารย์เกียรติคุณ ดร.",
+    "first_name_th": "วิชาการ",
+    "last_name_th": "ล้ำเลิศ",
+    "institution": "มหาวิทยาลัยแห่งชาติ",
+    "expertise": "ปัญญาประดิษฐ์ทางการศึกษา",
+    "roles": ["RESERVE_EXTERNAL_COMMITTEE"]
+  },
+  {
+    "ext_prof_id": "EXT002",
+    "email": "utsahakum.k@techcorp.co.th",
+    "password": "ext_pass_456",
+    "prefix_th": "ดร.",
+    "first_name_th": "อุตสาหกรรม",
+    "last_name_th": "ก้าวหน้า",
+    "institution": "บริษัท เทคโนโลยี จำกัด (มหาชน)",
+    "expertise": "การจัดการเทคโนโลยีและนวัตกรรม",
+    "roles": ["RESERVE_EXTERNAL_COMMITTEE"]
+  },
+  {
+    "ext_prof_id": "EXT003",
+    "email": "prateep.p@anotheruni.ac.th",
+    "password": "ext_pass_789",
+    "prefix_th": "ศาสตราจารย์ ดร.",
+    "first_name_th": "ประทีป",
+    "last_name_th": "ภายนอก",
     "institution": "มหาวิทยาลัยแห่งหนึ่ง",
-    "expertise": "นวัตกรรมการศึกษา"
+    "expertise": "นวัตกรรมการศึกษา",
+    "roles": ["RESERVE_EXTERNAL_COMMITTEE"]
+  },
+  {
+    "ext_prof_id": "EXT004",
+    "email": "siree.w@research.or.th",
+    "password": "ext_pass_000",
+    "prefix_th": "รองศาสตราจารย์",
+    "first_name_th": "สิรี",
+    "last_name_th": "วิจารณ์",
+    "institution": "สถาบันวิจัยอิสระ",
+    "expertise": "การวัดผลและประเมินผล",
+    "roles": []
   }
 ]

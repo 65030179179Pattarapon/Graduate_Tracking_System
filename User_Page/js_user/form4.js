@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const submissionData = {
                 doc_id: `form4_${userEmail}_${Date.now()}`,
                 type: "ฟอร์ม 4",
-                title: "แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิฯ",
+                title: "แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย",
                 student_email: userEmail,
                 student_id: document.getElementById('student-id').value,
                 details: {

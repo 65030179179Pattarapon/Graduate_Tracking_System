@@ -113,6 +113,16 @@ textarea { resize: vertical; min-height: 80px; }
 .file-input::file-selector-button { margin-right: 10px; border: none; background: var(--color-primary); padding: 8px 12px; border-radius: 4px; color: #fff; cursor: pointer; transition: background-color .2s ease-in-out; }
 .file-input::file-selector-button:hover { background: #c93870; }
 .file-name-display { display: block; margin-top: 8px; font-size: 13px; color: var(--text-secondary); font-style: italic; }
+.file-naming-instruction {
+    display: block;
+    font-size: 13px;
+    color: #e74c3c; /* สีแดงอ่อนๆ เพื่อให้เด่นขึ้น */
+    margin-bottom: 10px;
+    background-color: #fef5f5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-style: italic;
+}
 
 /* --- สไตล์สำหรับ Checklist และ Dropdown ในข้อความ --- */
 .checklist-group { display: flex; flex-direction: column; gap: 15px; }

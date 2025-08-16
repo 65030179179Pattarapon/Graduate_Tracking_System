@@ -287,47 +287,70 @@ legend {
 .checkbox-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-.checkbox-group label {
+.checkbox-item {
+    display: grid;
+    /* กำหนด 2 คอลัมน์หลัก: [ส่วนของ Label] และ [ส่วนของ Quantity] */
+    grid-template-columns: 1fr auto; 
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 15px;
+}
+
+.checkbox-item:last-child {
+    border-bottom: none;
+}
+
+.checkbox-item label {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 15px;
+    gap: 12px;
+    margin-bottom: 0;
     font-weight: 500;
+    white-space: nowrap; /* ป้องกันไม่ให้ข้อความตกบรรทัด */
 }
 
-.checkbox-group input[type="checkbox"] {
-    width: auto;
-    height: 1.2em;
-    width: 1.2em;
+.checkbox-item input[type="checkbox"] {
+    width: 1.3em;
+    height: 1.3em;
+    flex-shrink: 0;
 }
 
-.checkbox-group .other-label {
+.quantity-wrapper {
     display: flex;
     align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
-.checkbox-group .other-label input[type="text"] {
-    margin-left: 5px;
-    flex-grow: 1;
-    padding: 8px;
+.quantity-input {
+    width: 50px !important;
+    text-align: center !important;
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-family: 'Sarabun', sans-serif;
     font-size: 14px;
 }
 
-.checkbox-group .other-label input[type="text"]:disabled {
-    background-color: #e9ecef;
-    cursor: not-allowed;
+/* --- จัดการแถว "อื่นๆ" เป็นพิเศษ --- */
+.checkbox-item.other-item {
+    /* กำหนด Grid ใหม่สำหรับแถวนี้: [Label] [Text Input] [Quantity] */
+    grid-template-columns: auto 1fr auto; 
 }
 
-.char-counter {
-    text-align: right;
-    font-size: 12px;
-    color: #888;
-    margin-top: 5px;
-    padding-right: 2px;
+.checkbox-item.other-item input[type="text"] {
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    width: 100%;
 }
 
 /* มาตรฐาน: Submit Button */
