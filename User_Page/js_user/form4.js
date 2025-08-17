@@ -5,30 +5,6 @@
 // =================================================================
 
 /**
- * แสดง Modal ยืนยันการออกจากระบบ
- */
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        // ทำให้ modal แสดงขึ้นมาและเพิ่ม animation
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
-
-/**
- * ปิด Modal
- */
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        // รอให้ animation จบก่อนค่อยซ่อน element
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
-
-/**
  * แปลงวันที่จาก ISO format เป็นรูปแบบ "วัน เดือน พ.ศ."
  * @param {string} isoString - วันที่ในรูปแบบ ISO (e.g., "2025-03-18T...")
  * @returns {string} - วันที่ในรูปแบบไทย หรือ 'N/A' ถ้าข้อมูลผิดพลาด
@@ -157,36 +133,6 @@ function generateEvaluatorForms(count) {
 // ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมด)
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Navbar Dropdown Logic ---
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault();
-            const dropdownMenu = this.nextElementSibling;
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                if (menu !== dropdownMenu) menu.classList.remove('show');
-            });
-            if (dropdownMenu) dropdownMenu.classList.toggle('show');
-        });
-    });
-    // Close dropdown when clicking outside
-    window.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
-
-    // --- Logout Modal Logic ---
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
-    if (modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
     // --- Character Counter Logic ---
     const commentBox = document.getElementById('student-comment');

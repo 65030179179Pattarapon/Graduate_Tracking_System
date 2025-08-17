@@ -1,196 +1,3 @@
-/* /User_Page/css_user/profile.css */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
-
-/* 🎨 Theme Variables */
-:root {
-    --color-primary: #ed4988;
-    --color-secondary: #f1592b;
-    --text-primary: #1e2022;
-    --text-secondary: #52575d;
-    --bg-main: #f4f7f6;
-    --bg-card: #ffffff;
-    --border-color: #e9ecef;
-    --rejected-color: #dc3545;
-    --approved-color: #28a745;
-    --pending-color: #ffc107;
-}
-
-/* 🖌️ General Body Styles */
-body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--bg-main);
-    margin: 0; 
-    padding: 0;
-    color: var(--text-primary);
-    padding-top: 65px;
-}
-
-/* --- Standard Navbar Styles --- */
-nav {
-    background: var(--bg-card);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 65px;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.logo-link {
-    text-decoration: none;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.logo img {
-    height: 40px;
-    width: auto;
-}
-
-.logo span {
-    font-weight: 600;
-    font-size: 18px;
-    color: var(--color-primary);
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-links > li > a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s, color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.nav-links > li > a.active {
-    background-color: transparent;
-    color: var(--color-primary);
-    font-weight: 600;
-}
-
-.nav-links > li > a:not(.active):hover {
-    background-color: var(--color-primary);
-    color: white;
-}
-
-/* Dropdown Styles */
-.dropdown {
-    position: relative;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    background: var(--bg-card);
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 8px 0;
-    list-style: none;
-    top: 110%;
-    left: 0;
-    min-width: 220px;
-    white-space: nowrap;
-    z-index: 1001;
-    border: 1px solid var(--border-color);
-}
-
-.dropdown-menu.show {
-    display: block;
-}
-
-.dropdown-menu li a {
-    color: var(--text-primary);
-    font-size: 14px;
-    padding: 10px 15px;
-    width: auto;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.dropdown-menu li a:hover,
-.dropdown-menu .active-item {
-    background-color: #f8f9fa;
-    color: var(--color-primary);
-}
-
-.dropdown-menu .dropdown-header {
-    padding: 8px 15px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.dropdown-menu .dropdown-divider {
-    height: 1px;
-    margin: 8px 0;
-    overflow: hidden;
-    background-color: var(--border-color);
-}
-
-.user-menu {
-    position: relative;
-}
-
-.user-menu > a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    transition: background-color 0.2s, color 0.2s;
-    cursor: pointer;
-}
-
-.user-menu > a:hover {
-    background-color: #f8f9fa;
-    color: var(--color-primary);
-}
-
-#nav-username {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.user-menu .fas {
-    font-size: 18px;
-}
-
-.user-menu .dropdown-menu {
-    right: 0;
-    left: auto;
-    width: 180px;
-}
-
 /* --- Main Page Styles --- */
 .profile-container {
     max-width: 1600px;
@@ -327,7 +134,7 @@ h1 {
     margin-bottom: 20px;
 }
 #signature-display-area img {
-    max-width: 80%;
+    max-width: 100%;
     max-height: 100px;
 }
 #signature-display-area .text-muted {
@@ -454,51 +261,231 @@ h1 {
     padding: 20px;
 }
 
-/* --- Standard Modal Styles --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.modal-overlay.show {
-    display: flex;
-    opacity: 1;
-}
-.modal-box {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
-}
-.modal-overlay.show .modal-box {
-    transform: scale(1);
-}
-.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
-.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
-.modal-actions { display: flex; justify-content: center; gap: 15px; }
-.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
-.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
-.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
-.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
-.modal-actions .btn-danger:hover { background-color: #c82333; }
+/* --- [แก้ไข] Editable Field Styles (Buttons Below Input Version) --- */
 
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-    .profile-layout {
-        grid-template-columns: 1fr;
-    }
+.editable-field {
+    display: flex;
+    flex-wrap: wrap; /* อนุญาตให้ปุ่มตกบรรทัดลงมาข้างล่างได้ */
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+/* ทำให้ span หรือ input ขยายเต็มพื้นที่ที่เหลือ */
+.editable-field span,
+.editable-field input {
+    flex-grow: 1; 
+    min-width: 150px; /* กำหนดความกว้างขั้นต่ำ */
+}
+
+/* ส่วนที่ครอบปุ่มทั้งหมด */
+.edit-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.editable-field .btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text-secondary);
+    padding: 5px;
+    transition: color 0.2s;
+}
+.editable-field .btn-icon:hover {
+    color: var(--color-primary);
+}
+
+/* ปุ่มข้อความ "ยืนยัน" และ "ยกเลิก" */
+.btn-text-save, .btn-text-cancel {
+    padding: 6px 16px; /* ปรับขนาดให้พอดี */
+    font-size: 14px;
+    font-family: 'Sarabun', sans-serif;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-text-save {
+    background-color: var(--approved-color);
+    border-color: var(--approved-color);
+    color: white;
+}
+.btn-text-save:hover {
+    background-color: #218838;
+}
+
+.btn-text-cancel {
+    background-color: #f8f9fa;
+    color: var(--text-secondary);
+}
+.btn-text-cancel:hover {
+    background-color: #e2e6ea;
+}
+
+
+/* --- [แก้ไข] Editable Field Styles (Always-Visible Icon - Corrected) --- */
+
+.editable-field {
+    display: inline-flex; 
+    align-items: center;
+    gap: 1px; /* กำหนดระยะห่างสุดท้ายที่นี่ (ลองปรับเป็น 4px ถ้าต้องการชิดกว่านี้) */
+}
+
+/* [แก้ไข] ทำให้ span มีความกว้างพอดีกับเนื้อหา และ input ขยายเต็ม */
+.editable-field span {
+    flex-grow: 0; /* ไม่ให้ขยายตัว */
+}
+.editable-field input {
+    flex-grow: 1; /* ให้ขยายตัวเฉพาะตอนเป็น input */
+}
+
+/* ส่วนที่ครอบปุ่มทั้งหมด */
+.edit-actions {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.editable-field .btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text-secondary);
+    padding: 5px;
+    transition: color 0.2s;
+}
+.editable-field .btn-icon:hover {
+    color: var(--color-primary);
+}
+
+.btn-save { color: var(--approved-color); }
+.btn-cancel { color: var(--rejected-color); }
+
+/* สถานะปกติ (แสดงผล): ซ่อนเฉพาะช่อง input, ปุ่ม save, ปุ่ม cancel */
+.editable-field #profile-phone-input,
+.editable-field #save-phone-btn,
+.editable-field #cancel-phone-btn {
+    display: none;
+}
+
+/* เมื่ออยู่ในโหมดแก้ไข ให้กลับมาขยายเต็มเหมือนเดิม */
+.editable-field.is-editing {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+
+/* สถานะเมื่อกดแก้ไข (โหมดแก้ไข) */
+.editable-field.is-editing #profile-phone-display,
+.editable-field.is-editing #edit-phone-btn {
+    display: none; /* ซ่อนตัวหนังสือเบอร์โทร และ ปุ่มดินสอ */
+}
+
+.editable-field.is-editing #profile-phone-input,
+.editable-field.is-editing #save-phone-btn,
+.editable-field.is-editing #cancel-phone-btn {
+    display: inline-block; /* แสดงช่องกรอก และ ปุ่มบันทึก/ยกเลิก */
+}
+
+.editable-field input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+/* --- [เพิ่ม] Signature Edit Modal Styles --- */
+.signature-modal-box {
+    max-width: 500px;
+    text-align: left;
+}
+.tab-nav {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 15px;
+}
+.tab-btn {
+    padding: 10px 15px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-bottom: 3px solid transparent;
+}
+.tab-btn.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.canvas-wrapper {
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    touch-action: none;
+}
+#signature-canvas {
+    width: 100%;
+    height: 200px;
+    cursor: crosshair;
+}
+.btn-text {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+.upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    cursor: pointer;
+    text-align: center;
+    color: var(--text-secondary);
+}
+.upload-label:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+.upload-label .fas { font-size: 36px; margin-bottom: 10px; }
+.upload-filename { text-align: center; font-style: italic; margin-top: 10px; }
+
+/* --- [แก้ไข] สไตล์สำหรับปุ่มใน Modal (Stacked Layout) --- */
+
+.modal-actions.stacked {
+    display: flex;
+    flex-direction: column; /* เรียงเป็นแนวตั้ง */
+    align-items: center;    /* จัดให้อยู่กึ่งกลางแนวนอน */
+    gap: 8px;              /* ระยะห่างระหว่างแถวบนกับแถวล่าง */
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.main-actions {
+    display: flex;
+    gap: 10px; /* ระยะห่างระหว่างปุ่ม "ยกเลิก" และ "บันทึก" */
+}
+
+/* ปรับสไตล์ปุ่มให้มีขนาดเหมาะสม */
+.modal-actions .btn-secondary,
+.modal-actions .btn-primary {
+    padding: 10px 25px;
 }

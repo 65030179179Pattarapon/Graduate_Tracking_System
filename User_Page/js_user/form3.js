@@ -1,26 +1,7 @@
 // /User_Page/js_user/form3.js (Corrected and Fully Modified Version)
 
 // =================================================================
-// ภาค 1: Helper Functions (ฟังก์ชันช่วยเหลือ)
-// =================================================================
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
-
-// =================================================================
-// ภาค 2: Form 3 Specific Logic (Logic หลักของฟอร์ม 3)
+// ภาค 1: Form 3 Specific Logic (Logic หลักของฟอร์ม 3)
 // =================================================================
 async function populateForm3() {
     const userEmail = localStorage.getItem("current_user");
@@ -99,61 +80,9 @@ async function populateForm3() {
 }
 
 // =================================================================
-// ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมด)
+// ภาค 2: Main Event Listener (ตัวจัดการการทำงานทั้งหมด)
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // --- ส่วนที่ขาดไปและได้เติมให้สมบูรณ์แล้ว ---
-    // --- Navbar Dropdown Logic ---
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault();
-            const dropdownMenu = this.nextElementSibling;
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                if (menu !== dropdownMenu) menu.classList.remove('show');
-            });
-            if (dropdownMenu) dropdownMenu.classList.toggle('show');
-        });
-    });
-    window.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
-
-    // --- Logout Modal Logic ---
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-
-    if (logoutButton) {
-        logoutButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            logout();
-        });
-    }
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', closeModal);
-    }
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = "/login/index.html";
-        });
-    }
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-    }
-    // --- จบส่วนที่เติมเข้ามา ---
-
 
     // --- File Input Display Logic ---
     const fileInput = document.getElementById('outline-file');

@@ -1,69 +1,3 @@
-/* /User_Page/css_user/form1.css (Standard Form Styles with Corrected Dropdown Style) */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
-
-/* 🎨 Theme Variables */
-:root {
-    --color-primary: #ed4988;
-    --color-secondary: #f1592b;
-    --text-primary: #1e2022;
-    --text-secondary: #52575d;
-    --bg-main: #f4f7f6;
-    --bg-card: #ffffff;
-    --border-color: #e9ecef;
-    --rejected-color: #dc3545;
-    --approved-text: #0b802c;
-    --pending-text: #b58105;
-    --rejected-text: #d4380d;
-}
-
-/* 🖌️ General Body Styles */
-body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--bg-main);
-    margin: 0; 
-    padding: 0;
-    color: var(--text-primary);
-    padding-top: 65px; /* Space for fixed navbar */
-}
-
-/* 🔹 Navbar (Standardized) */
-nav { background: var(--bg-card); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); position: fixed; top: 0; left: 0; right: 0; height: 65px; z-index: 1000; border-bottom: 1px solid var(--border-color); }
-.logo-link { text-decoration: none; }
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo img { height: 40px; width: auto; }
-.logo span { font-weight: 600; font-size: 18px; color: var(--color-primary); }
-.nav-links { list-style: none; display: flex; align-items: center; gap: 5px; margin: 0; padding: 0; }
-.nav-links li a { color: var(--text-secondary); text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; transition: background-color 0.2s, color 0.2s; display: flex; align-items: center; gap: 8px; }
-.nav-links li a:hover, .nav-links li a.active { background-color: var(--color-primary); color: white; }
-.nav-links li a .fa-caret-down { font-size: 12px; margin-left: 4px; }
-.dropdown { position: relative; }
-.dropdown-menu { display: none; position: absolute; background: var(--bg-card); box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 8px 0; list-style: none; top: 110%; left: 0; min-width: 220px; white-space: nowrap; z-index: 1001; border: 1px solid var(--border-color); }
-.dropdown-menu.show { display: block; }
-nav .dropdown-menu li a { text-decoration: none; }
-.dropdown-menu li a { color: var(--text-primary); font-size: 14px; padding: 10px 15px; width: auto; display: flex; align-items: center; gap: 10px; }
-.dropdown-menu li a:hover { background-color: #f8f9fa; color: var(--color-primary); }
-/* --- 🆕 สไตล์สำหรับ Dropdown Header และ Divider --- */
-.dropdown-menu .dropdown-header {
-    padding: 8px 15px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.dropdown-menu .dropdown-divider {
-    height: 1px;
-    margin: 8px 0;
-    overflow: hidden;
-    background-color: var(--border-color);
-}
-.user-menu { position: relative; }
-.user-menu > a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; transition: background-color 0.2s, color 0.2s; cursor: pointer; }
-.user-menu > a:hover { background-color: #f8f9fa; color: var(--color-primary); }
-#nav-username { font-weight: 600; font-size: 14px; }
-.user-menu .fas { font-size: 18px; }
-.user-menu .dropdown-menu { right: 0; left: auto; width: 180px; }
-
 /* 🔹 Main Content Area */
 .status-page-container {
   max-width: 1800px;
@@ -92,9 +26,9 @@ nav .dropdown-menu li a { text-decoration: none; }
   display: flex;
   flex-direction: column;
 }
-.status-box.approved { border-color: var(--approved-text); }
-.status-box.pending { border-color: var(--pending-text); }
-.status-box.rejected { border-color: var(--rejected-text); }
+.status-box.approved { border-color: var(--approved-color); }
+.status-box.pending { border-color: var(--pending-color); }
+.status-box.rejected { border-color: var(--rejected-color); }
 
 .status-box h3 {
   margin: 0 0 20px 0;
@@ -180,45 +114,3 @@ nav .dropdown-menu li a { text-decoration: none; }
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-/* มาตรฐาน: Modal Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.modal-overlay.show {
-    display: flex;
-    opacity: 1;
-}
-.modal-box {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    width: 90%;
-    max-width: 400px;
-    text-align: center;
-    transform: scale(0.95);
-    transition: transform 0.3s ease;
-}
-.modal-overlay.show .modal-box {
-    transform: scale(1);
-}
-.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
-.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
-.modal-actions { display: flex; justify-content: center; gap: 15px; }
-.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
-.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
-.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
-.modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
-.modal-actions .btn-danger:hover { background-color: #c82333; }

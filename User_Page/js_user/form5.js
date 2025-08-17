@@ -3,21 +3,6 @@
 // =================================================================
 // ภาค 1: Standard Reusable Logic
 // =================================================================
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
 
 function formatThaiDate(isoString) {
     if (!isoString) return 'N/A';
@@ -87,43 +72,19 @@ async function populateForm5() {
 // ภาค 3: Main Event Listener (ตัวจัดการการทำงานทั้งหมดในหน้า)
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- [ส่วนที่เพิ่มเข้ามา] Standard Navbar & Logout Modal Logic ---
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault();
-            const dropdownMenu = this.nextElementSibling;
-            // ปิด Dropdown อื่นๆ ที่เปิดอยู่ก่อน
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                if (menu !== dropdownMenu) menu.classList.remove('show');
-            });
-            if (dropdownMenu) dropdownMenu.classList.toggle('show');
-        });
-    });
-
-    // Logic สำหรับปิด Dropdown เมื่อคลิกที่พื้นที่อื่นนอก Dropdown
-    window.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
-    
-    // Logic ของปุ่ม Logout และ Modal
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
-    if (modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
     
     // --- Character Counter Logic ---
     const commentBox = document.getElementById('student-comment');
-    const charCounter = document.getElementById('char-counter');
-    if (commentBox && charCounter) { /* ... โค้ดเดิม ... */ }
+    if (commentBox) {
+        const charCounter = document.getElementById('char-counter');
+        if (charCounter) {
+            commentBox.addEventListener('input', () => {
+                const currentLength = commentBox.value.length;
+                const maxLength = commentBox.maxLength;
+                charCounter.textContent = `${currentLength} / ${maxLength}`;
+            });
+        }
+    }
 
     // --- [แก้ไข] Interactive Checkbox and Quantity Logic ---
     const toolCheckboxes = document.querySelectorAll('input[name="research-tool"]');

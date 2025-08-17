@@ -4,22 +4,6 @@
 // ภาค 1: Helper Functions
 // =================================================================
 
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
-
 function formatThaiDate(isoString) {
     if (!isoString) return '-';
     try {
@@ -52,6 +36,7 @@ function getStatusClass(statusText) {
 // =================================================================
 
 let cropper = null; // Global variable for Cropper instance
+let signaturePad = null; // [เพิ่ม] Global variable for SignaturePad instance
 
 async function loadProfileData() {
     const userEmail = localStorage.getItem("current_user");
@@ -83,7 +68,7 @@ async function loadProfileData() {
         document.getElementById('profile-program').textContent = programs.find(p => p.id === currentUser.program_id)?.name || '-';
         document.getElementById('profile-department').textContent = departments.find(d => d.id === currentUser.department_id)?.name || '-';
         document.getElementById('profile-faculty').textContent = currentUser.faculty || '-';
-        document.getElementById('profile-phone').textContent = currentUser.phone || '-';
+        document.getElementById('profile-phone-display').textContent = currentUser.phone || '-';
         document.getElementById('profile-email').textContent = currentUser.email || '-';
 
         const statusSpan = document.getElementById('profile-status');
@@ -171,16 +156,22 @@ function displaySignature(userEmail) {
 }
 
 /**
- * จัดการการลบลายเซ็น
+ * จัดการการลบลายเซ็น และบังคับให้สร้างใหม่ทันที
  */
 function deleteSignature() {
-    if (confirm("การลบลายเซ็นจะทำให้คุณต้องตั้งค่าใหม่ก่อนยื่นเอกสารครั้งถัดไป คุณต้องการลบลายเซ็นใช่หรือไม่?")) {
+    if (confirm("การลบลายเซ็นจะทำให้คุณต้องตั้งค่าใหม่ทันที คุณต้องการลบลายเซ็นใช่หรือไม่?")) {
         const userEmail = localStorage.getItem("current_user");
         if(userEmail) {
+            // 1. ลบข้อมูลลายเซ็นเก่า
             localStorage.removeItem(`${userEmail}_signature_data`);
             localStorage.removeItem(`${userEmail}_signed`);
-            alert("ลบลายเซ็นเรียบร้อยแล้ว");
-            displaySignature(userEmail);
+            
+            // 2. อัปเดตการแสดงผลในหน้าโปรไฟล์
+            displaySignature(userEmail); 
+            
+            // 3. แจ้งเตือนและเปิด Modal ให้สร้างใหม่ทันที
+            alert("ลบลายเซ็นเรียบร้อยแล้ว กรุณาตั้งค่าลายเซ็นใหม่เพื่อดำเนินการต่อ");
+            openSignatureModal(); // เรียกใช้ฟังก์ชันเปิด Modal ที่มีอยู่แล้ว
         }
     }
 }
@@ -267,37 +258,121 @@ function closeCropModal() {
     }
 }
 
+/**
+ * [ฟังก์ชันใหม่] รีเซ็ต Tab ใน Modal กลับไปที่ "วาดลายเซ็น" เสมอ
+ */
+function resetSignatureModalTabs() {
+    const drawTabBtn = document.querySelector('.tab-btn[data-tab="draw"]');
+    const uploadTabBtn = document.querySelector('.tab-btn[data-tab="upload"]');
+    const drawPanel = document.getElementById('tab-draw');
+    const uploadPanel = document.getElementById('tab-upload');
+
+    if (drawTabBtn && uploadTabBtn && drawPanel && uploadPanel) {
+        // ทำให้แท็บ "วาด" active
+        drawTabBtn.classList.add('active');
+        drawPanel.classList.add('active');
+
+        // ทำให้แท็บ "อัปโหลด" inactive
+        uploadTabBtn.classList.remove('active');
+        uploadPanel.classList.remove('active');
+    }
+}
+
+/**
+ * จัดการการเปิด Modal แก้ไขลายเซ็น (เวอร์ชันสร้าง Canvas ใหม่เสมอ)
+ */
+function openSignatureModal() {
+    const modal = document.getElementById('signature-edit-modal');
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => modal.classList.add('show'));
+
+    // 1. หาตำแหน่งที่จะใส่ Canvas
+    const canvasWrapper = document.querySelector('#tab-draw .canvas-wrapper');
+    // 2. ล้าง Canvas เก่าทิ้ง
+    canvasWrapper.innerHTML = ''; 
+    // 3. สร้าง Element <canvas> ขึ้นมาใหม่
+    const newCanvas = document.createElement('canvas');
+    newCanvas.id = 'signature-canvas';
+    // 4. นำ Canvas ใหม่ไปใส่ในตำแหน่ง
+    canvasWrapper.appendChild(newCanvas);
+
+    // 5. ปรับขนาด Canvas ใหม่ให้ถูกต้อง
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    newCanvas.width = newCanvas.offsetWidth * ratio;
+    newCanvas.height = newCanvas.offsetHeight * ratio;
+    newCanvas.getContext("2d").scale(ratio, ratio);
+
+    // 6. สร้าง SignaturePad instance ใหม่บน Canvas ที่เพิ่งสร้าง
+    signaturePad = new SignaturePad(newCanvas, {
+        backgroundColor: 'rgb(255, 255, 255)'
+    });
+    
+    // 7. รีเซ็ตให้กลับไปที่แท็บ "วาด" เสมอ
+    resetSignatureModalTabs(); 
+}
+
+/**
+ * ปิด Modal แก้ไขลายเซ็น และทำลาย instance ของ SignaturePad ทิ้ง
+ */
+function closeSignatureModal() {
+    const modal = document.getElementById('signature-edit-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        setTimeout(() => { 
+            modal.style.display = 'none'; 
+            
+            // --- [ส่วนที่สำคัญที่สุดที่เพิ่มเข้ามา] ---
+            // ทำการปิดการใช้งานและล้างค่า "กระดานวาดภาพ" ทิ้งไปเลย
+            if (signaturePad) {
+                signaturePad.off(); // หยุดการดักจับ event ทั้งหมด
+                signaturePad = null; // ล้างค่าในตัวแปร
+            }
+            // --- [จบส่วนที่เพิ่มเข้ามา] ---
+
+        }, 300);
+    }
+}
+
+function saveSignature() {
+    const userEmail = localStorage.getItem("current_user");
+    if (!userEmail) return;
+    const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+    let signatureData = null;
+    if (activeTab === 'draw') {
+        if (signaturePad.isEmpty()) {
+            alert("กรุณาวาดลายเซ็นของคุณ");
+            return;
+        }
+        signatureData = signaturePad.toDataURL('image/png');
+        finalizeSave(userEmail, signatureData);
+    } else {
+        const fileInput = document.getElementById('signature-upload-input');
+        const file = fileInput.files[0];
+        if (!file) {
+            alert("กรุณาเลือกไฟล์รูปภาพ");
+            return;
+        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            signatureData = reader.result;
+            finalizeSave(userEmail, signatureData);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function finalizeSave(userEmail, signatureData) {
+    localStorage.setItem(`${userEmail}_signature_data`, signatureData);
+    localStorage.setItem(`${userEmail}_signed`, "true");
+    alert("บันทึกลายเซ็นเรียบร้อยแล้ว");
+    displaySignature(userEmail);
+    closeSignatureModal();
+}
+
 // =================================================================
 // ภาค 3: Main Event Listener
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Standard Navbar & Modal Logic ---
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault();
-            const dropdownMenu = this.nextElementSibling;
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                if (menu !== dropdownMenu) menu.classList.remove('show');
-            });
-            if (dropdownMenu) dropdownMenu.classList.toggle('show');
-        });
-    });
-    window.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
-    if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
     // --- Profile Page Specific Event Listeners ---
     const deleteSignatureBtn = document.getElementById('delete-signature-btn');
@@ -310,6 +385,100 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cropConfirmBtn) cropConfirmBtn.addEventListener('click', confirmCrop);
     if (cropCancelBtn) cropCancelBtn.addEventListener('click', closeCropModal);
     
+// --- [Logic ใหม่] สำหรับแก้ไขเบอร์โทรศัพท์ (Hover Effect Version) ---
+    const editableField = document.querySelector('.editable-field');
+    const editPhoneBtn = document.getElementById('edit-phone-btn');
+    const savePhoneBtn = document.getElementById('save-phone-btn');
+    const cancelPhoneBtn = document.getElementById('cancel-phone-btn');
+    const phoneDisplay = document.getElementById('profile-phone-display');
+    const phoneInput = document.getElementById('profile-phone-input');
+
+    if (editPhoneBtn) {
+        editPhoneBtn.addEventListener('click', () => {
+            // เข้าสู่โหมดแก้ไขโดยการเพิ่มคลาส
+            editableField.classList.add('is-editing');
+            phoneInput.value = phoneDisplay.textContent.trim();
+            phoneInput.focus();
+        });
+    }
+
+    if (cancelPhoneBtn) {
+        cancelPhoneBtn.addEventListener('click', () => {
+            // ออกจากโหมดแก้ไขโดยการลบคลาส
+            editableField.classList.remove('is-editing');
+        });
+    }
+
+    if (savePhoneBtn) {
+        savePhoneBtn.addEventListener('click', async () => {
+            const newPhone = phoneInput.value.trim();
+            const userEmail = localStorage.getItem("current_user");
+            
+            // --- จำลองการบันทึกข้อมูล ---
+            phoneDisplay.textContent = newPhone;
+            // (ในอนาคตส่วนนี้จะยิง API ไปบันทึกที่ Server)
+            
+            // --- [แก้ไข] เปลี่ยนข้อความแจ้งเตือน ---
+            alert("ได้ทำการเปลี่ยนเบอร์โทรศัพท์เรียบร้อยแล้ว");
+            
+            // สลับ UI กลับสู่โหมดแสดงผล
+            editableField.classList.remove('is-editing');
+        });
+    }
+
+    // --- [Logic ใหม่] สำหรับ Modal แก้ไขลายเซ็น ---
+const editSignatureBtn = document.getElementById('edit-signature-btn');
+const signatureCancelBtn = document.getElementById('signature-cancel-btn');
+const signatureSaveBtn = document.getElementById('signature-save-btn');
+const clearSignatureBtn = document.getElementById('clear-signature-btn');
+const signatureUploadInput = document.getElementById('signature-upload-input');
+const uploadFilename = document.getElementById('upload-filename');
+
+if(editSignatureBtn) editSignatureBtn.addEventListener('click', openSignatureModal);
+if(signatureCancelBtn) signatureCancelBtn.addEventListener('click', closeSignatureModal);
+if(signatureSaveBtn) signatureSaveBtn.addEventListener('click', saveSignature);
+if(clearSignatureBtn) clearSignatureBtn.addEventListener('click', () => { if(signaturePad) signaturePad.clear(); });
+
+document.querySelectorAll('.tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+        button.classList.add('active');
+        document.getElementById(`tab-${button.dataset.tab}`).classList.add('active');
+    });
+});
+
+    if(signatureUploadInput) {
+        signatureUploadInput.addEventListener('change', () => {
+            uploadFilename.textContent = signatureUploadInput.files.length > 0 
+                ? `ไฟล์ที่เลือก: ${signatureUploadInput.files[0].name}` 
+                : '';
+        });
+    }
+
+    if(clearSignatureBtn) {
+        clearSignatureBtn.addEventListener('click', () => {
+            // 1. ตรวจสอบว่าแท็บไหนกำลังถูกใช้งานอยู่
+            const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+
+            if (activeTab === 'draw') {
+                // 2. ถ้าอยู่แท็บ "วาด" ให้ล้าง Canvas
+                if (signaturePad) {
+                    signaturePad.clear();
+                }
+            } else if (activeTab === 'upload') {
+                // 3. ถ้าอยู่แท็บ "อัปโหลด" ให้ล้างข้อมูลไฟล์
+                const fileInput = document.getElementById('signature-upload-input');
+                const fileNameDisplay = document.getElementById('upload-filename');
+                
+                // ล้างค่าใน input file ที่ซ่อนอยู่
+                fileInput.value = null; 
+                // ล้างข้อความแสดงชื่อไฟล์
+                fileNameDisplay.textContent = '';
+            }
+        });
+    }
+
     // --- Load initial data ---
     loadProfileData();
 });

@@ -1,18 +1,8 @@
-// --- Standard Navbar & Logout Logic ---
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
+// /User_Page/js_user/form1.js (Fully Modified Version for Committee Selection)
+
+// =================================================================
+// ภาค 1: Form 1 Specific Logic
+// =================================================================
 
 // --- Form 1 Specific Logic ---
 async function populateForm1() {
@@ -81,38 +71,11 @@ window.updateCoAdvisor = function() {
   if (coSelect.value === mainAdvisorId) coSelect.value = "";
 }
 
-// --- Main Event Listener for all page interactions ---
+// =================================================================
+// ภาค 2: Main Event Listener
+// =================================================================
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Standard Navbar Logic
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', function(event) {
-        event.preventDefault();
-        const dropdownMenu = this.nextElementSibling;
-        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-          if (menu !== dropdownMenu) menu.classList.remove('show');
-        });
-        if (dropdownMenu) dropdownMenu.classList.toggle('show');
-      });
-    });
-    window.addEventListener('click', function(event) {
-      if (!event.target.closest('.dropdown')) {
-        document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-          menu.classList.remove('show');
-        });
-      }
-    });
-
-    // Logout Modal Logic
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
-    if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-
 
     // Character Counter Logic for Comment Box
     const commentBox = document.getElementById('student-comment');

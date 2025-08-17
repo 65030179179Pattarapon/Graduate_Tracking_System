@@ -1,43 +1,6 @@
 // /User_Page/js_user/templates.js
-
 // =================================================================
-// ภาค 1: Helper Functions
-// =================================================================
-
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
-
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
-
-function formatThaiDate(isoString) {
-    if (!isoString) return 'N/A';
-    try {
-        const date = new Date(isoString);
-        return date.toLocaleDateString('th-TH', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            timeZone: 'UTC'
-        });
-    } catch (error) {
-        return 'Invalid Date';
-    }
-}
-
-
-// =================================================================
-// ภาค 2: Templates Page Logic
+// ภาค 1: Templates Page Logic
 // =================================================================
 
 /**
@@ -123,49 +86,10 @@ async function loadTemplateData() {
 }
 
 // =================================================================
-// ภาค 3: Main Event Listener
+// ภาค 2: Main Event Listener
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Navbar & Modal Logic ---
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault();
-            const dropdownMenu = this.nextElementSibling;
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                if (menu !== dropdownMenu) menu.classList.remove('show');
-            });
-            if (dropdownMenu) dropdownMenu.classList.toggle('show');
-        });
-    });
- 
-    window.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
 
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
-            localStorage.clear();
-            window.location.href = "/login/index.html";
-        });
-    }
-    if(modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-    }
-    
     // --- Load data for this page ---
     loadTemplateData();
 });
