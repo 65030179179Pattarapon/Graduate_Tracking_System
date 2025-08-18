@@ -22,7 +22,6 @@
       <li><a href="manage_guides.html">📖 จัดการคู่มือ</a></li>
       <li><a href="manage_documents.html">📂 จัดการเอกสาร</a></li>
       <li><a href="admin_profile.html">👤 โปรไฟล์</a></li>
-      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
     </ul>
   </nav>
 
@@ -32,13 +31,13 @@
 
     <!-- Filter Bar -->
     <div class="filter-bar">
-      <input type="text" id="search-name" placeholder="ค้นหาชื่อ/รหัสนักศึกษา">
-      <select id="filter-program">
+      <input type="id" id="student-id" placeholder="ค้นหาชื่อ/รหัสนักศึกษา">
+      <select id="program">
         <option value="">ทุกระดับปริญญา</option>
-        <option value="ป.โท">ปริญญาโท</option>
-        <option value="ป.เอก">ปริญญาเอก</option>
+        <option value="ปริญญาเอก">ปริญญาโท</option>
+        <option value="ปริญญาโท">ปริญญาเอก</option>
       </select>
-      <select id="filter-year">
+      <select id="admit-year">
         <option value="">ทุกปี</option>
         <option>2575</option>
         <option>2574</option>
