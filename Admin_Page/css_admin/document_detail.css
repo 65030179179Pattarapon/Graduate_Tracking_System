@@ -1,28 +1,44 @@
 /* /Admin_Page/css_admin/document_detail.css */
 
-/* --- Main Page Layout --- */
+/* 1. ตรวจสอบให้แน่ใจว่า Element ที่ครอบหลักไม่มี overflow ที่ผิดพลาด */
+main.detail-container {
+    /* ถ้ามี property overflow อยู่ ให้ลบทิ้ง หรือตั้งเป็น visible */
+    overflow: visible; 
+}
+
+/* --- [แก้ไข] Layout สำหรับ Independent Scrolling (เวอร์ชันแน่นอน) --- */
+
+/* 1. กำหนดให้ Layout หลักมีความสูงเต็มจอ (ใต้ Navbar) */
 .detail-container {
     max-width: 1600px;
-    margin: 40px auto;
-    padding: 0 20px;
+    margin: 0 auto; /* เอา margin บน-ล่าง ออก */
+    padding: 20px;
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 30px;
     align-items: start;
+    /* หัวใจของการแก้ไข: กำหนดความสูงให้เต็มพื้นที่ที่เหลือ */
+    height: calc(100vh - 65px); 
 }
 
+/* 2. สั่งให้คอลัมน์ซ้าย (เนื้อหา) มี scrollbar ของตัวเองเมื่อเนื้อหายาว */
 .document-content {
     display: flex;
     flex-direction: column;
     gap: 25px;
+    overflow-y: auto; /* <<<<< คำสั่งสำคัญ */
+    height: 100%; /* ทำให้สูงเต็มพื้นที่ที่ได้รับ */
 }
 
+/* 3. สั่งให้คอลัมน์ขวา (sidebar) มี scrollbar ของตัวเองถ้าเนื้อหายาว */
 .document-sidebar {
     display: flex;
     flex-direction: column;
     gap: 25px;
-    position: sticky;
-    top: 95px; /* 65px (navbar) + 30px (gap) */
+    overflow-y: auto; /* <<<<< เพิ่มเผื่อไว้ */
+    height: 100%;
+    /* ไม่ต้องใช้ position: sticky อีกต่อไป */
 }
 
 .content-header {
@@ -346,6 +362,39 @@
 .actor-list li {
     font-size: 15px;
     padding: 5px;
+}
+
+.actor-sublist li {
+    padding: 6px 0; /* << แก้ไข: เพิ่มระยะห่างบน-ล่างเป็น 6px */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* สถานะ: รออนุมัติ (สีเทา) */
+.actor-sublist li.pending {
+    color: var(--text-secondary); 
+}
+.actor-sublist li.pending .fas {
+    color: var(--text-secondary);
+}
+
+/* สถานะ: อนุมัติแล้ว (สีเขียว) */
+.actor-sublist li.approved {
+    color: var(--approved-color);
+    font-weight: 500;
+}
+.actor-sublist li.approved .fas {
+    color: var(--approved-color);
+}
+
+/* สถานะ: ตีกลับ (สีแดง) */
+.actor-sublist li.rejected {
+    color: var(--rejected-color);
+    font-weight: 500;
+}
+.actor-sublist li.rejected .fas {
+    color: var(--rejected-color);
 }
 
 .waiting-info {
