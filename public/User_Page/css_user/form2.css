@@ -1,74 +1,24 @@
-/* /User_Page/css_user/form2.css (Standard Light Theme Styles) */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
-
-/* 🎨 Theme Variables */
-:root {
-    --color-primary: #ed4988;
-    --color-secondary: #f1592b;
-    --text-primary: #1e2022;
-    --text-secondary: #52575d;
-    --bg-main: #f4f7f6;
-    --bg-card: #ffffff;
-    --border-color: #e9ecef;
-    --rejected-color: #dc3545;
-}
-
-/* 🖌️ General Body Styles */
-body {
-    font-family: 'Sarabun', sans-serif;
-    background: var(--bg-main);
-    margin: 0; 
-    padding: 0;
-    color: var(--text-primary);
-    padding-top: 65px; /* Space for fixed navbar */
-}
-
-/* มาตรฐาน: Navbar Styles */
-nav {
-    background: var(--bg-card);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 65px;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.logo-link { text-decoration: none; }
-.logo { display: flex; align-items: center; gap: 12px; }
-.logo img { height: 40px; width: auto; }
-.logo span { font-weight: 600; font-size: 18px; color: var(--color-primary); }
-
-.nav-links { list-style: none; display: flex; align-items: center; gap: 5px; margin: 0; padding: 0; }
-.nav-links > li > a { color: var(--text-secondary); text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; transition: background-color 0.2s, color 0.2s; display: flex; align-items: center; gap: 8px; }
-.nav-links > li > a.active { background-color: transparent; color: var(--color-primary); font-weight: 600; }
-.nav-links > li > a:not(.active):hover { background-color: var(--color-primary); color: white; }
-.nav-links li a .fa-caret-down { font-size: 12px; margin-left: 4px; }
-
-/* มาตรฐาน: Dropdown Styles */
-.dropdown { position: relative; }
-.dropdown-menu { display: none; position: absolute; background: var(--bg-card); box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1); border-radius: 8px; padding: 8px 0; list-style: none; top: 110%; left: 0; min-width: 220px; white-space: nowrap; z-index: 1001; border: 1px solid var(--border-color); }
-.dropdown-menu.show { display: block; }
-.dropdown-menu li a { color: var(--text-primary); font-size: 14px; padding: 10px 15px; width: auto; display: flex; align-items: center; gap: 10px; text-decoration: none; transition: background-color 0.2s, color 0.2s; }
-.dropdown-menu li a:hover, .dropdown-menu .active-item { background-color: #f8f9fa; color: var(--color-primary); }
-.dropdown-menu .dropdown-header { padding: 8px 15px; font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
-.dropdown-menu .dropdown-divider { height: 1px; margin: 8px 0; overflow: hidden; background-color: var(--border-color); }
-
-.user-menu { position: relative; }
-.user-menu > a { color: var(--text-secondary); text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; transition: background-color 0.2s, color 0.2s; cursor: pointer; }
-.user-menu > a:hover { background-color: #f8f9fa; color: var(--color-primary); }
-#nav-username { font-weight: 600; font-size: 14px; }
-.user-menu .fas { font-size: 18px; }
-.user-menu .dropdown-menu { right: 0; left: auto; width: 180px; }
-
 /* มาตรฐาน: Form Container */
-.form-container { max-width: 800px; margin: 40px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+.form-container { 
+    max-width: 800px; 
+    margin: 40px auto; 
+    padding: 30px; 
+    background: white; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07); 
+    animation: fadeIn 0.6s ease-out; /* << เพิ่มบรรทัดนี้ */
+}
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
 h2 { text-align: center; color: var(--text-primary); margin-top: 0; margin-bottom: 25px; font-size: 22px; }
 fieldset { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
 legend { padding: 0 10px; font-weight: 600; color: var(--color-primary); }
@@ -113,6 +63,16 @@ textarea { resize: vertical; min-height: 80px; }
 .file-input::file-selector-button { margin-right: 10px; border: none; background: var(--color-primary); padding: 8px 12px; border-radius: 4px; color: #fff; cursor: pointer; transition: background-color .2s ease-in-out; }
 .file-input::file-selector-button:hover { background: #c93870; }
 .file-name-display { display: block; margin-top: 8px; font-size: 13px; color: var(--text-secondary); font-style: italic; }
+.file-naming-instruction {
+    display: block;
+    font-size: 13px;
+    color: #e74c3c; /* สีแดงอ่อนๆ เพื่อให้เด่นขึ้น */
+    margin-bottom: 10px;
+    background-color: #fef5f5;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-style: italic;
+}
 
 /* --- สไตล์สำหรับ Checklist และ Dropdown ในข้อความ --- */
 .checklist-group { display: flex; flex-direction: column; gap: 15px; }
@@ -147,17 +107,3 @@ textarea { resize: vertical; min-height: 80px; }
 /* --- สไตล์ปุ่ม Submit --- */
 button[type="submit"] { width: 100%; background: var(--color-secondary); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.2s; margin-top: 10px; }
 button[type="submit"]:hover { background: #e24a1e; }
-
-/* Modal Styles */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
-.modal-overlay.show { opacity: 1; pointer-events: auto; }
-.modal-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 400px; text-align: center; transform: scale(0.95); transition: transform 0.3s ease; }
-.modal-overlay.show .modal-box { transform: scale(1); }
-.modal-box h3 { margin-top: 0; margin-bottom: 15px; font-size: 20px; }
-.modal-box p { margin-bottom: 25px; color: var(--text-secondary); }
-.modal-actions { display: flex; justify-content: center; gap: 15px; }
-.modal-actions button { padding: 10px 25px; border: none; border-radius: 6px; font-weight: 500; cursor: pointer; }
-.modal-actions .btn-secondary { background-color: #e9ecef; color: var(--text-secondary); border: 1px solid #dee2e6; }
-.modal-actions .btn-secondary:hover { background-color: #dee2e6; }
-.modal-actions .btn-danger { background-color: var(--rejected-color, #dc3545); color: white; }
-.modal-actions .btn-danger:hover { background-color: #c82333; }

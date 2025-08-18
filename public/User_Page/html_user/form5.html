@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ขออนุญาตเก็บรวบรวมข้อมูล</title>
   <link rel="stylesheet" href="/User_Page/css_user/form5.css" />
+  <link rel="stylesheet" href="/User_Page/css_user/common.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <link rel="icon" href="/assets/images/logo.png">
 </head>
@@ -84,20 +85,44 @@
       <fieldset>
         <legend>📋 รายละเอียดการขออนุญาต</legend>
         <div class="form-group">
-            <label>เครื่องมือที่ใช้ในการวิจัย* (เลือกได้มากกว่า 1 ข้อ)</label>
+            <label>เครื่องมือที่ใช้ในการวิจัย* (เลือกได้มากกว่า 1 เครื่องมือและระบุจำนวน)</label>
+            
             <div class="checkbox-group">
-              <label><input type="checkbox" name="research-tool" value="แบบสอบถาม"> แบบสอบถาม</label>
-              <label><input type="checkbox" name="research-tool" value="แบบทดสอบ"> แบบทดสอบ</label>
-              <label><input type="checkbox" name="research-tool" value="ทดลองสอน"> ทดลองสอน</label>
-              <label class="other-label">
-                  <input type="checkbox" name="research-tool" id="other-checkbox" value="อื่นๆ"> อื่นๆ: 
-                  <input type="text" id="other-tool-text" placeholder="ระบุเพิ่มเติม" disabled>
-              </label>
+            
+                <div class="checkbox-item">
+                    <label><input type="checkbox" name="research-tool" value="แบบสอบถาม"> แบบสอบถาม</label>
+                    <div class="quantity-wrapper">
+                        <input type="number" class="quantity-input" data-type="แบบสอบถาม" min="1" value="1" disabled>
+                        <span>ฉบับ</span>
+                    </div>
+                </div>
+
+                <div class="checkbox-item">
+                    <label><input type="checkbox" name="research-tool" value="แบบทดสอบ"> แบบทดสอบ</label>
+                    <div class="quantity-wrapper">
+                        <input type="number" class="quantity-input" data-type="แบบทดสอบ" min="1" value="1" disabled>
+                        <span>ฉบับ</span>
+                    </div>
+                </div>
+
+                <div class="checkbox-item">
+                    <label><input type="checkbox" name="research-tool" value="ทดลองสอน"> ทดลองสอน</label>
+                    <div class="quantity-wrapper">
+                        <input type="number" class="quantity-input" data-type="ทดลองสอน" min="1" value="1" disabled>
+                        <span>ฉบับ</span>
+                    </div>
+                </div>
+
+                <div class="checkbox-item other-item">
+                    <label><input type="checkbox" name="research-tool" id="other-checkbox" value="อื่นๆ"> อื่นๆ:</label>
+                    <input type="text" id="other-tool-text" placeholder="ระบุเพิ่มเติม" disabled>
+                    <div class="quantity-wrapper">
+                        <input type="number" class="quantity-input" data-type="อื่นๆ" min="1" value="1" disabled>
+                        <span>ฉบับ</span>
+                    </div>
+                </div>
+
             </div>
-        </div>
-        <div class="form-group">
-            <label for="num-docs">จำนวนหนังสือขออนุญาตที่ต้องการ (ฉบับ)*</label>
-            <input type="number" id="num-docs" min="1" max="10" placeholder="ระบุจำนวนเป็นตัวเลข" required>
         </div>
       </fieldset>
       
@@ -126,5 +151,6 @@
   </div>
 
   <script src="/User_Page/js_user/form5.js"></script>
+  <script src="/User_Page/js_user/common.js"></script>
 </body>
 </html>

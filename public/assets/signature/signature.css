@@ -131,9 +131,14 @@ body {
 }
 
 #signature-preview {
-  max-width: 100%;
-  max-height: 100%;
-  display: none;
+    display: none; /* ปล่อยให้ JavaScript ควบคุมการแสดงผล */
+    max-width: 90%;
+    max-height: 180px;
+    background-color: #ffffff; /* << ทำให้พื้นหลังของรูปเป็นสีขาว */
+    border: 1px solid var(--border-color); /* << เพิ่มเส้นขอบบางๆ */
+    border-radius: 8px; /* << ทำให้ขอบมน */
+    padding: 15px; /* << เพิ่มระยะห่างภายใน */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07); /* << เพิ่มเงาจางๆ ให้ดูมีมิติ */
 }
 
 #preview-text {

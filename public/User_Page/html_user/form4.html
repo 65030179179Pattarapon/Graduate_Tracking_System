@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ขอเชิญผู้ทรงคุณวุฒิประเมิน</title>
   <link rel="stylesheet" href="/User_Page/css_user/form4.css" />
+  <link rel="stylesheet" href="/User_Page/css_user/common.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <link rel="icon" href="/assets/images/logo.png">
 </head>
-<body>
 <body>
   <nav>
     <a href="/User_Page/html_user/home.html" class="logo-link">
@@ -29,7 +29,7 @@
             <li><a href="/User_Page/html_user/form3.html">แบบนำส่งเอกสารหัวข้อและเค้าโครงวิทยานิพนธ์ 1 เล่ม</a></li>
             <li><a href="/User_Page/html_user/form4.html" class="active">แบบขอหนังสือเชิญเป็นผู้ทรงคุณวุฒิตรวจและประเมิน...เพื่อการวิจัย</a></li>
             <li><a href="/User_Page/html_user/form5.html">แบบขอหนังสือขออนุญาตเก็บรวบรวมข้อมูล (วิทยานิพนธ์)</a></li>
-              
+            
           <li class="dropdown-divider"></li> <li class="dropdown-header">ขั้นการสอบวิทยานิพนธ์ขั้นสุดท้าย</li>
             <li><a href="/User_Page/html_user/form6.html">บันทึกข้อความ เรื่อง ขอแต่งตั้งคณะกรรมการการสอบวิทยานิพนธ์ขั้นสุดท้าย</a></li>
         </ul>
@@ -85,27 +85,62 @@
 
       <fieldset>
         <legend>👨‍🏫 รายละเอียดการขอเชิญ</legend>
+
         <div class="form-group">
-          <label for="num-evaluators">จำนวนผู้ทรงคุณวุฒิที่ต้องการเชิญ (คน)*</label>
-          <input type="number" id="num-evaluators" min="1" max="10" placeholder="ระบุจำนวนเป็นตัวเลข เช่น 3" required>
-        </div>
-        <div class="form-group">
-          <label>ประเภทของเครื่องมือที่ต้องการประเมิน* (เลือกได้มากกว่า 1 ข้อ)</label>
+          <label>ประเภทของเครื่องมือที่ต้องการประเมิน* (เลือกและระบุจำนวน)</label>
           <div class="checkbox-group">
-            <label><input type="checkbox" name="document-type" value="บทเรียน"> บทเรียน</label>
-            <label><input type="checkbox" name="document-type" value="แบบประเมิน"> แบบประเมิน</label>
-            <label><input type="checkbox" name="document-type" value="แบบทดสอบ"> แบบทดสอบ</label>
-            <label><input type="checkbox" name="document-type" value="แบบสอบถาม"> แบบสอบถาม</label>
-            <label class="other-label">
-                <input type="checkbox" name="document-type" id="other-checkbox" value="อื่นๆ"> อื่นๆ: 
+            
+            <div class="checkbox-item">
+                <label><input type="checkbox" name="document-type" value="บทเรียน"> บทเรียน</label>
+                <div class="quantity-wrapper">
+                    <input type="number" class="quantity-input" data-type="บทเรียน" min="1" value="1" disabled>
+                    <span>ฉบับ</span>
+                </div>
+            </div>
+
+            <div class="checkbox-item">
+                <label><input type="checkbox" name="document-type" value="แบบประเมิน"> แบบประเมิน</label>
+                <div class="quantity-wrapper">
+                    <input type="number" class="quantity-input" data-type="แบบประเมิน" min="1" value="1" disabled>
+                    <span>ฉบับ</span>
+                </div>
+            </div>
+
+            <div class="checkbox-item">
+                <label><input type="checkbox" name="document-type" value="แบบทดสอบ"> แบบทดสอบ</label>
+                <div class="quantity-wrapper">
+                    <input type="number" class="quantity-input" data-type="แบบทดสอบ" min="1" value="1" disabled>
+                    <span>ฉบับ</span>
+                </div>
+            </div>
+
+            <div class="checkbox-item">
+                <label><input type="checkbox" name="document-type" value="แบบสอบถาม"> แบบสอบถาม</label>
+                <div class="quantity-wrapper">
+                    <input type="number" class="quantity-input" data-type="แบบสอบถาม" min="1" value="1" disabled>
+                    <span>ฉบับ</span>
+                </div>
+            </div>
+
+            <div class="checkbox-item other-item">
+                <label><input type="checkbox" name="document-type" id="other-checkbox" value="อื่นๆ"> อื่นๆ:</label>
                 <input type="text" id="other-doc-text" placeholder="ระบุเพิ่มเติม" disabled>
-            </label>
+                <div class="quantity-wrapper">
+                    <input type="number" class="quantity-input" data-type="อื่นๆ" min="1" value="1" disabled>
+                    <span>ฉบับ</span>
+                </div>
+            </div>
+
           </div>
         </div>
         <div class="form-group">
-            <label for="num-docs">จำนวนหนังสือขอเชิญที่ต้องการ (ฉบับ)*</label>
-            <input type="number" id="num-docs" min="1" max="10" placeholder="ระบุจำนวนเป็นตัวเลข เช่น 3" required>
+          <label for="num-evaluators">จำนวนผู้ทรงคุณวุฒิที่ต้องการเชิญ (คน)*</label>
+          <input type="number" id="num-evaluators" min="1" max="10" placeholder="ระบุจำนวน แล้วช่องกรอกข้อมูลจะปรากฏ" required>
         </div>
+
+        <div id="evaluators-container">
+            </div>
+
       </fieldset>
 
       <fieldset>
@@ -133,5 +168,6 @@
   </div>
 
   <script src="/User_Page/js_user/form4.js"></script>
+  <script src="/User_Page/js_user/common.js"></script>
 </body>
 </html>

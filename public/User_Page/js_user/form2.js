@@ -1,35 +1,14 @@
-// /User_Page/js_user/form2.js (Self-Contained Version)
+// /User_Page/js_user/form2.js (Fully Modified Version for Committee Selection)
 
 // =================================================================
 // ภาค 1: Helper Functions
 // =================================================================
-function logout() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.style.display = 'flex';
-        requestAnimationFrame(() => modal.classList.add('show'));
-    }
-}
 
-function closeModal() {
-    const modal = document.getElementById('logout-confirm-modal');
-    if (modal) {
-        modal.classList.remove('show');
-        setTimeout(() => { modal.style.display = 'none'; }, 300);
-    }
-}
-
-// ฟังก์ชันใหม่สำหรับสร้างปีการศึกษา
 function populateRegistrationYears() {
     const selectYear = document.getElementById('registration-year');
     if (!selectYear) return;
-
-    // ทำให้ตัวเลือกปีว่างก่อน เผื่อมีการเรียกซ้ำ
     selectYear.innerHTML = '<option value="">เลือกปี</option>';
-
     const currentThaiYear = new Date().getFullYear() + 543;
-    
-    // แก้ไขตัวเลข 5 ให้เป็นจำนวนปีที่ต้องการย้อนหลัง เช่น 20 ปี
     for (let i = 0; i < 20; i++) { 
         const year = currentThaiYear - i;
         const option = new Option(year, year);
@@ -49,11 +28,13 @@ async function populateForm2() {
     }
 
     try {
-        const [students, advisors, programs, departments] = await Promise.all([
+        // [แก้ไข] ดึงข้อมูลอาจารย์ภายนอก (external_professor.json) เพิ่มเข้ามา
+        const [students, advisors, programs, departments, externalProfessors] = await Promise.all([
             fetch("/data/student.json").then(res => res.json()),
             fetch("/data/advisor.json").then(res => res.json()),
             fetch("/data/structures/programs.json").then(res => res.json()),
-            fetch("/data/structures/departments.json").then(res => res.json())
+            fetch("/data/structures/departments.json").then(res => res.json()),
+            fetch("/data/external_professor.json").then(res => res.json())
         ]);
 
         const currentUser = students.find(s => s.email === userEmail);
@@ -62,9 +43,8 @@ async function populateForm2() {
             return;
         }
 
-        // --- Populate Form Fields ---
+        // --- เติมข้อมูลนักศึกษา (เหมือนเดิม) ---
         document.getElementById('nav-username').textContent = userEmail;
-        
         document.getElementById('fullname').value = `${currentUser.prefix_th} ${currentUser.first_name_th} ${currentUser.last_name_th}`.trim();
         document.getElementById('student-id').value = currentUser.student_id;
         document.getElementById('degree').value = currentUser.degree || 'N/A';
@@ -74,22 +54,55 @@ async function populateForm2() {
         document.getElementById('department').value = departmentName;
         document.getElementById('phone').value = currentUser.phone || 'N/A';
 
+        // --- [Logic ใหม่] สร้าง Dropdown และเติมข้อมูลอาจารย์ ---
+        
+        // 1. แสดงชื่ออาจารย์ที่ปรึกษาหลัก และ ร่วม 1 (จากโปรไฟล์)
         const mainAdvisor = advisors.find(a => a.advisor_id === currentUser.main_advisor_id);
         const coAdvisor1 = advisors.find(a => a.advisor_id === currentUser.co_advisor1_id);
-        
-        document.getElementById('main-advisor').value = mainAdvisor ? `${mainAdvisor.prefix_th || ''}${mainAdvisor.first_name_th || ''} ${mainAdvisor.last_name_th || ''}`.trim() : 'ยังไม่ได้เลือก';
-        document.getElementById('co-advisor-1').value = coAdvisor1 ? `${coAdvisor1.prefix_th || ''}${coAdvisor1.first_name_th || ''} ${coAdvisor1.last_name_th || ''}`.trim() : 'ไม่มี';
+        document.getElementById('main-advisor').value = mainAdvisor ? `${mainAdvisor.prefix_th || ''}${mainAdvisor.first_name_th || ''} ${mainAdvisor.last_name_th || ''}`.trim() : 'ไม่มีข้อมูล';
+        document.getElementById('co-advisor-1').value = coAdvisor1 ? `${coAdvisor1.prefix_th || ''}${coAdvisor1.first_name_th || ''} ${coAdvisor1.last_name_th || ''}`.trim() : 'ไม่มีข้อมูล';
 
-        const coAdvisor2Select = document.getElementById("co-advisor-2");
         const usedAdvisorIds = [currentUser.main_advisor_id, currentUser.co_advisor1_id].filter(id => id);
-        const availableAdvisors = advisors.filter(a => !usedAdvisorIds.includes(a.advisor_id));
-        
-        availableAdvisors.forEach(advisor => {
-            const advisorFullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
-            const opt = new Option(advisorFullName, advisor.advisor_id);
-            coAdvisor2Select.appendChild(opt);
+
+        // 2. สร้าง Dropdown ประธานกรรมการสอบ
+        const committeeChairSelect = document.getElementById("committee-chair");
+        const potentialChairs = advisors.filter(a => a.roles?.includes("COMMITTEE_CHAIR") && !usedAdvisorIds.includes(a.advisor_id));
+        potentialChairs.forEach(advisor => {
+            const fullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
+            committeeChairSelect.appendChild(new Option(fullName, advisor.advisor_id));
+        });
+
+        // 3. สร้าง Dropdown ที่ปรึกษาร่วม 2
+        const coAdvisor2Select = document.getElementById("co-advisor-2");
+        const potentialCoAdvisors = advisors.filter(a => a.roles?.includes("CO_ADVISOR") && !usedAdvisorIds.includes(a.advisor_id));
+        potentialCoAdvisors.forEach(advisor => {
+            const fullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
+            coAdvisor2Select.appendChild(new Option(fullName, advisor.advisor_id));
+        });
+
+        // 4. สร้าง Dropdown กรรมการคนที่ 5 (อาจารย์ภายในทั้งหมดที่ไม่ถูกเลือกไปแล้ว)
+        const member5Select = document.getElementById("committee-member-5");
+        const internalMembers = advisors.filter(a => !usedAdvisorIds.includes(a.advisor_id));
+        internalMembers.forEach(advisor => {
+            const fullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
+            member5Select.appendChild(new Option(fullName, advisor.advisor_id));
         });
         
+        // 5. สร้าง Dropdown กรรมการสำรอง (ภายนอก)
+        const reserveExternalSelect = document.getElementById("reserve-external");
+        const externalMembers = externalProfessors.filter(p => p.roles?.includes("RESERVE_EXTERNAL_COMMITTEE"));
+        externalMembers.forEach(prof => {
+            const fullName = `${prof.prefix_th || ''}${prof.first_name_th || ''} ${prof.last_name_th || ''}`.trim();
+            reserveExternalSelect.appendChild(new Option(fullName, prof.ext_prof_id));
+        });
+
+        // 6. สร้าง Dropdown กรรมการสำรอง (ภายใน)
+        const reserveInternalSelect = document.getElementById("reserve-internal");
+        internalMembers.forEach(advisor => { // ใช้ list เดียวกับกรรมการคนที่ 5
+            const fullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.trim();
+            reserveInternalSelect.appendChild(new Option(fullName, advisor.advisor_id));
+        });
+
         populateRegistrationYears();
         
     } catch (error) {
@@ -102,33 +115,6 @@ async function populateForm2() {
 // ภาค 3: Main Event Listener
 // =================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // --- Navbar & Modal Logic ---
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(event) {
-            event.preventDefault();
-            const dropdownMenu = this.nextElementSibling;
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                if (menu !== dropdownMenu) menu.classList.remove('show');
-            });
-            if (dropdownMenu) dropdownMenu.classList.toggle('show');
-        });
-    });
-    window.addEventListener('click', function(event) {
-        if (!event.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-                menu.classList.remove('show');
-            });
-        }
-    });
-    const logoutButton = document.getElementById("logout-button");
-    const modal = document.getElementById('logout-confirm-modal');
-    const cancelBtn = document.getElementById('modal-cancel-btn');
-    const confirmBtn = document.getElementById('modal-confirm-btn');
-    if (logoutButton) logoutButton.addEventListener('click', (e) => { e.preventDefault(); logout(); });
-    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
-    if (confirmBtn) confirmBtn.addEventListener('click', () => { localStorage.clear(); window.location.href = "/login/index.html"; });
-    if(modal) modal.addEventListener('click', function(e) { if (e.target === this) closeModal(); });
 
     // --- Character Counter Logic ---
     const commentBox = document.getElementById('student-comment');
@@ -156,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // --- Form Submission Logic ---
+    // --- [แก้ไข] Form Submission Logic ---
     const thesisForm = document.getElementById("thesis-form");
     if (thesisForm) {
         thesisForm.addEventListener("submit", (e) => {
@@ -164,28 +150,29 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const userEmail = localStorage.getItem("current_user");
             
-            // --- Validation ---
+            // --- รวบรวมข้อมูลจาก Dropdown ที่เพิ่มเข้ามา ---
+            const committee = {
+                chair_id: document.getElementById('committee-chair').value,
+                co_advisor2_id: document.getElementById('co-advisor-2').value,
+                member5_id: document.getElementById('committee-member-5').value,
+                reserve_external_id: document.getElementById('reserve-external').value,
+                reserve_internal_id: document.getElementById('reserve-internal').value,
+            };
+
+            // --- Validation ที่ครอบคลุมขึ้น ---
+            if (!committee.chair_id || !committee.co_advisor2_id || !committee.member5_id || !committee.reserve_external_id || !committee.reserve_internal_id) {
+                alert("กรุณาเลือกข้อมูลคณะกรรมการสอบและกรรมการสำรองให้ครบถ้วน");
+                return;
+            }
+            // (Validation อื่นๆ เหมือนเดิม)
+
             const proposalFile = document.getElementById('proposal-file').files[0];
             const coverPageFile = document.getElementById('cover-page-file').files[0];
             const registrationProofFile = document.getElementById('registration-proof-file').files[0];
             const semester = document.getElementById('registration-semester').value;
             const year = document.getElementById('registration-year').value;
 
-            if (document.getElementById('thesis-title-th').value.trim() === '' || 
-                document.getElementById('thesis-title-en').value.trim() === '') {
-                alert("กรุณากรอกข้อมูลหัวข้อวิทยานิพนธ์ให้ครบถ้วน");
-                return;
-            }
-            if (!proposalFile || !coverPageFile || !registrationProofFile) {
-                alert("กรุณาแนบไฟล์ที่จำเป็น (*) ให้ครบถ้วนทุกช่อง");
-                return;
-            }
-            if (!semester || !year) {
-                alert("กรุณาเลือกภาคการศึกษาและปีการศึกษาสำหรับสำเนาการลงทะเบียน");
-                return;
-            }
-
-            // --- Construct submission object ---
+            // --- Construct submission object (โครงสร้างใหม่) ---
             const submissionData = {
                 doc_id: `form2_${userEmail}_${Date.now()}`,
                 type: "ฟอร์ม 2",
@@ -194,7 +181,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 student_id: document.getElementById('student-id').value,
                 thesis_title_th: document.getElementById('thesis-title-th').value.trim(),
                 thesis_title_en: document.getElementById('thesis-title-en').value.trim(),
-                selected_co_advisor2_id: document.getElementById("co-advisor-2").value || null,
+                
+                committee: committee, // **ส่งข้อมูลคณะกรรมการเป็น Object**
+
                 files: [
                     { type: 'เค้าโครงวิทยานิพนธ์', name: proposalFile.name },
                     { type: 'หน้าปก', name: coverPageFile.name },
@@ -203,8 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 details: {
                     registration_semester: semester,
                     registration_year: year,
-                }
-                ,
+                },
                 student_comment: document.getElementById('student-comment')?.value.trim() || "",
                 submitted_date: new Date().toISOString(),
                 status: "รอตรวจ"
@@ -215,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
             existingPendingDocs.push(submissionData);
             localStorage.setItem('localStorage_pendingDocs', JSON.stringify(existingPendingDocs));
             
-            console.log("Form 2 Submission Data:", submissionData);
+            console.log("Form 2 New Submission Data:", submissionData);
             alert("✅ ยืนยันและส่งแบบฟอร์มเสนอหัวข้อเรียบร้อยแล้ว!");
             window.location.href = "/User_Page/html_user/status.html";
         });

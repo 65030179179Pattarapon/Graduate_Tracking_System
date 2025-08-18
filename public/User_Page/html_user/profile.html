@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>โปรไฟล์ของฉัน | Graduate Tracker</title>
     <link rel="stylesheet" href="/User_Page/css_user/profile.css" />
+    <link rel="stylesheet" href="/User_Page/css_user/common.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
@@ -80,7 +81,18 @@
                             <div><label>ภาควิชา:</label><span id="profile-department">-</span></div>
                             <div><label>คณะ:</label><span id="profile-faculty">-</span></div>
                             <div><label>สถานะ:</label><span id="profile-status" class="status-badge">-</span></div>
-                            <div><label>เบอร์โทรศัพท์:</label><span id="profile-phone">-</span></div>
+                            <div>
+                                <label>เบอร์โทรศัพท์:</label>
+                                <div class="editable-field">
+                                    <span id="profile-phone-display">-</span>
+                                    <input type="tel" id="profile-phone-input" class="hidden" placeholder="กรอกเบอร์โทรศัพท์">
+                                    <div class="edit-actions">
+                                        <button id="edit-phone-btn" class="btn-icon" title="แก้ไขเบอร์โทรศัพท์"><i class="fas fa-pencil-alt"></i></button>
+                                        <button id="save-phone-btn" class="btn-text-save hidden">ยืนยัน</button>
+                                        <button id="cancel-phone-btn" class="btn-text-cancel hidden">ยกเลิก</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div><label>อีเมล:</label><span id="profile-email">-</span></div>
                         </div>
                     </div>
@@ -92,7 +104,7 @@
                         <p>กำลังโหลดลายเซ็น...</p>
                     </div>
                     <div class="signature-actions">
-                        <a href="/User_Page/html_user/signature.html" class="btn btn-primary"><i class="fas fa-edit"></i> แก้ไขลายเซ็น</a>
+                        <button id="edit-signature-btn" class="btn btn-primary"><i class="fas fa-edit"></i> แก้ไขลายเซ็น</button>
                         <button id="delete-signature-btn" class="btn btn-danger"><i class="fas fa-trash"></i> ลบลายเซ็น</button>
                     </div>
                 </section>
@@ -187,8 +199,45 @@
             </div>
         </div>
     </div>
+    
+   <div id="signature-edit-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box signature-modal-box">
+            <h3>แก้ไขลายเซ็นดิจิทัล</h3>
+            <div class="tab-nav">
+                <button class="tab-btn active" data-tab="draw">วาดลายเซ็น</button>
+                <button class="tab-btn" data-tab="upload">อัปโหลด</button>
+            </div>
+            <div class="tab-content">
+                <div id="tab-draw" class="tab-panel active">
+                    <div class="canvas-wrapper">
+                        <canvas id="signature-canvas"></canvas>
+                    </div>
+                    </div>
+                <div id="tab-upload" class="tab-panel">
+                    <label for="signature-upload-input" class="upload-label">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <span>เลือกไฟล์รูปภาพ (.png, .jpg)</span>
+                    </label>
+                    <input type="file" id="signature-upload-input" accept="image/png, image/jpeg" style="display: none;">
+                    <p id="upload-filename" class="upload-filename"></p>
+                </div>
+            </div>
+            <div class="modal-actions stacked">
+                <div class="main-actions">
+                    <button id="signature-cancel-btn" class="btn-secondary">ยกเลิก</button>
+                    <button id="signature-save-btn" class="btn-primary">บันทึก</button>
+                </div>
+                <div class="secondary-actions">
+                     <button id="clear-signature-btn" class="btn-text">ล้าง</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="/User_Page/js_user/profile.js"></script>
+    <script src="/User_Page/js_user/common.js"></script>
 
   </body>
 </html>

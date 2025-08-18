@@ -147,12 +147,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             signatureData = uploadedSignatureData;
-        } else {
+        } else { // ส่วนของการวาด
             if (!isCanvasDirty) {
                 alert("✍️ กรุณาวาดลายเซ็นของคุณก่อนบันทึก");
                 return;
             }
-            signatureData = canvas.toDataURL('image/png'); 
+            
+            // --- [ส่วนที่แก้ไขและเพิ่มเติม] ---
+            // 1. สร้าง Canvas ชั่วคราวขึ้นมา
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            // 2. เติมพื้นหลังสีขาวลงบน Canvas ชั่วคราว
+            tempCtx.fillStyle = '#FFFFFF';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+            // 3. วาดรูปลายเซ็นเดิม (ที่พื้นหลังโปร่งใส) ทับลงไปบนพื้นหลังสีขาว
+            tempCtx.drawImage(canvas, 0, 0);
+
+            // 4. ดึงข้อมูลรูปภาพจาก Canvas ชั่วคราว (ซึ่งตอนนี้มีพื้นหลังสีขาวแล้ว)
+            signatureData = tempCanvas.toDataURL('image/png');
+            // --- [จบส่วนที่แก้ไข] ---
         }
 
         const email = localStorage.getItem("current_user");
@@ -174,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
             executive: "/Executive_Page/html_executive/"
         };
         alert("✅ ลายเซ็นของคุณถูกบันทึกแล้ว");
-        const homePageFile = (role === 'admin') ? "home.html" : "home.html";
+        const homePageFile = "home.html"; // home.html ใช้ได้กับทุก role
         if (basePath[role]) {
             window.location.href = basePath[role] + homePageFile;
         } else {
