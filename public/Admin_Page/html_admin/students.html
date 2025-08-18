@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>จัดการนักศึกษา - Graduate Tracker</title>
+  <link rel="stylesheet" href="/Admin_Page/css_admin/students.css" />
+</head>
+<body>
+  <!-- 🔶 Top Navigation -->
+  <nav class="topnav">
+    <div class="logo-section">
+      <img src="/assets/images/logo.png" alt="KMITL Logo" />
+      <h1>Graduate Tracker</h1>
+    </div>
+    <ul class="menu-links">
+      <li><a href="home.html" >🏠 หน้าหลัก</a></li>
+      <li><a href="manage_structure.html">🎓 จัดการภาค/หลักสูตร/แผน</a></li>
+      <li><a href="students.html" class="active">👨‍🎓 จัดการนักศึกษา</a></li>
+      <li><a href="manage_advisors.html">👨‍🏫 จัดการอาจารย์ที่ปรึกษา</a></li>
+      <li><a href="manage_professors.html">👥 จัดการผู้ทรงคุณวุฒิภายนอก</a></li>
+      <li><a href="manage_guides.html">📖 จัดการคู่มือ</a></li>
+      <li><a href="manage_documents.html">📂 จัดการเอกสาร</a></li>
+      <li><a href="admin_profile.html">👤 โปรไฟล์</a></li>
+      <li><a href="#" onclick="logout()">🚪 ออกจากระบบ</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <h2>👨‍🎓 รายชื่อนักศึกษาทั้งหมด</h2>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <input type="text" id="search-name" placeholder="ค้นหาชื่อ/รหัสนักศึกษา">
+      <select id="filter-program">
+        <option value="">ทุกระดับปริญญา</option>
+        <option value="ป.โท">ปริญญาโท</option>
+        <option value="ป.เอก">ปริญญาเอก</option>
+      </select>
+      <select id="filter-year">
+        <option value="">ทุกปี</option>
+        <option>2575</option>
+        <option>2574</option>
+        <option>2573</option>
+        <option>2572</option>
+        <option>2571</option>
+        <option>2570</option>
+        <option>2569</option>
+        <option>2568</option>
+        <option>2567</option>
+        <option>2566</option>
+        <option>2565</option>
+        <option>2564</option>
+        <option>2563</option>
+        <option>2562</option>
+        <option>2561</option>
+        <option>2560</option>
+      </select>
+    </div>
+    
+    <!-- Add Student Button -->
+    <div class="table-header-right">
+        <button class="add-student-btn" onclick="window.location.href='manage_students.html'">➕ เพิ่มนักศึกษา</button>
+    </div>
+  
+    <!-- Student Table -->
+    <div class="student-table">
+      <table>
+        <thead>
+          <tr>
+            <th>รหัสนักศึกษา</th>
+            <th>ชื่อ-สกุล</th>
+            <th>อีเมล</th>
+            <th>เบอร์โทรศัพท์</th>
+            <th>หลักสูตร</th>
+          </tr>
+        </thead>        
+        <tbody id="student-table-body">
+          <!-- JS will populate rows -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="../js_admin/students.js"></script>
+</body>
+</html>
