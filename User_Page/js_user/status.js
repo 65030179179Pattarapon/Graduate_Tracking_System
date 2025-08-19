@@ -65,12 +65,18 @@ async function loadStatusData() {
         const navUsername = document.getElementById('nav-username');
         if (navUsername) navUsername.textContent = currentUser.email;
 
-        const userFullname = `${currentUser.prefix_th}${currentUser.first_name_th} ${currentUser.last_name_th}`;
-        const studentId = currentUser.student_id;
-        
-        paginationState.approved.data = combinedApproved.filter(doc => doc.student_id === studentId || doc.student_email === userEmail);
-        paginationState.pending.data = combinedPending.filter(doc => doc.student_id === studentId || doc.student_email === userEmail);
-        paginationState.rejected.data = combinedRejected.filter(doc => doc.student_id === studentId || doc.student_email === userEmail);
+        // --- [ส่วนที่แก้ไข] ---
+        // 1. รวมเอกสารทั้งหมดก่อน แล้วค่อยกรอง
+        const allUserDocuments = [...combinedPending, ...combinedApproved, ...combinedRejected]
+            .filter(doc => doc.student_email === userEmail);
+
+        // 2. สร้างเงื่อนไขการกรองที่ชัดเจนขึ้น
+        const approvedStates = ['อนุมัติแล้ว', 'ผ่านเกณฑ์'];
+        const rejectedStates = ['ไม่อนุมัติ', 'ตีกลับ', 'ไม่ผ่านเกณฑ์'];
+
+        paginationState.approved.data = allUserDocuments.filter(doc => approvedStates.includes(doc.status));
+        paginationState.rejected.data = allUserDocuments.filter(doc => rejectedStates.includes(doc.status));
+        paginationState.pending.data = allUserDocuments.filter(doc => !approvedStates.includes(doc.status) && !rejectedStates.includes(doc.status));
 
         // --- [จุดที่แก้ไขที่ 1] ---
         // ทำการจัดเรียงข้อมูลทั้งหมดทันทีหลังจากกรองเสร็จ

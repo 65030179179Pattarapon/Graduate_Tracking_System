@@ -72,7 +72,6 @@
     "final_defense_request_date": null, "final_defense_date": "2025-08-20", "final_defense_status": "-",
     "thesis_completion_date": null, "graduation_date": null,
     "main_advisor_id": "ADV002", "co_advisor1_id": "ADV001", "co_advisor2_id": null,
-    "english_test_type": "KMITL-TEP", "english_test_score": 35, "english_test_date": "2024-05-10", "english_test_status": "ไม่ผ่านเกณฑ์",
     "publications": [
       { "title": "A Review of Student Tracking Systems", "journal_conference_name": "ICET 2025", "publication_date": "2025-02-10", "status": "ตอบรับการตีพิมพ์", "doi_link": "https://doi.org/10.xxxx/icet.2025.xxxx" }
     ],

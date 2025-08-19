@@ -59,6 +59,9 @@ async function loadProfileData() {
 
         const currentUser = students.find(s => s.email === userEmail);
         if (!currentUser) { alert("ไม่พบข้อมูลนักศึกษา"); return; }
+
+        const allApprovedDocs = [...dbApproved, ...localStorageApproved];
+        const userApprovedDocs = allApprovedDocs.filter(doc => doc.student_id === currentUser.student_id || doc.student_email === userEmail);
         
         // 1. Populate Profile Info
         document.getElementById('profile-fullname').textContent = `${currentUser.prefix_th} ${currentUser.first_name_th} ${currentUser.last_name_th}`.trim();
@@ -80,11 +83,9 @@ async function loadProfileData() {
         displayProfilePicture(userEmail);
 
         // 3. Populate Academic Status (ส่วนที่แก้ไข)
-        populateAcademicStatus(currentUser, advisors);
+        populateAcademicStatus(currentUser, advisors, userApprovedDocs);
 
         // 4. Populate Uploaded Files
-        const allApprovedDocs = [...dbApproved, ...localStorageApproved];
-        const userApprovedDocs = allApprovedDocs.filter(doc => doc.student_id === currentUser.student_id || doc.student_email === userEmail);
         renderUploadedFiles(userApprovedDocs);
 
     } catch (error) {
@@ -96,22 +97,28 @@ async function loadProfileData() {
 /**
  * แสดงข้อมูลสรุปสถานะการศึกษาทั้งหมด
  */
-function populateAcademicStatus(currentUser, advisors) {
+function populateAcademicStatus(currentUser, advisors, userApprovedDocs) {
     // Thesis Info
     document.getElementById('profile-thesis-th').textContent = currentUser.thesis_title_th || '-';
     document.getElementById('profile-thesis-en').textContent = currentUser.thesis_title_en || '-';
     
-    // --- ส่วนที่แก้ไข: การแสดงผลอาจารย์ที่ปรึกษา ---
+ // --- ส่วนที่แก้ไข: การแสดงผลอาจารย์ที่ปรึกษา ---
     const mainAdvisor = advisors.find(a => a.advisor_id === currentUser.main_advisor_id);
     const coAdvisor1 = advisors.find(a => a.advisor_id === currentUser.co_advisor1_id);
-    const coAdvisor2 = advisors.find(a => a.advisor_id === currentUser.co_advisor2_id);
+    
+    // --- [เพิ่มส่วนที่ขาดไป] ค้นหา coAdvisor2 จากเอกสารฟอร์ม 2 ที่อนุมัติแล้ว ---
+    const approvedForm2 = (userApprovedDocs || []).find(doc => doc.type === 'ฟอร์ม 2');
+    let coAdvisor2 = null;
+    if (approvedForm2 && approvedForm2.committee?.co_advisor2_id) {
+        coAdvisor2 = advisors.find(a => a.advisor_id === approvedForm2.committee.co_advisor2_id);
+    }
 
     document.getElementById('profile-main-advisor').textContent = mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}`.trim() : '-';
     document.getElementById('profile-co-advisor1').textContent = coAdvisor1 ? `${coAdvisor1.prefix_th}${coAdvisor1.first_name_th} ${coAdvisor1.last_name_th}`.trim() : '-';
     document.getElementById('profile-co-advisor2').textContent = coAdvisor2 ? `${coAdvisor2.prefix_th}${coAdvisor2.first_name_th} ${coAdvisor2.last_name_th}`.trim() : '-';
 
-    // Proposal Defense
-    document.getElementById('proposal-exam-date').textContent = '-'; // หากมีข้อมูลวันที่สอบหัวข้อในอนาคต สามารถนำมาใส่ที่นี่
+        // Proposal Defense
+    document.getElementById('proposal-exam-date').textContent = '-';
     const proposalStatusSpan = document.getElementById('proposal-status');
     proposalStatusSpan.textContent = currentUser.proposal_status || 'ยังไม่ยื่น';
     proposalStatusSpan.className = `status-badge ${getStatusClass(currentUser.proposal_status)}`;
@@ -125,11 +132,20 @@ function populateAcademicStatus(currentUser, advisors) {
     document.getElementById('graduation-date').textContent = formatThaiDate(currentUser.graduation_date);
     
     // English Test
-    document.getElementById('eng-test-type').textContent = currentUser.english_test_type || '-';
-    document.getElementById('eng-approval-date').textContent = '-'; // หากมีข้อมูลวันที่อนุมัติผลสอบ สามารถนำมาใส่ที่นี่
     const engStatusSpan = document.getElementById('eng-test-status-detailed');
-    engStatusSpan.textContent = currentUser.english_test_status || 'ยังไม่ยื่น';
-    engStatusSpan.className = `status-badge ${getStatusClass(currentUser.english_test_status)}`;
+    const approvedEngTestDoc = (userApprovedDocs || []).find(doc => doc.type === 'English Test Submission');
+
+    if (approvedEngTestDoc) {
+        document.getElementById('eng-test-type').textContent = approvedEngTestDoc.details.exam_type || '-';
+        document.getElementById('eng-approval-date').textContent = formatThaiDate(approvedEngTestDoc.approved_date || approvedEngTestDoc.submitted_date);
+        engStatusSpan.textContent = approvedEngTestDoc.status;
+        engStatusSpan.className = `status-badge ${getStatusClass(approvedEngTestDoc.status)}`;
+    } else {
+        document.getElementById('eng-test-type').textContent = currentUser.english_test_type || '-';
+        document.getElementById('eng-approval-date').textContent = '-';
+        engStatusSpan.textContent = currentUser.english_test_status || 'ยังไม่ยื่น';
+        engStatusSpan.className = `status-badge ${getStatusClass(currentUser.english_test_status)}`;
+    }
 }
 
 /**
