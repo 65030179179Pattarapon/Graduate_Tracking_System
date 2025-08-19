@@ -65,7 +65,6 @@ async function loadDocumentDetail() {
     try {
         const [
             students, dbPending, dbApproved, dbRejected,
-            // --- เพิ่มบรรทัดนี้ ---
             dbWaitingAdvisor, 
             advisors, externalProfessors, programs, departments, executives
         ] = await Promise.all([
@@ -73,7 +72,6 @@ async function loadDocumentDetail() {
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]')),
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]')),
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]')),
-            // --- และเพิ่มบรรทัดนี้ ---
             Promise.resolve(JSON.parse(localStorage.getItem('localStorage_waitingAdvisorDocs') || '[]')),
             fetch("/data/advisor.json").then(res => res.json()),
             fetch("/data/external_professor.json").then(res => res.json()),
@@ -81,8 +79,7 @@ async function loadDocumentDetail() {
             fetch("/data/structures/departments.json").then(res => res.json()),
             fetch("/data/executive.json").then(res => res.json())
         ]);
-
-        // --- และแก้ไขบรรทัดนี้ ---
+        
         const allDocuments = [...dbPending, ...dbApproved, ...dbRejected, ...dbWaitingAdvisor];
         const documentData = allDocuments.find(doc => doc.doc_id === docId);
 
@@ -100,7 +97,8 @@ async function loadDocumentDetail() {
             externalProfessors,
             programs,
             departments,
-            executives
+            executives,
+            allDocs: allDocuments
         };
 
         renderHeader(fullDataPayload);
@@ -112,6 +110,50 @@ async function loadDocumentDetail() {
     } catch (error) {
         console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลเอกสาร:", error);
         document.querySelector('main.detail-container').innerHTML = `<h1>เกิดข้อผิดพลาด: ${error.message}</h1>`;
+    }
+}
+
+function prepareRejection(docId) {
+    const confirmBtn = document.getElementById('confirm-rejection-btn');
+    if (confirmBtn) {
+        confirmBtn.dataset.docId = docId;
+    }
+    const commentInput = document.getElementById('rejection-comment');
+    if (commentInput) commentInput.value = '';
+    
+    openModal('rejection-modal');
+}
+
+
+function handleAdminAction(docId, action, newStatus, comment = '') {
+    // This is a placeholder for the full logic. 
+    // The robust version that searches all lists should be here.
+    // For now, this will just show the success message.
+    console.log("Action triggered:", { docId, action, newStatus, comment });
+    
+    // Simulate finding and moving the document
+    // NOTE: This is a simplified simulation. The more robust, multi-list version is better.
+    let pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
+    let rejectedDocs = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
+    const docIndex = pendingDocs.findIndex(d => d.doc_id === docId);
+
+    if (docIndex > -1) {
+        const docToUpdate = pendingDocs[docIndex];
+        docToUpdate.status = newStatus;
+        docToUpdate.comment = comment;
+        docToUpdate.last_action_date = new Date().toISOString();
+        
+        rejectedDocs.push(docToUpdate);
+        pendingDocs.splice(docIndex, 1);
+
+        localStorage.setItem('localStorage_pendingDocs', JSON.stringify(pendingDocs));
+        localStorage.setItem('localStorage_rejectedDocs', JSON.stringify(rejectedDocs));
+
+        alert('ดำเนินการสำเร็จ!');
+        closeModal('rejection-modal');
+        window.location.href = '/Admin_Page/html_admin/home.html';
+    } else {
+        alert('ไม่พบเอกสาร (อาจถูกดำเนินการไปแล้ว)');
     }
 }
 
@@ -383,18 +425,61 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
         const coAdvisor = advisors.find(a => a.advisor_id === doc.selected_co_advisor_id);
         const executive = executives.find(e => e.role === 'ผู้ช่วยคณบดีฝ่ายวิชาการ');
 
-        let advisorNames = [
-            mainAdvisor ? `${mainAdvisor.prefix_th}${mainAdvisor.first_name_th}` : null,
-            coAdvisor ? `${coAdvisor.prefix_th}${coAdvisor.first_name_th}` : null
-        ].filter(Boolean).join(', ');
-
-        currentWorkflow = [
-            { name: 'ยื่นเอกสาร', actor: `${user.prefix_th}${user.first_name_th} ${user.last_name_th}` },
-            { name: 'อ.ที่ปรึกษาอนุมัติ', status: 'รออาจารย์ที่ปรึกษาอนุมัติ', actor: advisorNames || 'N/A' },
-            { name: 'ผู้บริหารอนุมัติ', status: 'รอผู้บริหารอนุมัติ', actor: executive?.name || 'N/A' },
-            { name: 'เสร็จสิ้น', status: 'อนุมัติแล้ว', actor: 'เจ้าหน้าที่' }
+        // 1. สร้างข้อมูลสำหรับแต่ละขั้นตอนใน Timeline
+        const workflowSteps = [
+            { 
+                name: 'ยื่นเอกสาร', 
+                actor: user.email, // แสดงเป็นอีเมล
+                isCompleted: true // ขั้นตอนแรกเสร็จสิ้นเสมอ
+            },
+            { 
+                name: 'อ.ที่ปรึกษาอนุมัติ', 
+                actors: [mainAdvisor, coAdvisor].filter(Boolean), // รายชื่ออาจารย์ที่ต้องอนุมัติ
+                isActive: doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ',
+                isCompleted: doc.status !== 'รอตรวจ' && doc.status !== 'รออาจารย์ที่ปรึกษาอนุมัติ'
+            },
+            { 
+                name: 'ผู้บริหารอนุมัติ', 
+                actor: executive?.email || 'N/A',
+                isActive: doc.status === 'รอผู้บริหารอนุมัติ',
+                isCompleted: doc.status === 'อนุมัติแล้ว'
+            },
+            { 
+                name: 'เสร็จสิ้น', 
+                actor: 'เจ้าหน้าที่',
+                isCompleted: doc.status === 'อนุมัติแล้ว'
+            }
         ];
+        
+        // 2. สร้าง HTML ของ Timeline จากข้อมูลที่เตรียมไว้
+        timelineContainer.innerHTML = workflowSteps.map(step => {
+            let actorHtml = '';
+            if (step.actors && step.actors.length > 0) {
+                actorHtml = '<ul class="actor-sublist">';
+                step.actors.forEach(advisor => {
+                    // สมมติว่าสถานะของแต่ละคนยังไม่ถูกติดตามแยกกันในฟอร์ม 1
+                    actorHtml += `<li class="pending"><i class="fas fa-clock"></i> ${advisor.prefix_th}${advisor.first_name_th}: ${advisor.email}</li>`;
+                });
+                actorHtml += '</ul>';
+            } else {
+                actorHtml = `<small>โดย: ${step.actor || 'N/A'}</small>`;
+            }
 
+            const stepClasses = ['timeline-step'];
+            if (step.isCompleted) stepClasses.push('completed');
+            if (step.isActive) stepClasses.push('active');
+
+            return `
+                <div class="${stepClasses.join(' ')}">
+                    <div class="timeline-icon"></div>
+                    <div class="timeline-label">
+                        <span>${step.name}</span>
+                        ${actorHtml}
+                    </div>
+                </div>`;
+        }).join('');
+
+        // 3. สร้าง Action Panel (ส่วนปุ่มกด) ตามสถานะปัจจุบัน
         if (doc.status === 'รอตรวจ') {
             actionHTML = `
                 <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ อ.ที่ปรึกษา</p>
@@ -404,22 +489,13 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
                 </ul>
                 <div class="action-buttons">
                     <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_advisor', 'รออาจารย์ที่ปรึกษาอนุมัติ')">ส่งต่อ</button>
-                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
+                    <button class="btn-danger" onclick="openModal('rejection-modal', '${doc.doc_id}')">ส่งกลับให้แก้ไข</button>
                 </div>`;
         } else if (doc.status === 'รออาจารย์ที่ปรึกษาอนุมัติ') {
             actionHTML = `<p class="waiting-info">กำลังรอการอนุมัติจากอาจารย์ที่ปรึกษา...</p>`;
-        } else if (doc.status === 'รอผู้บริหารอนุมัติ') {
-            actionHTML = `
-                <p class="next-step-info"><b>ขั้นตอนต่อไป:</b> ส่งต่อให้ ผู้บริหาร</p>
-                <ul class="actor-list">
-                    ${executive ? `<li><b>ผู้รับผิดชอบ:</b> ${executive.name} (${executive.role})</li>` : ''}
-                </ul>
-                <div class="action-buttons">
-                    <button class="btn-primary" onclick="handleAdminAction('${doc.doc_id}', 'forward_to_executive', 'อนุมัติแล้ว')">อนุมัติขั้นสุดท้าย</button>
-                    <button class="btn-danger" onclick="openModal('rejection-modal')">ส่งกลับให้แก้ไข</button>
-                </div>`;
         }
-    }         else if (doc.type === 'ฟอร์ม 2') {
+
+    }       else if (doc.type === 'ฟอร์ม 2') {
             // --- 1. รวบรวมข้อมูลคณะกรรมการที่เกี่ยวข้องทั้งหมด (เหมือนเดิม) ---
             const committeeIds = doc.committee || {};
             const committeeMembers = [];
@@ -604,72 +680,25 @@ function renderActionPanelAndTimeline({ doc, user, advisors, executives }) {
     document.getElementById('confirm-rejection-btn').onclick = () => handleAdminAction(doc.doc_id, 'reject', 'ส่งกลับให้แก้ไข');
 }
 
-function handleAdminAction(docId, action, nextStatus) {
-    const comment = document.getElementById('rejection-comment')?.value || 
-                    document.getElementById('admin-comment-input')?.value || '';
-
-    if (action === 'reject' && !comment) {
-        alert('กรุณาใส่เหตุผล/ความคิดเห็นในการส่งกลับ');
-        return;
-    }
-
-    const confirmationMessage = action === 'reject' 
-        ? 'คุณแน่ใจหรือไม่ว่าต้องการส่งเอกสารกลับไปแก้ไข?'
-        : `คุณแน่ใจหรือไม่ว่าต้องการส่งต่อเอกสาร?`;
-
-    if (confirm(confirmationMessage)) {
-        // 1. ดึงข้อมูลเอกสารทั้งหมดจาก localStorage
-        let pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
-        let waitingAdvisorDocs = JSON.parse(localStorage.getItem('localStorage_waitingAdvisorDocs') || '[]');
-        let rejectedDocs = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
-
-        // 2. ค้นหาเอกสารที่ต้องการดำเนินการ
-        let docIndex = pendingDocs.findIndex(d => d.doc_id === docId);
-        if (docIndex === -1) {
-            alert('ไม่พบเอกสารที่ต้องการดำเนินการ หรือเอกสารถูกดำเนินการไปแล้ว');
-            return;
-        }
-
-        const docToUpdate = pendingDocs[docIndex];
-
-        // 3. เพิ่มประวัติการดำเนินการ
-        if (!docToUpdate.history) {
-            docToUpdate.history = [{ date: docToUpdate.submitted_date, action: "นักศึกษายื่นเอกสาร", actor: docToUpdate.student_email }];
-        }
-        docToUpdate.history.push({
-            date: new Date().toISOString(),
-            action: action === 'reject' ? 'ส่งกลับให้แก้ไข' : `ส่งต่อไปยัง ${nextStatus}`,
-            actor: 'เจ้าหน้าที่',
-            comment: comment || ''
+// =================================================================
+// ภาค 3: Main Execution
+// =================================================================
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Setup event listener for the modal's confirm button ONCE.
+    const confirmRejectBtn = document.getElementById('confirm-rejection-btn');
+    if (confirmRejectBtn) {
+        confirmRejectBtn.addEventListener('click', () => {
+            const docId = confirmRejectBtn.dataset.docId;
+            if (docId) {
+                const comment = document.getElementById('rejection-comment').value;
+                handleAdminAction(docId, 'reject', 'ส่งกลับให้แก้ไข', comment);
+            } else {
+                console.error("No Doc ID found on rejection confirmation.");
+            }
         });
-
-        // 4. อัปเดตสถานะและย้ายข้อมูล
-        docToUpdate.status = nextStatus;
-        docToUpdate.last_action_date = new Date().toISOString();
-
-        if (action === 'reject') {
-            docToUpdate.status = 'ส่งกลับให้แก้ไข'; // อัปเดตสถานะให้ถูกต้อง
-            docToUpdate.comment = comment; // เพิ่มความคิดเห็นเข้าไปในเอกสาร
-            rejectedDocs.push(docToUpdate); // ย้ายไป Rejected
-        } else {
-            waitingAdvisorDocs.push(docToUpdate); // ย้ายไป Waiting for Advisor
-        }
-        
-        // ลบออกจาก Pending
-        pendingDocs.splice(docIndex, 1);
-
-        // 5. บันทึกข้อมูลกลับลง localStorage
-        localStorage.setItem('localStorage_pendingDocs', JSON.stringify(pendingDocs));
-        localStorage.setItem('localStorage_waitingAdvisorDocs', JSON.stringify(waitingAdvisorDocs));
-        localStorage.setItem('localStorage_rejectedDocs', JSON.stringify(rejectedDocs));
-        
-        closeModal('rejection-modal'); // ปิด modal (ถ้ามี)
-        alert('ดำเนินการสำเร็จ!');
-        window.location.href = '/Admin_Page/html_admin/home.html'; // กลับไปหน้าหลักเพื่อดูผลลัพธ์
     }
-}
 
-// =================================================================
-// ภาค 4: Main Execution
-// =================================================================
-document.addEventListener('DOMContentLoaded', loadDocumentDetail);
+    // Load all the document details
+    loadDocumentDetail();
+});

@@ -84,48 +84,52 @@ function viewStudentDetail(studentId) {
 // =================================================================
 
 /**
- * สลับการแสดงผลของแต่ละ Section ในหน้าหลัก
- * @param {string} sectionId - ID ของ section ที่จะแสดง (เช่น 'dashboard', 'pending-review')
- */
+ * [แก้ไข] สลับการแสดงผลของแต่ละ Section และ "จดจำ" Section ล่าสุด
+ */
 function showSection(sectionId) {
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.classList.remove('active');
-    });
-    document.querySelectorAll('.sidebar-btn').forEach(button => {
-        button.classList.remove('active');
-    });
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.querySelectorAll('.sidebar-btn').forEach(button => {
+        button.classList.remove('active');
+    });
 
-    const activeSection = document.getElementById(`section-${sectionId}`);
-    const activeButton = document.querySelector(`.sidebar-btn[data-section="${sectionId}"]`);
-    
-    if (activeSection) {
-        activeSection.classList.add('active');
-    }
-    if (activeButton) {
-        activeButton.classList.add('active');
-    }
+    const activeSection = document.getElementById(`section-${sectionId}`);
+    const activeButton = document.querySelector(`.sidebar-btn[data-section="${sectionId}"]`);
+    
+    if (activeSection) {
+        activeSection.classList.add('active');
+    }
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
 
-    // โหลดข้อมูลสำหรับ section ที่ถูกเลือก
-    switch(sectionId) {
-        case 'dashboard':
-            loadDashboardData();
-            break;
-        case 'pending-review':
-            loadPendingReviewData();
-            break;
-        case 'pending-advisor':
-            loadAdvisorApprovalData();
-            break;
-        case 'pending-external':
-            loadExternalApprovalData();
-            break;
-        case 'pending-executive':
-            loadExecutiveApprovalData();
-            break;
-        case 'all-documents':
-            loadAllDocumentsData();
-            break;
-    }
+    // --- [ส่วนที่ต้องเพิ่มเข้ามา] ---
+    // บันทึก sectionId ที่เปิดล่าสุดลงใน sessionStorage
+    // คำสั่งนี้จะทำงานทุกครั้งที่มีการเปลี่ยน Section
+    sessionStorage.setItem('lastActiveAdminSection', sectionId);
+
+    // โหลดข้อมูลสำหรับ section ที่ถูกเลือก
+    switch(sectionId) {
+        case 'dashboard':
+            loadDashboardData();
+            break;
+        case 'pending-review':
+            loadPendingReviewData();
+            break;
+        case 'pending-advisor':
+            loadAdvisorApprovalData();
+            break;
+        case 'pending-external':
+            loadExternalApprovalData();
+            break;
+        case 'pending-executive':
+            loadExecutiveApprovalData();
+            break;
+        case 'all-documents':
+            loadAllDocumentsData();
+            break;
+    }
 }
 
 /**
@@ -187,7 +191,6 @@ async function initializeApp() {
     pageState.pendingReview.filteredData = pendingDocs;
     setupPendingReviewFilters();
     
-    // (ในระบบจริง ข้อมูลส่วนนี้จะมาจากฐานข้อมูล ไม่ใช่ localStorage ทั้งหมด)
     pageState.pendingAdvisor.fullData = { waiting: [], processed: [] };
     pageState.pendingAdvisor.filteredData = [];
     setupAdvisorApprovalFilters();
@@ -195,7 +198,6 @@ async function initializeApp() {
     setupExecutiveApprovalFilters();
     setupAllDocumentsFilters();
 
-    // ซ่อน Filter ไว้เป็นค่าเริ่มต้น
     const filterBody = document.getElementById('advanced-filter-body');
     const toggleBtn = document.getElementById('toggle-filter-btn');
     if (filterBody && toggleBtn) {
@@ -204,10 +206,16 @@ async function initializeApp() {
         toggleBtn.textContent = 'แสดง';
     }
 
-    // --- แสดงหน้า Dashboard เป็นหน้าแรก ---
-    showSection('dashboard');
+    // --- [ส่วนที่แก้ไข] ---
+    // ตรวจสอบและ "เรียกคืน" Section ล่าสุดที่เคยเปิดดู
+    // และลบบรรทัดที่เรียก showSection('dashboard') ซ้ำซ้อนทิ้งไป
+    const lastSection = sessionStorage.getItem('lastActiveAdminSection');
+    if (lastSection && document.getElementById(`section-${lastSection}`)) {
+        showSection(lastSection); // ถ้ามีความจำอยู่ และ element ของ section นั้นมีจริง ให้เปิดหน้านั้น
+    } else {
+        showSection('dashboard'); // ถ้าไม่มีความจำ หรือหา section ไม่เจอ ให้ไปที่ dashboard
+    }
 }
-
 
 // =================================================================
 // ภาค 5: Dashboard Logic

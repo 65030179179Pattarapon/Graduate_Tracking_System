@@ -129,3 +129,14 @@ nav {
 .modal-actions .btn-secondary:hover { background-color: #dee2e6; }
 .modal-actions .btn-danger { background-color: var(--rejected-color); color: white; }
 .modal-actions .btn-danger:hover { background-color: #c82333; }
+
+/* เพิ่มใน document_detail.css หรือ common.css */
+.modal-box .form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}

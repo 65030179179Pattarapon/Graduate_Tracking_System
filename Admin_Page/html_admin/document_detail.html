@@ -101,16 +101,6 @@
             </div>
         </aside>
     </main>
-    
-        <div id="rejection-modal" class="modal-overlay" style="display: none;">
-            <div class="modal-content">
-                <span class="close-button" onclick="closeModal('rejection-modal')">&times;</span>
-                <h2>ส่งกลับเพื่อแก้ไข</h2>
-                <p>กรุณาระบุเหตุผลหรือสิ่งที่ต้องการให้นักศึกษาแก้ไขให้ชัดเจน</p>
-                <textarea id="rejection-comment" placeholder="เช่น กรุณาแก้ไขไฟล์บทคัดย่อ..."></textarea>
-                <button id="confirm-rejection-btn" class="btn-danger">ยืนยันและส่งกลับ</button>
-            </div>
-        </div>
 
         <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
         <div class="modal-box">
@@ -119,6 +109,21 @@
             <div class="modal-actions">
                 <button id="modal-cancel-btn" class="btn-secondary">ยกเลิก</button>
                 <button id="modal-confirm-btn" class="btn-danger">ยืนยัน</button>
+            </div>
+        </div>
+    </div>
+    
+        <div id="rejection-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box">
+            <h3><i class="fas fa-exclamation-triangle"></i> ยืนยันการส่งกลับ</h3>
+            <p>กรุณาระบุเหตุผล/ความคิดเห็นสำหรับแจ้งนักศึกษา</p>
+            <div class="form-group" style="text-align: left;">
+                <label for="rejection-comment">เหตุผลในการส่งกลับ*</label>
+                <textarea id="rejection-comment" rows="4" placeholder="เช่น กรุณาแก้ไขเอกสารแนบข้อ 3.2..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="modal-cancel-rejection-btn" class="btn-secondary" onclick="closeModal('rejection-modal')">ยกเลิก</button>
+                <button id="confirm-rejection-btn" class="btn-danger">ยืนยันและส่งกลับ</button>
             </div>
         </div>
     </div>
