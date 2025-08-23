@@ -87,6 +87,58 @@ nav {
 .user-menu .fas { font-size: 18px; }
 .user-menu .dropdown-menu { right: 0; left: auto; width: 180px; }
 
+/* --- Main Layout --- */
+.admin-page-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr; /* Sidebar width and main content */
+    height: calc(100vh - 65px); /* Full height minus navbar */
+}
+
+/* --- Sidebar Styles --- */
+.sidebar {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.sidebar-btn {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none; /* เพิ่มเผื่อไว้สำหรับ tag <a> */
+}
+
+.sidebar-btn:hover {
+    background-color: #f8f9fa;
+    color: var(--text-primary);
+}
+
+.sidebar-btn.active {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    padding: 30px;
+    overflow-y: auto; /* Allow content to scroll independently */
+}
 
 /* --- Standard Modal Styles --- */
 .modal-overlay {

@@ -5,23 +5,24 @@ let recentDocsState = {
     fullData: []
 };
 
-function determineNextStep(studentData, userApprovedDocs) {
+function determineNextStep(studentData, userApprovedDocs, userRejectedDocs) { // [แก้ไข] เพิ่ม userRejectedDocs เข้ามา
     const nextStepContainer = document.getElementById('next-step-content');
     if (!nextStepContainer) return;
 
     const hasApproved = (formType) => userApprovedDocs.some(doc => doc.type === formType);
-    const state = JSON.parse(localStorage.getItem('userDashboardState') || '{}');
-
-    if (state.rejectedCount > 0) {
+    
+    // [แก้ไข] ใช้ข้อมูลที่ส่งเข้ามาโดยตรง ไม่ต้องอ่านจาก localStorage ซ้ำ
+    if (userRejectedDocs.length > 0) { 
         nextStepContainer.className = 'next-step-body alert';
         nextStepContainer.innerHTML = `
             <span class="action-title">⚠️ มีเอกสารที่ต้องแก้ไข</span>
-            <p>ระบบพบว่าคุณมีเอกสารที่ถูกส่งกลับหรือไม่อนุมัติ กรุณาตรวจสอบและดำเนินการแก้ไข</p>
+            <p>ระบบพบว่าคุณมีเอกสารที่ถูกส่งกลับ (${userRejectedDocs.length} รายการ) กรุณาตรวจสอบและดำเนินการแก้ไข</p>
             <a href="/User_Page/html_user/status.html" class="action-button">ไปที่หน้าสถานะเอกสาร</a>
         `;
-        return;
+        return; // จบการทำงานถ้ามีเอกสารตีกลับ
     }
-
+    
+    // 2. ตรวจสอบตามลำดับ Workflow
     if (!hasApproved('ฟอร์ม 1')) {
         nextStepContainer.innerHTML = `<span class="action-title">เลือกอาจารย์ที่ปรึกษา</span><p>ขั้นตอนแรกคือการยื่นแบบฟอร์มเพื่อขอรับรองการเป็นอาจารย์ที่ปรึกษาวิทยานิพนธ์ หลัก/ร่วม</p><a href="/User_Page/html_user/form1.html" class="action-button">ไปที่ฟอร์ม 1</a>`;
         return;
@@ -34,11 +35,7 @@ function determineNextStep(studentData, userApprovedDocs) {
         nextStepContainer.innerHTML = `<span class="action-title">นำส่งเอกสารเค้าโครง</span><p>เมื่อหัวข้ออนุมัติแล้ว ขั้นตอนต่อไปคือนำส่งเอกสารเค้าโครงฉบับสมบูรณ์</p><a href="/User_Page/html_user/form3.html" class="action-button">ไปที่ฟอร์ม 3</a>`;
         return;
     }
-    if (studentData.english_test_status !== 'ผ่านเกณฑ์') {
-        const statusText = studentData.english_test_status ? `(สถานะปัจจุบัน: ${studentData.english_test_status})` : '';
-        nextStepContainer.innerHTML = `<span class="action-title">ยื่นผลสอบภาษาอังกฤษ</span><p>คุณยังไม่ได้ยื่นผลสอบภาษาอังกฤษ หรือผลสอบยังไม่ผ่านเกณฑ์ ${statusText}</p><a href="/User_Page/html_user/eng.html" class="action-button">ไปที่หน้ายื่นผลสอบ</a>`;
-        return;
-    }
+
     if (!hasApproved('ฟอร์ม 4')) {
         nextStepContainer.innerHTML = `<span class="action-title">เชิญผู้ทรงคุณวุฒิ</span><p>ขั้นตอนต่อไปคือการยื่นเรื่องขอเชิญผู้ทรงคุณวุฒิเพื่อประเมินเครื่องมือวิจัย</p><a href="/User_Page/html_user/form4.html" class="action-button">ไปที่ฟอร์ม 4</a>`;
         return;
@@ -48,10 +45,22 @@ function determineNextStep(studentData, userApprovedDocs) {
         return;
     }
 
+    if (!hasApproved('ฟอร์ม 6')) {
+        nextStepContainer.innerHTML = `<span class="action-title">ยื่นคำร้องขอสอบจบ</span><p>ขั้นตอนต่อไปคือการยื่นคำร้องขอแต่งตั้งคณะกรรมการสอบวิทยานิพนธ์ขั้นสุดท้าย</p><a href="/User_Page/html_user/form6.html" class="action-button">ไปที่ฟอร์ม 6</a>`;
+        return;
+    }
+
+        const approvedEngTest = userApprovedDocs.find(doc => doc.type === 'ผลสอบภาษาอังกฤษ');
+    if (!approvedEngTest) {
+        const statusText = studentData.english_test_status ? `(สถานะปัจจุบัน: ${studentData.english_test_status})` : '';
+        nextStepContainer.innerHTML = `<span class="action-title">ยื่นผลสอบภาษาอังกฤษ</span><p>คุณยังไม่ได้ยื่นผลสอบภาษาอังกฤษ หรือผลสอบยังไม่ผ่านเกณฑ์ ${statusText}</p><a href="/User_Page/html_user/eng.html" class="action-button">ไปที่หน้ายื่นผลสอบ</a>`;
+        return;
+    }
+    // ถ้าผ่านทุกขั้นตอนแล้ว
     nextStepContainer.className = 'next-step-body done';
     nextStepContainer.innerHTML = `
         <span class="action-title">👍 ยอดเยี่ยม!</span>
-        <p>คุณได้ดำเนินการในขั้นตอนสำคัญๆ ของการศึกษาแล้ว กรุณาติดตามประกาศอื่นๆ ต่อไป</p>
+        <p>คุณได้ดำเนินการในขั้นตอนสำคัญๆ ของการศึกษาครบถ้วนแล้ว กรุณาติดตามประกาศอื่นๆ ต่อไป</p>
         <a href="/User_Page/html_user/status.html" class="action-button">ดูสถานะเอกสารทั้งหมด</a>
     `;
 }
@@ -149,7 +158,7 @@ async function loadDashboard() {
         renderRecentDocsPage(1); // แสดงหน้าแรก
 
         // --- 3. Determine and Render Next Step ---
-        determineNextStep(currentUser, userApprovedDocs);
+        determineNextStep(currentUser, userApprovedDocs, userRejectedDocs);
 
     } catch (error) {
         console.error("Failed to load dashboard data:", error);

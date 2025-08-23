@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>จัดการข้อมูลนักศึกษา - Admin</title>
+    <link rel="stylesheet" href="/Admin_Page/css_admin/common.css" />
+    <link rel="stylesheet" href="/Admin_Page/css_admin/manage_detail_user.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="icon" href="/assets/images/logo.png">
+</head>
+<body>
+    <nav>
+        <a href="/Admin_Page/html_admin/home.html" class="logo-link">
+            <div class="logo">
+                <img src="/assets/images/logo.png" alt="KMITL Logo" />
+                <span>Graduate Tracking System (Admin)</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/Admin_Page/html_admin/home.html"><i class="fas fa-home"></i> หน้าหลัก</a></li>
+            <li><a href="/Admin_Page/html_admin/manage_user.html" class="active"><i class="fas fa-users-cog"></i> จัดการผู้ใช้งาน</a></li>
+            <li><a href="#"><i class="fas fa-sitemap"></i> จัดการโครงสร้าง</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> ตั้งค่าระบบ</a></li>
+        </ul>
+        <div class="user-menu dropdown">
+            <a href="#" class="nav-dropdown-toggle" id="user-profile-link">
+                <span id="nav-username">Admin</span><i class="fas fa-user-circle"></i><i class="fas fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu user-dropdown-menu">
+                <li><a href="#"><i class="fas fa-user-edit"></i> จัดการโปรไฟล์</a></li>
+                <li><a href="#" id="logout-button"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-page-layout">
+      <aside class="sidebar">
+            <div class="sidebar-profile">
+                <img src="/assets/images/students/placeholder.png" alt="รูปโปรไฟล์นักศึกษา" id="sidebar-profile-img">
+                <h4 id="sidebar-fullname">กำลังโหลด...</h4>
+                <p id="sidebar-studentid">กำลังโหลด...</p>
+            </div>
+            <button class="sidebar-btn active" data-section="account">
+                <i class="fas fa-user-shield"></i> การจัดการบัญชี
+            </button>
+            <hr class="sidebar-divider">
+            <button class="sidebar-btn" data-section="profile">
+                <i class="fas fa-user-circle"></i> ข้อมูลทั่วไป
+            </button>
+            <button class="sidebar-btn" data-section="academic-thesis">
+                <i class="fas fa-book-open"></i> ข้อมูลการศึกษาและวิทยานิพนธ์
+            </button>
+             <button class="sidebar-btn" data-section="committee">
+                <i class="fas fa-users"></i> คณะกรรมการสอบวิทยานิพนธ์
+            </button>
+            <button class="sidebar-btn" data-section="publications-docs">
+                <i class="fas fa-file-alt"></i> ผลงานตีพิมพ์และเอกสารที่เกี่ยวข้อง
+            </button>
+            <button class="sidebar-btn" data-section="history">
+                <i class="fas fa-history"></i> ประวัติการยื่นเอกสาร
+            </button>
+            <hr class="sidebar-divider">
+            <a href="/Admin_Page/html_admin/manage_user.html" class="sidebar-btn">
+                <i class="fas fa-arrow-left"></i> กลับหน้ารายชื่อ
+            </a>
+        </aside>
+
+        <main class="main-content">
+            <div class="main-header">
+                <h1><i class="fas fa-edit"></i> จัดการข้อมูลนักศึกษา</h1>
+                <div class="action-buttons">
+                    <button id="save-all-btn" class="btn-primary"><i class="fas fa-save"></i> บันทึกการเปลี่ยนแปลงทั้งหมด</button>
+                </div>
+            </div>
+
+            <section id="section-account" class="content-section active">
+                <div class="detail-card">
+                    <h3><i class="fas fa-user-shield"></i> การจัดการบัญชี</h3>
+                    
+                    <div class="subsection">
+                        <h5>ข้อมูลปัจจุบัน</h5>
+                        <div class="form-grid two-cols">
+                            <div class="form-group">
+                                <label>อีเมล (สำหรับเข้าสู่ระบบ)</label>
+                                <input type="email" id="current-email" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>รหัสผ่านปัจจุบัน</label>
+                                <div class="password-group">
+                                    <input type="password" id="current-password" value="••••••••" disabled>
+                                    <button id="toggle-password-visibility" class="btn-icon" title="แสดง/ซ่อนรหัสผ่าน">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="subtle-divider">
+
+                    <div class="subsection">
+                        <h5>แก้ไขข้อมูลบัญชี</h5>
+                        <div class="form-grid two-cols">
+                            <div class="form-group">
+                                <label>อีเมลใหม่</label>
+                                <input type="email" id="new-email" placeholder="กรอกอีเมลใหม่ (ถ้าต้องการเปลี่ยน)">
+                            </div>
+                        </div>
+                        <div class="form-grid two-cols">
+                             <div class="form-group">
+                                <label>รหัสผ่านใหม่</label>
+                                <div class="password-group">
+                                    <input type="text" id="new-password" placeholder="กดปุ่ม 'สร้าง' เพื่อสุ่มรหัสผ่านใหม่">
+                                     <button id="generate-password-btn" class="btn-secondary" title="สุ่มรหัสผ่านใหม่">
+                                        <i class="fas fa-sync-alt"></i> สร้าง
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>ยืนยันรหัสผ่านใหม่</label>
+                                <input type="text" id="confirm-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        <section id="section-profile" class="content-section">
+          <div class="detail-card">
+              <h3><i class="fas fa-user-circle"></i> ข้อมูลทั่วไป</h3>
+              
+              <div class="form-grid single-col">
+                  <div class="form-group short-input">
+                      <label>รหัสนักศึกษา</label>
+                      <input type="text" id="student-id" disabled>
+                  </div>
+              </div>
+              
+              <div class="form-grid four-cols">
+                  <div class="form-group"><label>คำนำหน้า (ไทย)</label><select id="prefix-th"></select></div>
+                  <div class="form-group"><label>ชื่อ (ไทย)</label><input type="text" id="firstname-th"></div>
+                  <div class="form-group"><label>ชื่อกลาง (ไทย)</label><input type="text" id="middlename-th" placeholder="(ถ้ามี)"></div>
+                  <div class="form-group"><label>นามสกุล (ไทย)</label><input type="text" id="lastname-th"></div>
+              </div>
+              
+              <div class="form-grid four-cols">
+                   <div class="form-group"><label>คำนำหน้า (อังกฤษ)</label><select id="prefix-en"></select></div>
+                  <div class="form-group"><label>First Name</label><input type="text" id="firstname-en"></div>
+                  <div class="form-group"><label>Middle Name</label><input type="text" id="middlename-en" placeholder="(Optional)"></div>
+                  <div class="form-group"><label>Last Name</label><input type="text" id="lastname-en"></div>
+              </div>
+
+               <div class="form-grid three-cols">
+                  <div class="form-group"><label>อีเมล</label><input type="email" id="email"></div>
+                  <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="phone"></div>
+                   <div class="form-group"><label>เพศ</label><select id="gender"></select></div>
+              </div>
+          </div>
+            </div>
+        </section>
+
+            <!-- Section: ข้อมูลการศึกษาและวิทยานิพนธ์ -->
+            <section id="section-academic" class="content-section">
+                
+                <!-- การ์ดที่ 1: ข้อมูลการศึกษา -->
+                <div class="detail-card">
+                    <h3><i class="fas fa-graduation-cap"></i> ข้อมูลการศึกษา</h3>
+                    
+                    <!-- บรรทัดที่ 1 -->
+                    <div class="form-grid four-cols">
+                        <div class="form-group">
+                            <label>ระดับการศึกษา</label>
+                            <select id="degree"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>หลักสูตร</label>
+                            <select id="program"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>สาขาวิชา</label>
+                            <select id="major"></select> <!-- เปลี่ยนเป็น select -->
+                        </div>
+                        <div class="form-group">
+                            <label>สถานะนักศึกษา</label>
+                            <select id="student-status"></select>
+                        </div>
+                    </div>
+                    
+                    <!-- บรรทัดที่ 2 -->
+                    <div class="form-grid four-cols">
+                        <div class="form-group">
+                            <label>ปีการศึกษาที่รับเข้า</label>
+                            <select id="admit-year"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>ภาคการศึกษาที่รับเข้า</label>
+                            <select id="admit-semester"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>ประเภทรับเข้า</label>
+                            <select id="admit-type"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>แผนการเรียน</label>
+                            <select id="study-plan"></select>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Section: ข้อมูลวิทยานิพนธ์ -->
+            <section id="section-thesis" class="content-section">
+                 <div class="detail-card">
+                    <h3><i class="fas fa-book-open"></i> ข้อมูลวิทยานิพนธ์</h3>
+                    <div class="subsection">
+                        <h5>รายละเอียดหัวข้อวิทยานิพนธ์</h5>
+                        <div class="form-group"><label>ชื่อเรื่อง (ภาษาไทย)</label><textarea id="thesis-title-th" rows="2"></textarea></div>
+                        <div class="form-group"><label>ชื่อเรื่อง (ภาษาอังกฤษ)</label><textarea id="thesis-title-en" rows="2"></textarea></div>
+                         <div class="form-grid two-cols">
+                            <div class="form-group"><label>วันที่อนุมัติหัวข้อ</label><input type="date" id="proposal-approval-date"></div>
+                        </div>
+                    </div>
+                    <div class="subsection">
+                         <h5>การสอบภาษาอังกฤษ</h5>
+                         <div class="form-grid two-cols">
+                             <div class="form-group"><label>สถานะ</label><select id="eng-test-status"></select></div>
+                             <div class="form-group"><label>วันที่ผ่าน</label><input type="date" id="eng-test-date"></div>
+                         </div>
+                    </div>
+                 </div>
+            </section>
+
+            <section id="section-committee" class="content-section">
+                <div class="detail-card">
+                    <h3><i class="fas fa-users"></i> อาจารย์ที่ปรึกษาและคณะกรรมการ</h3>
+                    <div class="subsection">
+                        <h5>อาจารย์ที่ปรึกษา</h5>
+                         <div class="form-grid three-cols">
+                            <div class="form-group"><label>อาจารย์ที่ปรึกษาหลัก</label><select id="main-advisor"></select></div>
+                            <div class="form-group"><label>อาจารย์ที่ปรึกษาร่วม 1</label><select id="co-advisor1"></select></div>
+                            <div class="form-group"><label>อาจารย์ที่ปรึกษาร่วม 2</label><select id="co-advisor2"></select></div>
+                        </div>
+                    </div>
+                     <div class="subsection">
+                        <h5>คณะกรรมการสอบ</h5>
+                        <p>รายชื่อกรรมการสอบจะถูกจัดการผ่านเอกสารฟอร์ม 2 และ 6 โดยตรง</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-publications" class="content-section">
+                <div class="detail-card">
+                    <h3><i class="fas fa-file-alt"></i> ผลงานตีพิมพ์ของผู้สำเร็จการศึกษา</h3>
+                    <div class="table-container" id="publications-container">
+                        </div>
+                    <button id="add-publication-btn" class="btn-add-row"><i class="fas fa-plus"></i> เพิ่มผลงานตีพิมพ์</button>
+                </div>
+                 <div class="detail-card">
+                    <h3><i class="fas fa-paperclip"></i> เอกสารที่เกี่ยวข้อง</h3>
+                    <div class="table-container" id="attachments-container">
+                        </div>
+                    <button id="add-attachment-btn" class="btn-add-row"><i class="fas fa-plus"></i> เพิ่มเอกสาร</button>
+                </div>
+            </section>
+
+            <section id="section-history" class="content-section">
+                <div class="detail-card">
+                    <h3><i class="fas fa-history"></i> ประวัติการยื่นเอกสารทั้งหมด</h3>
+                    <div class="table-container">
+                        <table id="documents-history-table">
+                            <thead>
+                                <tr>
+                                    <th>ชื่อเอกสาร</th>
+                                    <th>วันที่ยื่น</th>
+                                    <th>สถานะ</th>
+                                    <th>ดูรายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
+        </div>
+
+    <script src="/Admin_Page/js_admin/common.js"></script>
+    <script src="/Admin_Page/js_admin/manage_detail_user.js"></script>
+</body>
+</html>

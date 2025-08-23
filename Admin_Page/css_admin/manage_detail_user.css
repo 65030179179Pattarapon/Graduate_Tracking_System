@@ -1,0 +1,293 @@
+/* /Admin_Page/css_admin/manage_detail_user.css */
+
+/* --- Main Layout & Sidebar (ใช้หลักการเดียวกับหน้า Admin อื่นๆ) --- */
+.admin-page-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Sidebar width and main content */
+    height: calc(100vh - 65px); /* Full height minus navbar */
+}
+
+.sidebar {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.sidebar-profile {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#sidebar-profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+#sidebar-fullname {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+#sidebar-studentid {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 10px 0;
+}
+
+.sidebar-btn {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.sidebar-btn:hover {
+    background-color: #f8f9fa;
+    color: var(--text-primary);
+}
+
+.sidebar-btn.active {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* --- Main Content Area --- */
+.main-content {
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.main-header h1 {
+    margin: 0;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content-section {
+    display: none; 
+}
+
+.content-section.active {
+    display: block; 
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Detail Card Styles --- */
+.detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    margin-bottom: 25px;
+}
+
+.detail-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* --- [แก้ไข] Form Grid Layouts --- */
+.form-grid {
+    display: grid;
+    gap: 10px 20px; /* ระยะห่างระหว่างช่องในแถวเดียวกัน */
+    margin-bottom: 20px; /* <<<< เพิ่มบรรทัดนี้เพื่อสร้างระยะห่างระหว่างบรรทัด */
+}
+
+/* ทำให้ form-grid อันสุดท้ายไม่มีระยะห่างด้านล่าง */
+.detail-card .form-grid:last-child {
+    margin-bottom: 0;
+}
+
+.form-grid.single-col { 
+    grid-template-columns: 1fr;
+    margin-bottom: 10px; /* ลดระยะห่างสำหรับช่องเดี่ยว */
+}
+.form-grid.two-cols { grid-template-columns: 1fr 1fr; }
+.form-grid.three-cols { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.form-grid.four-cols { 
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+}
+
+/* กำหนดให้ช่อง "รหัสนักศึกษา" มีความกว้างที่เหมาะสม */
+.form-group.short-input {
+    max-width: 372px; /* กำหนดความกว้างสูงสุด, สามารถปรับค่าได้ตามความเหมาะสม */
+}
+
+/* --- Table Styles within Cards --- */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* สไตล์ร่วมสำหรับ Input, Select, Textarea */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 15px; /* ปรับปรุง padding */
+    border: 1px solid var(--border-color);
+    border-radius: 8px; /* เพิ่มความโค้งมน */
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    background-color: #f8f9fa; /* เพิ่มสีพื้นหลังอ่อนๆ */
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* ลบลูกศรเริ่มต้นของ select (สำหรับบางเบราว์เซอร์) */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* เพิ่มไอคอนลูกศร dropdown ใหม่ */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 16px 12px;
+}
+
+/* สไตล์เมื่อผู้ใช้กำลังกรอกข้อมูล (Focus) */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: var(--bg-card); /* ทำให้พื้นหลังเป็นสีขาวเมื่อ focus */
+    box-shadow: 0 0 0 3px rgba(237, 73, 136, 0.15); /* เพิ่มเงาเรืองแสง */
+}
+
+/* สไตล์สำหรับ Placeholder Text */
+::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+/* สไตล์สำหรับ Textarea */
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* สไตล์สำหรับช่องที่ Disabled */
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* สไตล์สำหรับปุ่มหลัก (เช่น บันทึก, ยืนยัน) */
+.btn-primary,
+button[type="submit"] {
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover,
+button[type="submit"]:hover {
+    background-color: #d13c74; /* สีเข้มขึ้นเมื่อ hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(237, 73, 136, 0.3);
+}
+
+/* --- [เพิ่ม] Styles for Account Management --- */
+
+.password-group {
+    display: flex;
+    gap: 10px;
+}
+
+.password-group input {
+    flex-grow: 1;
+    background-color: #e9ecef; /* ทำให้ดูเหมือน readonly */
+}
+
+.password-group button {
+    flex-shrink: 0; /* ป้องกันไม่ให้ปุ่มถูกบีบ */
+}

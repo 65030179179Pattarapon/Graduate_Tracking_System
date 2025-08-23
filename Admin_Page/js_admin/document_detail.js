@@ -125,35 +125,107 @@ function prepareRejection(docId) {
 }
 
 
-function handleAdminAction(docId, action, newStatus, comment = '') {
-    // This is a placeholder for the full logic. 
-    // The robust version that searches all lists should be here.
-    // For now, this will just show the success message.
-    console.log("Action triggered:", { docId, action, newStatus, comment });
-    
-    // Simulate finding and moving the document
-    // NOTE: This is a simplified simulation. The more robust, multi-list version is better.
-    let pendingDocs = JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]');
-    let rejectedDocs = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
-    const docIndex = pendingDocs.findIndex(d => d.doc_id === docId);
+/**
+ * [แก้ไข] จัดการการอนุมัติ/ส่งกลับเอกสาร (เวอร์ชันที่ค้นหาจากทุกสถานะ)
+ */
+function handleAdminAction(docId, action, newStatus) {
+    const commentInput = document.getElementById('rejection-comment');
+    const comment = commentInput ? commentInput.value.trim() : '';
 
-    if (docIndex > -1) {
-        const docToUpdate = pendingDocs[docIndex];
-        docToUpdate.status = newStatus;
-        docToUpdate.comment = comment;
-        docToUpdate.last_action_date = new Date().toISOString();
+    if (action === 'reject' && !comment) {
+        alert('กรุณาใส่เหตุผลในการส่งกลับ');
+        commentInput.focus();
+        return;
+    }
+
+    const confirmationMessage = action === 'reject' 
+        ? 'คุณแน่ใจหรือไม่ว่าต้องการส่งเอกสารกลับไปแก้ไข?'
+        : `คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?`;
+
+    if (confirm(confirmationMessage)) {
+        // --- [ส่วนที่แก้ไขให้สมบูรณ์] ---
         
-        rejectedDocs.push(docToUpdate);
-        pendingDocs.splice(docIndex, 1);
+        // 1. ดึงข้อมูลจากทุก List ที่เป็นไปได้
+        const listKeys = [
+            'localStorage_pendingDocs', 
+            'localStorage_waitingAdvisorDocs', 
+            'localStorage_waitingExternalDocs', 
+            'localStorage_waitingExecutiveDocs'
+        ];
+        let allLists = {};
+        listKeys.forEach(key => {
+            allLists[key] = JSON.parse(localStorage.getItem(key) || '[]');
+        });
+        // เพิ่ม List ปลายทางเข้ามาด้วย
+        allLists['localStorage_rejectedDocs'] = JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]');
+        allLists['localStorage_approvedDocs'] = JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]');
+        
+        let sourceKey = null;
+        let docToUpdate = null;
 
-        localStorage.setItem('localStorage_pendingDocs', JSON.stringify(pendingDocs));
-        localStorage.setItem('localStorage_rejectedDocs', JSON.stringify(rejectedDocs));
+        // 2. ค้นหาเอกสารและ List ต้นทาง
+        for (const key of listKeys) {
+            const doc = allLists[key].find(d => d.doc_id === docId);
+            if (doc) {
+                sourceKey = key;
+                docToUpdate = doc;
+                break;
+            }
+        }
 
-        alert('ดำเนินการสำเร็จ!');
+        if (!docToUpdate) {
+            alert('ไม่พบเอกสารที่ต้องการดำเนินการ หรือเอกสารถูกดำเนินการไปแล้ว');
+            return;
+        }
+
+        // 3. เพิ่มประวัติการดำเนินการ (เหมือนเดิม)
+        if (!docToUpdate.history) {
+            docToUpdate.history = [{ date: docToUpdate.submitted_date, action: "นักศึกษายื่นเอกสาร", actor: docToUpdate.student_email }];
+        }
+        docToUpdate.history.push({
+            date: new Date().toISOString(),
+            action: action === 'reject' ? 'ส่งกลับให้แก้ไข' : `ส่งต่อไปยัง ${newStatus}`,
+            actor: 'เจ้าหน้าที่', // สมมติว่าผู้ดำเนินการคือ Admin
+            comment: comment || ''
+        });
+
+        // 4. อัปเดตสถานะและกำหนด List ปลายทาง
+        docToUpdate.last_action_date = new Date().toISOString();
+
+        let targetKey;
+        if (action === 'reject') {
+            docToUpdate.status = 'ส่งกลับให้แก้ไข';
+            docToUpdate.comment = comment;
+            targetKey = 'localStorage_rejectedDocs';
+        } else { // สำหรับ action อื่นๆ เช่น 'forward_to_committee'
+            docToUpdate.status = newStatus;
+            // ตัวอย่าง: กำหนด List ปลายทางตามสถานะใหม่
+            if (newStatus === 'รออาจารย์อนุมัติ') {
+                targetKey = 'localStorage_waitingAdvisorDocs';
+            } else if (newStatus === 'อนุมัติแล้ว') {
+                targetKey = 'localStorage_approvedDocs';
+            } else {
+                // กรณีอื่นๆ ถ้ามี
+                targetKey = sourceKey; // อยู่ที่เดิมถ้าไม่แน่ใจ
+            }
+        }
+
+        // 5. ย้ายข้อมูล
+        // ลบออกจาก List ต้นทาง
+        allLists[sourceKey] = allLists[sourceKey].filter(d => d.doc_id !== docId);
+        // เพิ่มไปยัง List ปลายทาง
+        allLists[targetKey].push(docToUpdate);
+
+        // 6. บันทึกข้อมูลทั้งหมดกลับลง localStorage
+        for (const key in allLists) {
+            localStorage.setItem(key, JSON.stringify(allLists[key]));
+        }
+        
+        // --- [จบส่วนของโค้ดที่หายไป] ---
+        
         closeModal('rejection-modal');
+        alert('ดำเนินการสำเร็จ!');
         window.location.href = '/Admin_Page/html_admin/home.html';
-    } else {
-        alert('ไม่พบเอกสาร (อาจถูกดำเนินการไปแล้ว)');
     }
 }
 
@@ -241,7 +313,7 @@ function generateFormSpecificHTML({ doc, user, advisors, programs, departments, 
                 </ul>`;
             break;
 
-case 'ฟอร์ม 2': {
+        case 'ฟอร์ม 2': {
             // --- 1. ค้นหาชื่ออาจารย์และกรรมการทั้งหมดจาก ID ---
             const committeeIds = doc.committee || {};
 

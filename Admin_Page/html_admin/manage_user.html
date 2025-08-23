@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>จัดการผู้ใช้งาน - Admin</title>
+    <link rel="stylesheet" href="/Admin_Page/css_admin/common.css" />
+    <link rel="stylesheet" href="/Admin_Page/css_admin/manage_user.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="icon" href="/assets/images/logo.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav>
+        <a href="/Admin_Page/html_admin/home.html" class="logo-link">
+            <div class="logo">
+                <img src="/assets/images/logo.png" alt="KMITL Logo" />
+                <span>Graduate Tracking System (Admin)</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="/Admin_Page/html_admin/home.html"><i class="fas fa-home"></i> หน้าหลัก</a></li>
+            <li><a href="/Admin_Page/html_admin/manage_user.html" class="active"><i class="fas fa-users-cog"></i> จัดการผู้ใช้งาน</a></li>
+            <li><a href="#"><i class="fas fa-sitemap"></i> จัดการโครงสร้าง</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> ตั้งค่าระบบ</a></li>
+        </ul>
+        <div class="user-menu dropdown">
+            <a href="#" class="nav-dropdown-toggle" id="user-profile-link">
+                <span id="nav-username">Admin</span><i class="fas fa-user-circle"></i><i class="fas fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu user-dropdown-menu">
+                <li><a href="#"><i class="fas fa-user-edit"></i> จัดการโปรไฟล์</a></li>
+                <li><a href="#" id="logout-button"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-page-layout">
+        <aside class="sidebar">
+            <button class="sidebar-btn" data-section="overview">
+                <i class="fas fa-chart-pie"></i> สรุปภาพรวมผู้ใช้งาน
+            </button>
+            <button class="sidebar-btn" data-section="students">
+                <i class="fas fa-user-graduate"></i> จัดการนักศึกษา
+            </button>
+            <button class="sidebar-btn" data-section="advisors">
+                <i class="fas fa-user-tie"></i> จัดการอาจารย์
+            </button>
+            <hr class="sidebar-divider">
+            <a href="/Admin_Page/html_admin/home.html" class="sidebar-btn">
+                <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
+            </a>
+        </aside>
+
+        <main class="main-content">
+            <section id="section-overview" class="content-section">
+                <h1><i class="fas fa-chart-pie"></i> ภาพรวมผู้ใช้งาน</h1>
+                <p>สรุปจำนวนและสัดส่วนผู้ใช้งานทั้งหมดในระบบ</p>
+                
+                <div class="overview-layout">
+                    <div class="summary-card">
+                        <h4><i class="fas fa-user-graduate"></i> ภาพรวมนักศึกษา</h4>
+                        <div class="stat-group">
+                            <div class="stat-item">
+                                <label>นักศึกษาทั้งหมด</label>
+                                <span id="overview-student-total" class="stat-main-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>ปริญญาโท</label>
+                                <span id="overview-student-master" class="stat-sub-value">0</span>
+                            </div>
+                             <div class="stat-item">
+                                <label>ปริญญาเอก</label>
+                                <span id="overview-student-phd" class="stat-sub-value">0</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="student-overview-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <h4><i class="fas fa-user-tie"></i> ภาพรวมบุคลากร</h4>
+                        <div class="stat-group">
+                             <div class="stat-item">
+                                <label>บุคลากรทั้งหมด</label>
+                                <span id="overview-staff-total" class="stat-main-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>อาจารย์ภายใน</label>
+                                <span id="overview-advisor-count" class="stat-sub-value">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>อาจารย์ภายนอก</label>
+                                <span id="overview-external-count" class="stat-sub-value">0</span>
+                            </div>
+                             <div class="stat-item">
+                                <label>ผู้บริหาร</label>
+                                <span id="overview-executive-count" class="stat-sub-value">0</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                             <canvas id="staff-overview-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="section-students" class="content-section">
+                <h1><i class="fas fa-user-graduate"></i> จัดการรายชื่อนักศึกษา</h1>
+                <p>เพิ่ม แก้ไข และดูข้อมูลนักศึกษาทั้งหมดในระบบ</p>
+
+                <div class="table-card">
+                    <div class="filter-card">
+                        <div class="filter-header">
+                            <h3><i class="fas fa-filter"></i> ตัวกรองข้อมูลนักศึกษา</h3>
+                        </div>
+                        <div class="filter-body">
+                            <div class="filter-grid four-cols">
+                                <div class="filter-group">
+                                    <label for="filter-student-id">รหัสนักศึกษา</label>
+                                    <input type="text" id="filter-student-id" placeholder="ค้นหา...">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filter-student-name">ชื่อ-นามสกุล</label>
+                                    <input type="text" id="filter-student-name" placeholder="ค้นหา...">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filter-student-email">อีเมล</label>
+                                    <input type="text" id="filter-student-email" placeholder="ค้นหา...">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="filter-advisor-name">อาจารย์ที่ปรึกษาหลัก</label>
+                                    <select id="filter-advisor-name">
+                                        <option value="">ทั้งหมด</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="filter-actions">
+                              <button id="reset-student-filters-btn" class="btn-secondary">
+                                <i class="fas fa-undo"></i> ล้างการค้นหา
+                              </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-header">
+                        <h2>รายชื่อนักศึกษา (<span id="student-count">0</span>)</h2>
+                        <button id="add-student-btn" class="btn-primary"><i class="fas fa-plus"></i> เพิ่มนักศึกษาใหม่</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort-key="student_id">รหัสนักศึกษา</th>
+                                <th class="sortable" data-sort-key="full_name">ชื่อ-นามสกุล</th>
+                                <th class="sortable" data-sort-key="email">อีเมล</th>
+                                <th class="sortable" data-sort-key="phone">เบอร์โทรศัพท์</th>
+                                <th class="sortable" data-sort-key="advisor_name">ที่ปรึกษาวิทยานิพนธ์หลัก</th>
+                                <th>ดำเนินการ</th>
+                            </tr>
+                        </thead>
+                            <tbody id="students-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-controls" id="pagination-students">
+                        </div>
+                </div>
+            </section>
+
+            <section id="section-advisors" class="content-section">
+                 <h1><i class="fas fa-user-tie"></i> จัดการรายชื่ออาจารย์</h1>
+                 <p>เพิ่ม แก้ไข และกำหนดบทบาท (Role) ของอาจารย์ในระบบ</p>
+                 <div class="table-card">
+                    <div class="table-header">
+                        <h2>รายชื่ออาจารย์</h2>
+                        <div class="table-actions">
+                            <input type="text" id="search-advisor-input" placeholder="🔍 ค้นหาจากชื่อ, อีเมล...">
+                            <button id="add-advisor-btn" class="btn-primary"><i class="fas fa-plus"></i> เพิ่มอาจารย์ใหม่</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ชื่อ-นามสกุล</th>
+                                    <th>อีเมล</th>
+                                    <th>บทบาท (Roles)</th>
+                                    <th>ดำเนินการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="advisors-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-controls" id="pagination-advisors">
+                        </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
+        </div>
+
+    <script src="/Admin_Page/js_admin/common.js"></script>
+    <script src="/Admin_Page/js_admin/manage_user.js"></script>
+</body>
+</html>
