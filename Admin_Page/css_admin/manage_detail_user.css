@@ -133,7 +133,21 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-/* --- [แก้ไข] Form Grid Layouts --- */
+.subsection h5 {
+    display: inline-block;              
+    background-color: var(--color-primary);        
+    color: white;                      
+    padding: 7px 10px;               
+    border-radius: 10px;                  
+    margin-bottom: 20px;                 
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.subsection + .subsection {
+    margin-top: 1px; /* ✨ เพิ่มระยะห่างด้านบนให้กับหัวข้อย่อยที่ไม่ได้อยู่เป็นอันแรก */
+}
+
 .form-grid {
     display: grid;
     gap: 10px 20px; /* ระยะห่างระหว่างช่องในแถวเดียวกัน */
@@ -290,4 +304,110 @@ button[type="submit"]:hover {
 
 .password-group button {
     flex-shrink: 0; /* ป้องกันไม่ให้ปุ่มถูกบีบ */
+}
+
+/* Utility class สำหรับซ่อน Element */
+.hidden {
+    display: none !important;
+}
+
+/* เพิ่มระยะห่างด้านบนให้ช่องกรอก "อื่นๆ" */
+#gender-other-input {
+    margin-top: 10px;
+}
+
+/* --- [เพิ่ม] สไตล์สำหรับหัวข้อย่อยแบบป้ายชื่อ --- */
+.subsection-title {
+    display: inline-block;              
+    background-color: var(--color-primary);        
+    color: white;                      
+    padding: 7px 10px;               
+    border-radius: 10px;                  
+    margin-bottom: 20px;                 
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* --- [เพิ่ม] สไตล์สำหรับปุ่มเพิ่มแถวในตาราง --- */
+.btn-add-row {
+    margin-top: 20px; /* เพิ่มระยะห่างด้านบนของปุ่ม */
+    background-color: #e9ecef;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add-row:hover {
+    background-color: #dee2e6;
+    border-color: #adb5bd;
+}
+
+/* --- [เพิ่ม] สไตล์สำหรับ Pagination Controls --- */
+.pagination-controls {
+    display: flex;
+    justify-content: flex-end; /* จัดปุ่มไปทางขวา */
+    align-items: center;
+    margin-top: 20px;
+    gap: 8px; /* ระยะห่างระหว่างปุ่มกับตัวเลข */
+}
+
+.pagination-btn {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    background-color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #f8f9fa;
+    color: var(--color-primary);
+}
+
+.pagination-btn:disabled {
+    cursor: not-allowed;
+    background-color: #e9ecef;
+    color: #adb5bd;
+}
+
+.page-info {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* --- [เพิ่ม] สไตล์สำหรับฟอร์มในตาราง --- */
+
+/* ทำให้แถวใหม่มีพื้นหลังเล็กน้อยเพื่อแยกความแตกต่าง */
+.new-data-row td {
+    background-color: #f8f9fa;
+}
+
+/* สไตล์สำหรับช่อง input และ file ในตาราง */
+.new-data-row input[type="text"],
+.new-data-row input[type="file"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+}
+
+.new-data-row input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(237, 73, 136, 0.15);
+}
+
+.new-data-row .btn-delete i {
+    color: var(--color-danger); /* ทำให้ไอคอนถังขยะเป็นสีแดง */
 }

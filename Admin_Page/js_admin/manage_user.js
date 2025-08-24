@@ -328,15 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-        function updateSortHeaders() {
-        document.querySelectorAll('#section-students th.sortable').forEach(headerCell => {
-            headerCell.classList.remove('asc', 'desc');
-            if (headerCell.dataset.sortKey === studentPageState.sortKey) {
-                headerCell.classList.add(studentPageState.sortDirection);
-            }
-        });
-    }
     
     function renderStudentsTablePage() {
         if (!studentsTableBody) return;

@@ -1,5 +1,15 @@
 // /Admin_Page/js_admin/manage_detail_user.js
 
+window.addEventListener('pageshow', function(event) {
+    // ตรวจสอบว่าหน้าเว็บถูกดึงมาจาก bfcache หรือไม่
+    // event.persisted จะเป็น true ถ้าถูกดึงมาจาก cache
+    if (event.persisted) {
+        console.log('Page was loaded from bfcache. Forcing a reload to ensure data is fresh.');
+        // สั่งให้โหลดหน้าเว็บใหม่ทั้งหมดเพื่อให้สคริปต์ทำงานอีกครั้ง
+        window.location.reload();
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     // 1. Global State & Element References
@@ -13,6 +23,47 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let currentStudent = null;
+
+    let pageState = {
+    publications: 1,
+    attachments: 1
+    };
+
+    // [เพิ่ม] ตัวแปรสำหรับตรวจสอบว่ามีการเปลี่ยนแปลงข้อมูลในฟอร์มหรือไม่
+    let hasUnsavedChanges = false;
+
+    /**
+     * [เพิ่ม] ฟังก์ชันสำหรับตั้งค่าสถานะการเปลี่ยนแปลง
+     * @param {boolean} status - true หากมีการเปลี่ยนแปลง, false หากไม่มี
+     */
+    function setUnsavedChanges(status = true) {
+        if (hasUnsavedChanges !== status) {
+            console.log(`Unsaved changes status is now: ${status}`); // สำหรับ Debug
+            hasUnsavedChanges = status;
+        }
+    }
+
+        /**
+     * แปลงวันที่รูปแบบ ISO String เป็นรูปแบบภาษาไทย (เช่น "18 มีนาคม 2568")
+     * @param {string} isoString - วันที่ในรูปแบบ ISO (เช่น "2025-03-18T00:00:00.000Z")
+     * @returns {string} วันที่ในรูปแบบภาษาไทย หรือ '-' ถ้าข้อมูลผิดพลาด
+     */
+    function formatDate(isoString) {
+        if (!isoString) return '-';
+        try {
+            const date = new Date(isoString);
+            return date.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'Asia/Bangkok' // แนะนำให้ใช้ Time Zone กรุงเทพฯ เพื่อความแม่นยำ
+            });
+        } catch (error) {
+            console.error("Invalid date format:", isoString, error);
+            return 'Invalid Date';
+        }
+    }
+
     // =================================================================
     // 2. Main Initializer
     // =================================================================
@@ -51,19 +102,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
 
     async function fetchMasterData() {
-        const [students, advisors, programs, pending, approved, rejected] = await Promise.all([
-            fetch('/data/student.json').then(res => res.json()),
-            fetch('/data/advisor.json').then(res => res.json()),
-            fetch('/data/structures/programs.json').then(res => res.json()),
-            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]')),
-            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]')),
-            Promise.resolve(JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]'))
-        ]);
-        
-        masterData.students = students;
-        masterData.advisors = advisors;
-        masterData.programs = programs;
-        masterData.allDocuments = [...pending, ...approved, ...rejected];
+        try {
+            // --- [แก้ไข] ตรวจสอบ localStorage สำหรับข้อมูลนักศึกษา ---
+            const savedStudents = localStorage.getItem('savedStudents');
+            let studentData;
+
+            if (savedStudents) {
+                console.log('Loading student data from localStorage.');
+                studentData = JSON.parse(savedStudents);
+            } else {
+                console.log('Fetching student data from student.json.');
+                studentData = await fetch('/data/student.json').then(res => res.json());
+            }
+            // ----------------------------------------------------
+
+            const [advisors, programs, externalProfessors, pending, approved, rejected] = await Promise.all([
+                fetch('/data/advisor.json').then(res => res.json()),
+                fetch('/data/structures/programs.json').then(res => res.json()),
+                fetch('/data/external_professor.json').then(res => res.json()),
+                Promise.resolve(JSON.parse(localStorage.getItem('localStorage_pendingDocs') || '[]')),
+                Promise.resolve(JSON.parse(localStorage.getItem('localStorage_approvedDocs') || '[]')),
+                Promise.resolve(JSON.parse(localStorage.getItem('localStorage_rejectedDocs') || '[]'))
+            ]);
+            
+            masterData.students = studentData; // ใช้ข้อมูลที่ดึงมา ไม่ว่าจากแหล่งไหน
+            masterData.advisors = advisors;
+            masterData.programs = programs;
+            masterData.allDocuments = [...pending, ...approved, ...rejected];
+            masterData.externalProfessors = externalProfessors;
+
+        } catch (error) {
+            console.error("Failed to fetch master data:", error);
+            document.querySelector('.main-content').innerHTML = '<h2>เกิดข้อผิดพลาดในการดึงข้อมูลหลัก</h2>';
+            throw error; 
+        }
     }
 
     // =================================================================
@@ -72,10 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateAllData() {
         populateSidebarProfile();
+        renderAccountSection();
         renderProfileSection();
         renderAcademicSection();
-        renderAcademicThesisSection
-        renderAccountSection(); // <-- [ใหม่] เรียกใช้ฟังก์ชันแสดงผลบัญชี
+        renderThesisSection();
+        renderCommitteeSection();
+        renderPublicationsDocsSection();
         renderDocumentsHistorySection();
     }
 
@@ -83,6 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('sidebar-profile-img').src = currentStudent.profile_image_url || '/assets/images/students/placeholder.png';
         document.getElementById('sidebar-fullname').textContent = `${currentStudent.prefix_th}${currentStudent.first_name_th} ${currentStudent.last_name_th}`;
         document.getElementById('sidebar-studentid').textContent = `รหัส: ${currentStudent.student_id}`;
+    }
+    
+    function renderAccountSection() {
+        document.getElementById('current-email').value = currentStudent.email;
+        document.getElementById('current-password').value = currentStudent.password || '••••••••'; // แสดงรหัสผ่านจำลอง
+        document.getElementById('new-email').value = currentStudent.email;
     }
 
 function renderProfileSection() {
@@ -126,28 +206,35 @@ function renderProfileSection() {
         document.getElementById('student-id').value = currentStudent.student_id;
         document.getElementById('email').value = currentStudent.email;
         document.getElementById('phone').value = currentStudent.phone;
-        genderSelect.value = currentStudent.gender;
 
+        const genderValue = currentStudent.gender;
+        const genderOtherInput = document.getElementById('gender-other-input');
+
+        // ตรวจสอบว่าค่า gender ที่มีอยู่เป็นค่ามาตรฐานหรือไม่
+        if (['ชาย', 'หญิง', ''].includes(genderValue)) {
+            genderSelect.value = genderValue;
+            genderOtherInput.classList.add('hidden');
+        } else {
+            // ถ้าไม่ใช่ ให้ถือว่าเป็น "อื่นๆ"
+            genderSelect.value = 'อื่นๆ';
+            genderOtherInput.value = genderValue || '';
+            genderOtherInput.classList.remove('hidden');
+        }
     }
     
-    function renderAccountSection() {
-        document.getElementById('current-email').value = currentStudent.email;
-        document.getElementById('current-password').value = currentStudent.password || '••••••••'; // แสดงรหัสผ่านจำลอง
-        document.getElementById('new-email').value = currentStudent.email;
-    }
 
-function renderAcademicSection() {
+    function renderAcademicSection() {
         // --- 1. ดึง Element ทั้งหมด ---
         const degreeSelect = document.getElementById('degree');
         const programSelect = document.getElementById('program');
-        const majorInput = document.getElementById('major');
+        const majorSelect = document.getElementById('major'); // << เพิ่ม Element สาขาวิชา
         const statusSelect = document.getElementById('student-status');
         const admitYearSelect = document.getElementById('admit-year');
         const admitSemesterSelect = document.getElementById('admit-semester');
         const admitTypeSelect = document.getElementById('admit-type');
         const studyPlanSelect = document.getElementById('study-plan');
 
-        // --- 2. สร้าง Options สำหรับ Dropdown ต่างๆ ---
+        // --- 2. สร้าง Options สำหรับ Dropdown ต่างๆ (เหมือนเดิม) ---
         degreeSelect.innerHTML = `
             <option value="">-- เลือกระดับ --</option>
             <option value="ปริญญาโท">ปริญญาโท</option>
@@ -184,7 +271,7 @@ function renderAcademicSection() {
             <option value="แบบ 2.1">แบบ 2.1</option>
         `;
 
-        // --- 3. สร้าง Logic สำหรับ Dropdown หลักสูตรที่ขึ้นอยู่กับระดับปริญญา ---
+        // --- 3. สร้าง Logic สำหรับ Dropdown ที่ขึ้นต่อกัน ---
         const programsByDegree = {
             'ปริญญาโท': [
                 "วท.ม. การศึกษาวิทยาศาสตร์และเทคโนโลยี", "วท.ม. คอมพิวเตอร์ศึกษา", 
@@ -199,49 +286,296 @@ function renderAcademicSection() {
             ]
         };
 
-        const updateProgramOptions = () => {
+        const updateDependentDropdowns = () => {
             const selectedDegree = degreeSelect.value;
+            
+            // อัปเดต Dropdown หลักสูตร
             programSelect.innerHTML = '<option value="">-- เลือกหลักสูตร --</option>';
             if (programsByDegree[selectedDegree]) {
                 programsByDegree[selectedDegree].forEach(prog => {
                     programSelect.add(new Option(prog, prog));
                 });
             }
-        };
-        degreeSelect.addEventListener('change', updateProgramOptions);
 
-        // --- 4. ตั้งค่าเริ่มต้นจากข้อมูลของนักศึกษา (ถ้ามี) ---
+            // [ส่วนที่แก้ไข] อัปเดต Dropdown สาขาวิชา
+            majorSelect.innerHTML = '<option value="">-- เลือกสาขาวิชา --</option>';
+            if (programsByDegree[selectedDegree]) {
+                programsByDegree[selectedDegree].forEach(prog => {
+                    // ตัดคำย่อข้างหน้าออก (เช่น "วท.ม. ")
+                    const majorName = prog.split(' ').slice(1).join(' ');
+                    majorSelect.add(new Option(majorName, majorName));
+                });
+            }
+        };
+        
+        degreeSelect.addEventListener('change', updateDependentDropdowns);
+
+        // --- 4. ตั้งค่าเริ่มต้นจากข้อมูลของนักศึกษา ---
         if (currentStudent) {
             degreeSelect.value = currentStudent.degree;
-            updateProgramOptions(); // เรียกเพื่อให้ list ของ program ถูกสร้างขึ้น
+            updateDependentDropdowns(); // เรียกเพื่อให้ list ของ program และ major ถูกสร้างขึ้น
+            
             programSelect.value = masterData.programs.find(p => p.id === currentStudent.program_id)?.name || '';
-            majorInput.value = currentStudent.major || ''; // สมมติว่ามีข้อมูลสาขาวิชาใน student.json
+            majorSelect.value = currentStudent.major || '';
             statusSelect.value = currentStudent.status;
             admitYearSelect.value = currentStudent.admit_year;
             admitSemesterSelect.value = currentStudent.admit_semester;
-            admitTypeSelect.value = currentStudent.admit_type || ''; // สมมติว่ามีข้อมูลประเภทรับเข้า
+            admitTypeSelect.value = currentStudent.admit_type || '';
             studyPlanSelect.value = currentStudent.plan;
         }
     }
-    
 
-function renderAcademicThesisSection() {
-        // ส่วนข้อมูลการศึกษา
-        document.getElementById('degree').value = currentStudent.degree;
-        document.getElementById('program').value = masterData.programs.find(p => p.id === currentStudent.program_id)?.name || '';
-        document.getElementById('student-status').value = currentStudent.status;
-        document.getElementById('admit-year').value = currentStudent.admit_year;
-        document.getElementById('admit-semester').value = currentStudent.admit_semester;
-        document.getElementById('study-plan').value = currentStudent.plan;
+    function renderThesisSection() {
+        // --- 1. ดึง Element ทั้งหมด ---
+        const thesisTitleTh = document.getElementById('thesis-title-th');
+        const thesisTitleEn = document.getElementById('thesis-title-en');
+        const proposalExamDate = document.getElementById('proposal-exam-date');
+        const proposalApprovalDate = document.getElementById('proposal-approval-date');
+        const finalThesisTitleTh = document.getElementById('final-thesis-title-th');
+        const finalThesisTitleEn = document.getElementById('final-thesis-title-en');
+        const finalDefenseDate = document.getElementById('final-defense-date');
+        const graduationDate = document.getElementById('graduation-date');
+        const qualificationStatus = document.getElementById('qualification-status');
+        const qualificationDate = document.getElementById('qualification-date');
+        const engMasterEntrance = document.getElementById('eng-master-entrance');
+        const engMasterExit = document.getElementById('eng-master-exit');
+        const engMasterDate = document.getElementById('eng-master-date');
+        const engPhdEntrance = document.getElementById('eng-phd-entrance');
+        const engPhdExit = document.getElementById('eng-phd-exit');
+        const engPhdDate = document.getElementById('eng-phd-date');
 
-        // ส่วนข้อมูลวิทยานิพนธ์
-        document.getElementById('thesis-title-th').value = currentStudent.thesis_title_th || '';
-        document.getElementById('thesis-title-en').value = currentStudent.thesis_title_en || '';
-        
-        // แปลง ISO date string เป็น YYYY-MM-DD สำหรับ input type="date"
+        // --- 2. แสดงผลข้อมูลอาจารย์ที่ปรึกษา (รูปแบบแสดงผลอย่างเดียว) ---
+        const mainAdvisorDisplay = document.getElementById('main-advisor-display');
+        const coAdvisor1Display = document.getElementById('co-advisor1-display');
+        const coAdvisor2Display = document.getElementById('co-advisor2-display');
+
+        // ฟังก์ชันช่วยในการค้นหาชื่ออาจารย์และนำไปแสดงผล
+        const setAdvisorDisplay = (displayElement, advisorId) => {
+            const placeholder = '— ยังไม่ได้เลือกอาจารย์ —';
+            if (advisorId && masterData.advisors) {
+                const advisor = masterData.advisors.find(a => a.advisor_id === advisorId);
+                if (advisor) {
+                    displayElement.value = `${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th} (${advisor.email})`;
+                } else {
+                    displayElement.value = '— ไม่พบข้อมูลอาจารย์ —'; // กรณีหา ID ไม่เจอ
+                }
+            } else {
+                displayElement.value = placeholder;
+            }
+        };
+
+        // ดึง ID อาจารย์ของนักศึกษาคนปัจจุบัน
+        const mainAdvisorId = currentStudent.main_advisor_id;   
+        const coAdvisor1Id = currentStudent.co_advisor1_id;
+
+        // หา ID อาจารย์ที่ปรึกษาร่วม 2 จากฟอร์มที่อนุมัติแล้ว
+        const approvedForm2 = masterData.allDocuments.find(d => d.student_email === currentStudent.email && d.type === 'ฟอร์ม 2' && d.status === 'อนุมัติแล้ว');
+        const coAdvisor2Id = approvedForm2 ? approvedForm2.committee?.co_advisor2_id : null;
+
+        // นำชื่อไปแสดงในช่อง input
+        setAdvisorDisplay(mainAdvisorDisplay, mainAdvisorId);
+        setAdvisorDisplay(coAdvisor1Display, coAdvisor1Id);
+        setAdvisorDisplay(coAdvisor2Display, coAdvisor2Id);
+
+        // --- 3. แสดงผลข้อมูลวิทยานิพนธ์ ---
+        thesisTitleTh.value = currentStudent.thesis_title_th || '';
+        thesisTitleEn.value = currentStudent.thesis_title_en || '';
         if (currentStudent.proposal_approval_date) {
-            document.getElementById('proposal-approval-date').value = new Date(currentStudent.proposal_approval_date).toISOString().split('T')[0];
+            proposalApprovalDate.value = formatDate(currentStudent.proposal_approval_date);
         }
+        
+        finalThesisTitleTh.value = currentStudent.thesis_title_th || ''; // สมมติว่าใช้ชื่อเรื่องเดียวกัน
+        finalThesisTitleEn.value = currentStudent.thesis_title_en || '';
+        if (currentStudent.graduation_date) {
+            graduationDate.value = formatDate(currentStudent.graduation_date);
+        }
+
+        // --- 4. สร้าง Options และแสดงผลการสอบอื่นๆ ---
+        const passOptions = `
+            <option value="">-- ยังไม่มีข้อมูล --</option>
+            <option value="ผ่าน">ผ่าน</option>
+            <option value="ไม่ผ่าน">ไม่ผ่าน</option>
+        `;
+        qualificationStatus.innerHTML = passOptions;
+        engMasterEntrance.innerHTML = passOptions;
+        engMasterExit.innerHTML = passOptions;
+        engPhdEntrance.innerHTML = passOptions;
+        engPhdExit.innerHTML = passOptions;
+
+    }
+
+    function renderCommitteeSection() {
+        // --- 1. ดึง Element ของ Dropdown ทั้งหมด (เหมือนเดิม) ---
+        const selects = {
+            mainAdvisor: document.getElementById('committee-main-advisor'),
+            coAdvisor1: document.getElementById('committee-co-advisor1'),
+            coAdvisor2: document.getElementById('committee-co-advisor2'),
+            chairman: document.getElementById('committee-chairman'),
+            member5: document.getElementById('committee-member5'),
+            external: document.getElementById('committee-external'),
+            internal: document.getElementById('committee-internal')
+        };
+
+        // --- 2. สร้าง Options รายชื่ออาจารย์ "ภายใน" ทั้งหมด (สำหรับช่องส่วนใหญ่) ---
+        let advisorOptionsHtml = '<option value="">-- โปรดเลือก --</option>';
+        if (masterData.advisors) {
+            masterData.advisors.forEach(advisor => {
+                const fullNameWithEmail = `${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th} (${advisor.email})`;
+                advisorOptionsHtml += `<option value="${advisor.advisor_id}">${fullNameWithEmail}</option>`;
+            });
+        }
+
+        // --- [เพิ่ม] 2.1 สร้าง Options สำหรับอาจารย์ "ภายนอก" โดยเฉพาะ ---
+        let externalProfessorOptionsHtml = '<option value="">-- โปรดเลือก --</option>';
+        if (masterData.externalProfessors) {
+            masterData.externalProfessors.forEach(prof => {
+                // สมมติว่าโครงสร้างข้อมูลเหมือนกับ advisor.json
+                const fullName = `${prof.prefix_th}${prof.first_name_th} ${prof.last_name_th}`;
+                externalProfessorOptionsHtml += `<option value="${prof.advisor_id}">${fullName}</option>`;
+            });
+        }
+
+        // --- [แก้ไข] 3. นำรายชื่อไปใส่ใน Dropdown โดยแยกตามประเภท ---
+        for (const key in selects) {
+            if (selects[key]) {
+                // ถ้าเป็น Dropdown ของอาจารย์ภายนอก ให้ใช้ list ของอาจารย์ภายนอก
+                if (key === 'external') {
+                    selects[key].innerHTML = externalProfessorOptionsHtml;
+                } else {
+                // ถ้าเป็นช่องอื่นๆ ให้ใช้ list ของอาจารย์ภายในตามปกติ
+                    selects[key].innerHTML = advisorOptionsHtml;
+                }
+            }
+        }
+
+        // --- 4. ตั้งค่าที่ถูกเลือกไว้แล้วสำหรับ "อาจารย์ที่ปรึกษา" ---
+        if (currentStudent.main_advisor_id) {
+            selects.mainAdvisor.value = currentStudent.main_advisor_id;
+        }
+        if (currentStudent.co_advisor1_id) {
+            selects.coAdvisor1.value = currentStudent.co_advisor1_id;
+        }
+
+        // --- 5. ค้นหาข้อมูลจากฟอร์มที่อนุมัติแล้วเพื่อตั้งค่า "คณะกรรมการสอบ" ---
+        // หาจากฟอร์ม 6 (สอบจบ) ก่อน ถ้าไม่เจอก็หาจากฟอร์ม 2 (สอบหัวข้อ)
+        const approvedForm = masterData.allDocuments.find(d =>
+            d.student_email === currentStudent.email &&
+            (d.type === 'ฟอร์ม 6' || d.type === 'ฟอร์ม 2') &&
+            d.status === 'อนุมัติแล้ว'
+        );
+
+        if (approvedForm && approvedForm.committee) {
+            const committee = approvedForm.committee;
+            // ตั้งค่าอาจารย์ที่ปรึกษาร่วม 2 (อาจมีในฟอร์ม)
+            if (committee.co_advisor2_id) {
+                selects.coAdvisor2.value = committee.co_advisor2_id;
+            }
+            // ตั้งค่าคณะกรรมการสอบ
+            if (committee.chairman_id) {
+                selects.chairman.value = committee.chairman_id;
+            }
+            if (committee.member5_id) {
+                selects.member5.value = committee.member5_id;
+            }
+            if (committee.external_id) {
+                selects.external.value = committee.external_id;
+            }
+            if (committee.internal_id) {
+                selects.internal.value = committee.internal_id;
+            }
+        }
+    }
+
+    function renderPublicationsDocsSection() {
+        // --- ดึงข้อมูลและ Element ที่จำเป็น ---
+        const publications = currentStudent.publications || [];
+        const attachments = currentStudent.attachments || [];
+        const itemsPerPage = 5;
+
+        // [แก้ไข] เปลี่ยนเป้าหมายเป็น tbody และ pagination
+        const pubTbody = document.getElementById('publications-tbody');
+        const pubPagination = document.getElementById('publications-pagination');
+        const attachTbody = document.getElementById('attachments-tbody');
+        const attachPagination = document.getElementById('attachments-pagination');
+
+        /**
+         * [ปรับปรุงใหม่] ฟังก์ชันสำหรับสร้าง "แถวข้อมูล" และปุ่มเปลี่ยนหน้า
+         * @param {HTMLElement} tbodyEl - Container ของแถวข้อมูล (tbody)
+         * @param {HTMLElement} paginationEl - Container ของปุ่มเปลี่ยนหน้า
+         * @param {Array} data - ข้อมูลทั้งหมด
+         * @param {number} currentPage - หน้าปัจจุบัน
+         * @param {string} dataType - ประเภทข้อมูล ('publications' หรือ 'attachments')
+         */
+        const renderTableRows = (tbodyEl, paginationEl, data, currentPage, dataType) => {
+            tbodyEl.innerHTML = ''; // เคลียร์เฉพาะข้อมูลเก่าใน tbody
+            paginationEl.innerHTML = '';
+
+            const columns = dataType === 'publications' ? 4 : 3;
+            const message = dataType === 'publications' ? 'ยังไม่มีข้อมูลผลงานตีพิมพ์' : 'ยังไม่มีเอกสารแนบ';
+
+            // [ปรับปรุง] การแสดงผลเมื่อไม่มีข้อมูล
+            if (data.length === 0) {
+                tbodyEl.innerHTML = `<tr><td colspan="${columns}" class="text-muted text-center" style="padding: 20px;">${message}</td></tr>`;
+                return;
+            }
+
+            // --- 1. สร้างตาราง ---
+            const totalPages = Math.ceil(data.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedData = data.slice(startIndex, endIndex);
+
+            // [ปรับปรุง] สร้างเฉพาะ HTML ของแถวข้อมูล (tr)
+            let tbodyHtml = '';
+            paginatedData.forEach(item => {
+                tbodyHtml += '<tr>';
+                if (dataType === 'publications') {
+                    tbodyHtml += `
+                        <td>${item.title || '-'}</td>
+                        <td>${item.type || '-'}</td>
+                        <td><a href="${item.url || '#'}" target="_blank" class="link-primary">ดูเอกสาร</a></td>
+                    `;
+                } else {
+                    tbodyHtml += `
+                        <td>${item.name || '-'}</td>
+                        <td><a href="${item.url || '#'}" target="_blank" class="link-primary">ดาวน์โหลด</a></td>
+                    `;
+                }
+                tbodyHtml += `
+                    <td><button class="btn-icon btn-delete" title="ลบ"><i class="fas fa-trash-alt"></i></button></td>
+                </tr>`;
+            });
+            tbodyEl.innerHTML = tbodyHtml;
+
+            // --- 2. สร้างปุ่มเปลี่ยนหน้า ---
+            if (totalPages > 1) {
+                let paginationHtml = `
+                    <span class="page-info">หน้า ${currentPage} / ${totalPages}</span>
+                    <button class="pagination-btn" id="prev-${dataType}" ${currentPage === 1 ? 'disabled' : ''}>ย้อนกลับ</button>
+                    <button class="pagination-btn" id="next-${dataType}" ${currentPage === totalPages ? 'disabled' : ''}>ถัดไป</button>
+                `;
+                paginationEl.innerHTML = paginationHtml;
+
+                // --- 3. เพิ่ม Event Listener ให้ปุ่ม ---
+                document.getElementById(`prev-${dataType}`).addEventListener('click', () => {
+                    if (pageState[dataType] > 1) {
+                        pageState[dataType]--;
+                        renderPublicationsDocsSection(); // Rerender ทั้งหมด
+                    }
+                });
+                document.getElementById(`next-${dataType}`).addEventListener('click', () => {
+                    if (pageState[dataType] < totalPages) {
+                        pageState[dataType]++;
+                        renderPublicationsDocsSection(); // Rerender ทั้งหมด
+                    }
+                });
+            }
+        };
+
+        // --- เรียกใช้ฟังก์ชันเพื่อสร้างตารางทั้งสองส่วน ---
+        // [แก้ไข] ส่ง tbody element เข้าไปแทน container div
+        renderTableRows(pubTbody, pubPagination, publications, pageState.publications, 'publications');
+        renderTableRows(attachTbody, attachPagination, attachments, pageState.attachments, 'attachments');
     }
 
     function renderDocumentsHistorySection() {
@@ -291,24 +625,217 @@ function renderAcademicThesisSection() {
     }
 
     function showSection(sectionId) {
-        // ซ่อนทุก Section และเอา active class ออกจากทุกปุ่มใน Sidebar
+        sessionStorage.setItem('userDetail_lastActiveSection', sectionId);
+
         document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
         document.querySelectorAll('.sidebar-btn').forEach(button => button.classList.remove('active'));
 
-        // แสดง Section ที่ถูกเลือก
         const activeSection = document.getElementById(`section-${sectionId}`);
         if (activeSection) {
             activeSection.classList.add('active');
         }
         
-        // เพิ่ม active class ให้ปุ่มที่ถูกเลือกใน Sidebar
         const activeButton = document.querySelector(`.sidebar-btn[data-section="${sectionId}"]`);
         if (activeButton) {
             activeButton.classList.add('active');
         }
+
+        // เรียกใช้ฟังก์ชัน render ตาม section ที่ถูกเลือก
+        switch(sectionId) {
+            case 'account':
+                renderAccountSection();
+                break;
+            case 'profile':
+                renderProfileSection();
+                renderAcademicSection();
+                break;
+            case 'thesis':
+                renderThesisSection();
+                break;
+            case 'committee':
+                renderCommitteeSection();
+                break;
+            case 'publications-docs':
+                renderPublicationsDocsSection();
+                break;
+            case 'history':
+                renderDocumentsHistorySection();
+                break;
+        }
     }
 
- function setupEventListeners() {
+    function generateRandomPassword(length = 10) {
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+        let password = "";
+        for (let i = 0; i < length; i++) {
+            password += charset.charAt(Math.floor(Math.random() * charset.length));
+        }
+        return password;
+    }
+
+    /**
+     * [สร้างใหม่] ฟังก์ชันสำหรับรวบรวมข้อมูลล่าสุดทั้งหมดจากฟอร์มบนหน้าเว็บ
+     * @returns {Object} อ็อบเจกต์ข้อมูลนักศึกษาที่อัปเดตแล้ว
+     */
+    function gatherDataFromForm() {
+        const updatedData = { ...currentStudent }; // คัดลอกข้อมูลเดิมมาเป็นฐาน
+
+        // === รวบรวมข้อมูลจากฟอร์มทั่วไปและข้อมูลการศึกษา ===
+        updatedData.prefix_th = document.getElementById('prefix-th').value;
+        updatedData.first_name_th = document.getElementById('firstname-th').value;
+        updatedData.last_name_th = document.getElementById('lastname-th').value;
+        // ... (เพิ่ม id อื่นๆ จากส่วนข้อมูลทั่วไปและการศึกษาตามที่คุณมี) ...
+        updatedData.degree = document.getElementById('degree').value;
+        updatedData.program_id = document.getElementById('program').value; // สมมติว่า value คือ id
+        updatedData.major = document.getElementById('major').value;
+        updatedData.status = document.getElementById('student-status').value;
+
+        // === รวบรวมข้อมูลอาจารย์และคณะกรรมการ ===
+        updatedData.main_advisor_id = document.getElementById('committee-main-advisor').value;
+        updatedData.co_advisor1_id = document.getElementById('committee-co-advisor1').value;
+        // ... (เพิ่ม id ของคณะกรรมการคนอื่นๆ) ...
+
+        // === รวบรวมข้อมูลจาก "ผลงานตีพิมพ์" (ส่วนที่ซับซ้อนที่สุด) ===
+        const publications = [];
+        const pubRows = document.querySelectorAll('#publications-tbody tr');
+        pubRows.forEach(row => {
+            if (row.classList.contains('new-data-row')) { // แถวที่เพิ่มใหม่
+                const inputs = row.querySelectorAll('input');
+                publications.push({
+                    title: inputs[0].value,
+                    type: inputs[1].value,
+                    // file: inputs[2].files[0] // การจัดการไฟล์ซับซ้อนกว่านี้, আপাততเก็บแค่ชื่อ
+                });
+            } else {
+                // Logic สำหรับอ่านข้อมูลจากแถวเดิม (อาจจะต้องหาจาก masterData)
+                // เพื่อความง่าย, ระบบนี้จะบันทึกเฉพาะรายการที่เพิ่มใหม่ก่อน
+            }
+        });
+        // หมายเหตุ: ระบบที่สมบูรณ์จะต้องจัดการการแก้ไขและลบข้อมูลเดิมด้วย
+        // เบื้องต้นจะสาธิตการ "เพิ่ม" ข้อมูลใหม่เข้าไปก่อน
+        updatedData.publications = [...(currentStudent.publications || []), ...publications];
+
+
+        // === รวบรวมข้อมูลจาก "เอกสารแนบ" ===
+        const attachments = [];
+        const attachRows = document.querySelectorAll('#attachments-tbody tr');
+        attachRows.forEach(row => {
+            if (row.classList.contains('new-data-row')) {
+                const inputs = row.querySelectorAll('input');
+                attachments.push({
+                    name: inputs[0].value,
+                });
+            }
+        });
+        updatedData.attachments = [...(currentStudent.attachments || []), ...attachments];
+
+        return updatedData;
+    }
+
+
+    /**
+     * [สร้างใหม่] ฟังก์ชันสำหรับจัดการกระบวนการบันทึกทั้งหมด
+     */
+    function handleSaveAll() {
+        console.log("Starting save process...");
+
+        // 1. รวบรวมข้อมูลล่าสุดจากฟอร์ม
+        const updatedStudentData = gatherDataFromForm();
+
+        // 2. ค้นหานักศึกษาคนนี้ใน masterData แล้วอัปเดตข้อมูล
+        const studentIndex = masterData.students.findIndex(s => s.student_id === currentStudent.student_id);
+        if (studentIndex !== -1) {
+            masterData.students[studentIndex] = updatedStudentData;
+
+            // 3. บันทึกข้อมูลนักศึกษาทั้งหมดลง localStorage
+            localStorage.setItem('savedStudents', JSON.stringify(masterData.students));
+
+            // 4. แจ้งเตือนผู้ใช้ และรีเซ็ตสถานะ
+            alert('บันทึกข้อมูลเรียบร้อยแล้ว');
+            setUnsavedChanges(false);
+
+            // 5. โหลดหน้าใหม่เพื่อให้เห็นข้อมูลที่อัปเดต (แนะนำ)
+            location.reload();
+
+        } else {
+            alert('เกิดข้อผิดพลาด: ไม่พบข้อมูลนักศึกษาในระบบ');
+        }
+    }
+
+    function setupEventListeners() {
+        // --- 1. ตรวจจับการเปลี่ยนแปลงในฟอร์มทั้งหมด ---
+        const formContainer = document.querySelector('.main-content');
+        if (formContainer) {
+            // เมื่อมีการ "พิมพ์" หรือ "เปลี่ยนแปลงค่า" ใน input, select, textarea
+            formContainer.addEventListener('input', (event) => {
+                // ไม่ต้องสนใจปุ่ม file upload เพราะมันจะ trigger 'change' แทน
+                if (event.target.type !== 'file') {
+                    setUnsavedChanges(true);
+                }
+            });
+            formContainer.addEventListener('change', (event) => {
+                // สำหรับ select dropdown และ file upload
+                setUnsavedChanges(true);
+            });
+        }
+
+        // --- 2. ตรวจจับการ "เพิ่ม" ข้อมูล ---
+        const addPubBtn = document.getElementById('add-publication-btn');
+        const addAttachBtn = document.getElementById('add-attachment-btn');
+        const pubTbody = document.getElementById('publications-tbody');
+        const attachTbody = document.getElementById('attachments-tbody');
+
+        if (addPubBtn && pubTbody) {
+            addPubBtn.addEventListener('click', () => {
+                setUnsavedChanges(true); // <-- ตั้งค่าว่ามีการเปลี่ยนแปลง
+                const noDataRow = pubTbody.querySelector('.no-data-row');
+                if (noDataRow) noDataRow.remove();
+                const newRowHtml = `...`; // (โค้ด HTML ของแถวใหม่เหมือนเดิม)
+                pubTbody.insertAdjacentHTML('beforeend', newRowHtml);
+            });
+        }
+
+        if (addAttachBtn && attachTbody) {
+            addAttachBtn.addEventListener('click', () => {
+                setUnsavedChanges(true); // <-- ตั้งค่าว่ามีการเปลี่ยนแปลง
+                const noDataRow = attachTbody.querySelector('.no-data-row');
+                if (noDataRow) noDataRow.remove();
+                const newRowHtml = `...`; // (โค้ด HTML ของแถวใหม่เหมือนเดิม)
+                attachTbody.insertAdjacentHTML('beforeend', newRowHtml);
+            });
+        }
+
+        // --- 3. ตรวจจับการ "ลบ" ข้อมูล ---
+        const handleRowAction = (event) => {
+            // จัดการการลบแถวใหม่ (ยกเลิก)
+            const cancelButton = event.target.closest('.btn-delete');
+            if (cancelButton && cancelButton.closest('.new-data-row')) {
+                cancelButton.closest('.new-data-row').remove();
+                // การยกเลิกไม่ถือว่าเป็นการเปลี่ยนแปลง "ที่ต้องบันทึก"
+                // แต่ถ้าอยากให้ถือว่าเป็นการเปลี่ยนแปลงด้วย ให้เรียก setUnsavedChanges(true) ที่นี่
+                return; 
+            }
+
+            // จัดการการลบแถวที่มีข้อมูลอยู่แล้ว (ต้องใช้ event delegation ที่ครอบคลุมกว่านี้)
+            const deleteDataButton = event.target.closest('.btn-delete');
+            if (deleteDataButton) {
+                setUnsavedChanges(true); // <-- การลบข้อมูลเก่าคือการเปลี่ยนแปลง
+                // ใส่ Logic การลบข้อมูลจริงที่นี่ (เช่น ซ่อนแถวและรอการบันทึก)
+                console.log('Delete button on existing data clicked!');
+                deleteDataButton.closest('tr').style.opacity = '0.5'; // ตัวอย่าง: ทำให้แถวจางลง
+            }
+        };
+        
+        if (pubTbody) pubTbody.addEventListener('click', handleRowAction);
+        if (attachTbody) attachTbody.addEventListener('click', handleRowAction);
+
+        // --- 4. จัดการปุ่มบันทึก (เพื่อรีเซ็ตสถานะ) ---
+        const saveAllBtn = document.getElementById('save-all-btn');
+        if (saveAllBtn) {
+            saveAllBtn.addEventListener('click', handleSaveAll);
+        }
+
+        // --- ส่วนจัดการรหัสผ่าน (จากฟังก์ชันตัวแรก) ---
         const togglePasswordBtn = document.getElementById('toggle-password-visibility');
         const currentPasswordField = document.getElementById('current-password');
         const generatePassBtn = document.getElementById('generate-password-btn');
@@ -326,21 +853,120 @@ function renderAcademicThesisSection() {
 
         if (generatePassBtn && newPasswordField && confirmPasswordField) {
             generatePassBtn.addEventListener('click', () => {
+                // --- ขั้นตอนดีบัก ---
+                console.log('1. ปุ่ม "สร้าง" ถูกคลิกแล้ว!');
+
                 const newPassword = generateRandomPassword();
-                newPasswordField.value = newPassword;
-                confirmPasswordField.value = newPassword;
+                console.log('2. รหัสผ่านที่สุ่มได้คือ:', newPassword);
+
+                console.log('3. Element ช่องกรอกรหัสผ่าน:', { 
+                    new: newPasswordField, 
+                    confirm: confirmPasswordField 
+                });
+
+                try {
+                    newPasswordField.value = newPassword;
+                    confirmPasswordField.value = newPassword;
+                    console.log('4. ตั้งค่ารหัสผ่านในช่อง input สำเร็จ!');
+                } catch (error) {
+                    console.error('เกิดข้อผิดพลาดตอนตั้งค่ารหัสผ่าน!:', error);
+                }
+            });
+        }
+        
+        // --- ส่วนจัดการ Dropdown เพศ (จากฟังก์ชันตัวที่สอง) ---
+        const genderSelect = document.getElementById('gender');
+        const genderOtherInput = document.getElementById('gender-other-input');
+
+        if (genderSelect && genderOtherInput) {
+            genderSelect.addEventListener('change', () => {
+                if (genderSelect.value === 'อื่นๆ') {
+                    genderOtherInput.classList.remove('hidden');
+                    genderOtherInput.focus();
+                } else {
+                    genderOtherInput.classList.add('hidden');
+                }
             });
         }
     }
     
-    function generateRandomPassword(length = 10) {
-        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
-        let password = "";
-        for (let i = 0; i < length; i++) {
-            password += charset.charAt(Math.floor(Math.random() * charset.length));
-        }
-        return password;
+    // --- [เพิ่ม] ฟังก์ชันสำหรับปุ่ม "เพิ่มผลงานตีพิมพ์" และ "เพิ่มเอกสารแนบ" ---
+
+    // 1. ดึง Element ที่เกี่ยวข้อง
+    const addPubBtn = document.getElementById('add-publication-btn');
+    const addAttachBtn = document.getElementById('add-attachment-btn');
+    const pubTbody = document.getElementById('publications-tbody');
+    const attachTbody = document.getElementById('attachments-tbody');
+
+    // 2. เมื่อกดปุ่ม "เพิ่มผลงานตีพิมพ์"
+    if (addPubBtn && pubTbody) {
+        addPubBtn.addEventListener('click', () => {
+            // เช็คว่ามีแถว "ไม่มีข้อมูล" อยู่หรือไม่ ถ้ามีให้ลบทิ้งก่อน
+            const noDataRow = pubTbody.querySelector('.no-data-row');
+            if (noDataRow) noDataRow.remove();
+
+            // สร้าง HTML สำหรับแถวใหม่ที่เป็นฟอร์ม
+            const newRowHtml = `
+                <tr class="new-data-row">
+                    <td><input type="text" placeholder="ระบุชื่อผลงาน"></td>
+                    <td><input type="text" placeholder="เช่น TCI กลุ่ม 1, Scopus"></td>
+                    <td><input type="file"></td>
+                    <td>
+                        <button class="btn-icon btn-delete" title="ยกเลิกการเพิ่ม">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            // เพิ่มแถวใหม่เข้าไปในตาราง
+            pubTbody.insertAdjacentHTML('beforeend', newRowHtml);
+        });
     }
+
+    // 3. เมื่อกดปุ่ม "เพิ่มเอกสารแนบ"
+    if (addAttachBtn && attachTbody) {
+        addAttachBtn.addEventListener('click', () => {
+            const noDataRow = attachTbody.querySelector('.no-data-row');
+            if (noDataRow) noDataRow.remove();
+
+            const newRowHtml = `
+                <tr class="new-data-row">
+                    <td><input type="text" placeholder="ระบุชื่อเรื่อง"></td>
+                    <td><input type="file"></td>
+                    <td>
+                        <button class="btn-icon btn-delete" title="ยกเลิกการเพิ่ม">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            attachTbody.insertAdjacentHTML('beforeend', newRowHtml);
+        });
+    }
+
+    // 4. จัดการการลบแถวใหม่ (Event Delegation)
+    const handleCancelAdd = (event) => {
+        const deleteButton = event.target.closest('.btn-delete');
+        if (deleteButton) {
+            const rowToRemove = deleteButton.closest('.new-data-row');
+            if (rowToRemove) {
+                rowToRemove.remove();
+            }
+        }
+    };
+
+    if(pubTbody) pubTbody.addEventListener('click', handleCancelAdd);
+    if(attachTbody) attachTbody.addEventListener('click', handleCancelAdd);
+
+    // [เพิ่ม] เพิ่ม Event Listener เพื่อแจ้งเตือนก่อนออกจากหน้า
+    window.addEventListener('beforeunload', (event) => {
+        // ถ้ามีข้อมูลที่ยังไม่ได้บันทึก
+        if (hasUnsavedChanges) {
+            // แสดง pop-up ของเบราว์เซอร์เพื่อยืนยันการออกจากหน้า
+            event.preventDefault();
+            event.returnValue = ''; // ข้อความใน pop-up จะถูกกำหนดโดยเบราว์เซอร์เอง
+        }
+    });
 
     // =================================================================
     // 6. Initialize Page

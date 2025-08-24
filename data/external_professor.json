@@ -41,6 +41,6 @@
     "last_name_th": "วิจารณ์",
     "institution": "สถาบันวิจัยอิสระ",
     "expertise": "การวัดผลและประเมินผล",
-    "roles": []
+    "roles": ["RESERVE_EXTERNAL_COMMITTEE"]
   }
 ]
