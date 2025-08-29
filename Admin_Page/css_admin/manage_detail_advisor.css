@@ -1,0 +1,318 @@
+/* /Admin_Page/css_admin/manage_detail_advisor.css */
+
+/* =================================================================
+   1. Main Layout & Sidebar (ใช้โครงสร้างเดียวกับหน้า user)
+   ================================================================= */
+.admin-page-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: calc(100vh - 65px);
+}
+
+.sidebar {
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-color);
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.main-content {
+    padding: 30px;
+    overflow-y: auto;
+}
+
+/* =================================================================
+   2. Sidebar Styles (ปรับแก้สำหรับอาจารย์)
+   ================================================================= */
+.sidebar-profile {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#sidebar-profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+#sidebar-fullname {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+}
+
+/* เปลี่ยนจาก studentid เป็น academic-position */
+#sidebar-academic-position {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.sidebar-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 10px 0;
+}
+
+.sidebar-btn {
+    width: 100%;
+    border: none;
+    background-color: transparent;
+    padding: 12px 15px;
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.sidebar-btn:hover {
+    background-color: #f8f9fa;
+    color: var(--text-primary);
+}
+
+.sidebar-btn.active {
+    background-color: var(--color-primary);
+    color: white;
+    font-weight: 600;
+}
+
+/* =================================================================
+   3. Main Content Area & Cards
+   ================================================================= */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.main-header h1 {
+    margin: 0;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content-section {
+    display: none; 
+}
+
+.content-section.active {
+    display: block; 
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    margin-bottom: 25px;
+}
+
+.detail-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.subsection h5 {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: white;
+    padding: 7px 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* =================================================================
+   4. Form & Input Styles
+   ================================================================= */
+.form-grid {
+    display: grid;
+    gap: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.detail-card .form-grid:last-child {
+    margin-bottom: 0;
+}
+
+.form-grid.single-col { grid-template-columns: 1fr; }
+.form-grid.two-cols { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.form-grid.three-cols { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.form-grid.four-cols { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+.form-group.short-input {
+    max-width: 372px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+select,
+textarea {
+    display: block;
+    width: 100%;
+    height: 48px;
+    padding: 10px 16px;
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px;
+    color: var(--text-primary);
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+textarea {
+    height: auto; /* ให้ความสูงปรับตาม property 'rows' */
+    min-height: 80px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 46, 99, 0.15);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+}
+
+.password-group {
+    display: flex;
+    gap: 10px;
+}
+
+.password-group input {
+    flex-grow: 1;
+}
+
+.password-group button {
+    flex-shrink: 0;
+}
+
+/* =================================================================
+   5. Advisor-Specific Styles (ส่วนที่เพิ่มใหม่สำหรับอาจารย์)
+   ================================================================= */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+}
+
+/* =================================================================
+   6. Table & Pagination Styles
+   ================================================================= */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+.btn-add-row {
+    margin-top: 20px;
+    background-color: #e9ecef;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-add-row:hover {
+    background-color: #dee2e6;
+    border-color: #adb5bd;
+}

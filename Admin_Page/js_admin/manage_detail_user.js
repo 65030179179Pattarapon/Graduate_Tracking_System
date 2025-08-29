@@ -1,11 +1,10 @@
 // /Admin_Page/js_admin/manage_detail_user.js
 
 window.addEventListener('pageshow', function(event) {
-    // ตรวจสอบว่าหน้าเว็บถูกดึงมาจาก bfcache หรือไม่
-    // event.persisted จะเป็น true ถ้าถูกดึงมาจาก cache
+
     if (event.persisted) {
         console.log('Page was loaded from bfcache. Forcing a reload to ensure data is fresh.');
-        // สั่งให้โหลดหน้าเว็บใหม่ทั้งหมดเพื่อให้สคริปต์ทำงานอีกครั้ง
+
         window.location.reload();
     }
 });
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     attachments: 1
     };
 
-    // [เพิ่ม] ตัวแปรสำหรับตรวจสอบว่ามีการเปลี่ยนแปลงข้อมูลในฟอร์มหรือไม่
     let hasUnsavedChanges = false;
 
     /**
@@ -693,9 +691,8 @@ function renderProfileSection() {
         // === รวบรวมข้อมูลอาจารย์และคณะกรรมการ ===
         updatedData.main_advisor_id = document.getElementById('committee-main-advisor').value;
         updatedData.co_advisor1_id = document.getElementById('committee-co-advisor1').value;
-        // ... (เพิ่ม id ของคณะกรรมการคนอื่นๆ) ...
 
-        // === รวบรวมข้อมูลจาก "ผลงานตีพิมพ์" (ส่วนที่ซับซ้อนที่สุด) ===
+ 
         const publications = [];
         const pubRows = document.querySelectorAll('#publications-tbody tr');
         pubRows.forEach(row => {
@@ -704,19 +701,16 @@ function renderProfileSection() {
                 publications.push({
                     title: inputs[0].value,
                     type: inputs[1].value,
-                    // file: inputs[2].files[0] // การจัดการไฟล์ซับซ้อนกว่านี้, আপাততเก็บแค่ชื่อ
+ 
                 });
             } else {
-                // Logic สำหรับอ่านข้อมูลจากแถวเดิม (อาจจะต้องหาจาก masterData)
-                // เพื่อความง่าย, ระบบนี้จะบันทึกเฉพาะรายการที่เพิ่มใหม่ก่อน
+
             }
         });
-        // หมายเหตุ: ระบบที่สมบูรณ์จะต้องจัดการการแก้ไขและลบข้อมูลเดิมด้วย
-        // เบื้องต้นจะสาธิตการ "เพิ่ม" ข้อมูลใหม่เข้าไปก่อน
+
         updatedData.publications = [...(currentStudent.publications || []), ...publications];
 
 
-        // === รวบรวมข้อมูลจาก "เอกสารแนบ" ===
         const attachments = [];
         const attachRows = document.querySelectorAll('#attachments-tbody tr');
         attachRows.forEach(row => {
@@ -733,28 +727,20 @@ function renderProfileSection() {
     }
 
 
-    /**
-     * [สร้างใหม่] ฟังก์ชันสำหรับจัดการกระบวนการบันทึกทั้งหมด
-     */
     function handleSaveAll() {
         console.log("Starting save process...");
 
-        // 1. รวบรวมข้อมูลล่าสุดจากฟอร์ม
         const updatedStudentData = gatherDataFromForm();
 
-        // 2. ค้นหานักศึกษาคนนี้ใน masterData แล้วอัปเดตข้อมูล
         const studentIndex = masterData.students.findIndex(s => s.student_id === currentStudent.student_id);
         if (studentIndex !== -1) {
             masterData.students[studentIndex] = updatedStudentData;
 
-            // 3. บันทึกข้อมูลนักศึกษาทั้งหมดลง localStorage
             localStorage.setItem('savedStudents', JSON.stringify(masterData.students));
 
-            // 4. แจ้งเตือนผู้ใช้ และรีเซ็ตสถานะ
             alert('บันทึกข้อมูลเรียบร้อยแล้ว');
             setUnsavedChanges(false);
 
-            // 5. โหลดหน้าใหม่เพื่อให้เห็นข้อมูลที่อัปเดต (แนะนำ)
             location.reload();
 
         } else {
@@ -763,23 +749,18 @@ function renderProfileSection() {
     }
 
     function setupEventListeners() {
-        // --- 1. ตรวจจับการเปลี่ยนแปลงในฟอร์มทั้งหมด ---
         const formContainer = document.querySelector('.main-content');
         if (formContainer) {
-            // เมื่อมีการ "พิมพ์" หรือ "เปลี่ยนแปลงค่า" ใน input, select, textarea
             formContainer.addEventListener('input', (event) => {
-                // ไม่ต้องสนใจปุ่ม file upload เพราะมันจะ trigger 'change' แทน
                 if (event.target.type !== 'file') {
                     setUnsavedChanges(true);
                 }
             });
             formContainer.addEventListener('change', (event) => {
-                // สำหรับ select dropdown และ file upload
                 setUnsavedChanges(true);
             });
         }
 
-        // --- 2. ตรวจจับการ "เพิ่ม" ข้อมูล ---
         const addPubBtn = document.getElementById('add-publication-btn');
         const addAttachBtn = document.getElementById('add-attachment-btn');
         const pubTbody = document.getElementById('publications-tbody');
@@ -787,55 +768,48 @@ function renderProfileSection() {
 
         if (addPubBtn && pubTbody) {
             addPubBtn.addEventListener('click', () => {
-                setUnsavedChanges(true); // <-- ตั้งค่าว่ามีการเปลี่ยนแปลง
+                setUnsavedChanges(true); 
                 const noDataRow = pubTbody.querySelector('.no-data-row');
                 if (noDataRow) noDataRow.remove();
-                const newRowHtml = `...`; // (โค้ด HTML ของแถวใหม่เหมือนเดิม)
+                const newRowHtml = `...`; 
                 pubTbody.insertAdjacentHTML('beforeend', newRowHtml);
             });
         }
 
         if (addAttachBtn && attachTbody) {
             addAttachBtn.addEventListener('click', () => {
-                setUnsavedChanges(true); // <-- ตั้งค่าว่ามีการเปลี่ยนแปลง
+                setUnsavedChanges(true); 
                 const noDataRow = attachTbody.querySelector('.no-data-row');
                 if (noDataRow) noDataRow.remove();
-                const newRowHtml = `...`; // (โค้ด HTML ของแถวใหม่เหมือนเดิม)
+                const newRowHtml = `...`; 
                 attachTbody.insertAdjacentHTML('beforeend', newRowHtml);
             });
         }
 
-        // --- 3. ตรวจจับการ "ลบ" ข้อมูล ---
         const handleRowAction = (event) => {
-            // จัดการการลบแถวใหม่ (ยกเลิก)
             const cancelButton = event.target.closest('.btn-delete');
             if (cancelButton && cancelButton.closest('.new-data-row')) {
                 cancelButton.closest('.new-data-row').remove();
-                // การยกเลิกไม่ถือว่าเป็นการเปลี่ยนแปลง "ที่ต้องบันทึก"
-                // แต่ถ้าอยากให้ถือว่าเป็นการเปลี่ยนแปลงด้วย ให้เรียก setUnsavedChanges(true) ที่นี่
+
                 return; 
             }
 
-            // จัดการการลบแถวที่มีข้อมูลอยู่แล้ว (ต้องใช้ event delegation ที่ครอบคลุมกว่านี้)
             const deleteDataButton = event.target.closest('.btn-delete');
             if (deleteDataButton) {
-                setUnsavedChanges(true); // <-- การลบข้อมูลเก่าคือการเปลี่ยนแปลง
-                // ใส่ Logic การลบข้อมูลจริงที่นี่ (เช่น ซ่อนแถวและรอการบันทึก)
+                setUnsavedChanges(true); 
                 console.log('Delete button on existing data clicked!');
-                deleteDataButton.closest('tr').style.opacity = '0.5'; // ตัวอย่าง: ทำให้แถวจางลง
+                deleteDataButton.closest('tr').style.opacity = '0.5'; 
             }
         };
         
         if (pubTbody) pubTbody.addEventListener('click', handleRowAction);
         if (attachTbody) attachTbody.addEventListener('click', handleRowAction);
 
-        // --- 4. จัดการปุ่มบันทึก (เพื่อรีเซ็ตสถานะ) ---
         const saveAllBtn = document.getElementById('save-all-btn');
         if (saveAllBtn) {
             saveAllBtn.addEventListener('click', handleSaveAll);
         }
 
-        // --- ส่วนจัดการรหัสผ่าน (จากฟังก์ชันตัวแรก) ---
         const togglePasswordBtn = document.getElementById('toggle-password-visibility');
         const currentPasswordField = document.getElementById('current-password');
         const generatePassBtn = document.getElementById('generate-password-btn');
@@ -853,7 +827,7 @@ function renderProfileSection() {
 
         if (generatePassBtn && newPasswordField && confirmPasswordField) {
             generatePassBtn.addEventListener('click', () => {
-                // --- ขั้นตอนดีบัก ---
+
                 console.log('1. ปุ่ม "สร้าง" ถูกคลิกแล้ว!');
 
                 const newPassword = generateRandomPassword();
@@ -874,7 +848,6 @@ function renderProfileSection() {
             });
         }
         
-        // --- ส่วนจัดการ Dropdown เพศ (จากฟังก์ชันตัวที่สอง) ---
         const genderSelect = document.getElementById('gender');
         const genderOtherInput = document.getElementById('gender-other-input');
 
@@ -890,22 +863,17 @@ function renderProfileSection() {
         }
     }
     
-    // --- [เพิ่ม] ฟังก์ชันสำหรับปุ่ม "เพิ่มผลงานตีพิมพ์" และ "เพิ่มเอกสารแนบ" ---
-
-    // 1. ดึง Element ที่เกี่ยวข้อง
     const addPubBtn = document.getElementById('add-publication-btn');
     const addAttachBtn = document.getElementById('add-attachment-btn');
     const pubTbody = document.getElementById('publications-tbody');
     const attachTbody = document.getElementById('attachments-tbody');
 
-    // 2. เมื่อกดปุ่ม "เพิ่มผลงานตีพิมพ์"
     if (addPubBtn && pubTbody) {
         addPubBtn.addEventListener('click', () => {
-            // เช็คว่ามีแถว "ไม่มีข้อมูล" อยู่หรือไม่ ถ้ามีให้ลบทิ้งก่อน
+
             const noDataRow = pubTbody.querySelector('.no-data-row');
             if (noDataRow) noDataRow.remove();
 
-            // สร้าง HTML สำหรับแถวใหม่ที่เป็นฟอร์ม
             const newRowHtml = `
                 <tr class="new-data-row">
                     <td><input type="text" placeholder="ระบุชื่อผลงาน"></td>
@@ -918,12 +886,11 @@ function renderProfileSection() {
                     </td>
                 </tr>
             `;
-            // เพิ่มแถวใหม่เข้าไปในตาราง
+
             pubTbody.insertAdjacentHTML('beforeend', newRowHtml);
         });
     }
 
-    // 3. เมื่อกดปุ่ม "เพิ่มเอกสารแนบ"
     if (addAttachBtn && attachTbody) {
         addAttachBtn.addEventListener('click', () => {
             const noDataRow = attachTbody.querySelector('.no-data-row');
@@ -944,7 +911,6 @@ function renderProfileSection() {
         });
     }
 
-    // 4. จัดการการลบแถวใหม่ (Event Delegation)
     const handleCancelAdd = (event) => {
         const deleteButton = event.target.closest('.btn-delete');
         if (deleteButton) {
@@ -958,13 +924,10 @@ function renderProfileSection() {
     if(pubTbody) pubTbody.addEventListener('click', handleCancelAdd);
     if(attachTbody) attachTbody.addEventListener('click', handleCancelAdd);
 
-    // [เพิ่ม] เพิ่ม Event Listener เพื่อแจ้งเตือนก่อนออกจากหน้า
     window.addEventListener('beforeunload', (event) => {
-        // ถ้ามีข้อมูลที่ยังไม่ได้บันทึก
         if (hasUnsavedChanges) {
-            // แสดง pop-up ของเบราว์เซอร์เพื่อยืนยันการออกจากหน้า
             event.preventDefault();
-            event.returnValue = ''; // ข้อความใน pop-up จะถูกกำหนดโดยเบราว์เซอร์เอง
+            event.returnValue = '';
         }
     });
 

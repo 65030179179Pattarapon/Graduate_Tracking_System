@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const studentsTableBody = document.getElementById('students-table-body');
     const advisorsTableBody = document.getElementById('advisors-table-body');
 
+    let advisorPageState = {
+        filtersInitialized: false,
+        filteredData: [],
+        currentPage: 1,
+        rowsPerPage: 10,
+        sortKey: null,      
+        sortDirection: null  
+    };
+
     // =================================================================
     // 2. Main Initializer
     // =================================================================
@@ -42,21 +51,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const addStudentButton = document.getElementById('add-student-btn');
+    if (addStudentButton) {
+        addStudentButton.addEventListener('click', () => {
+            window.location.href = '/Admin_Page/html_admin/add_student.html'; 
+        });
+    }
+
     // =================================================================
     // 3. Data Fetching
     // =================================================================
 
     async function fetchMasterData() {
-        const [students, advisors, programs, externalProfessors, executives] = await Promise.all([
-            fetch('/data/student.json').then(res => res.json()),
+        const [studentsData, advisorsData, programsData] = await Promise.all([
+            localStorage.getItem('savedStudents') 
+                ? Promise.resolve(JSON.parse(localStorage.getItem('savedStudents')))
+                : fetch('/data/student.json').then(res => res.json()),
             fetch('/data/advisor.json').then(res => res.json()),
-            fetch('/data/structures/programs.json').then(res => res.json()),
-            fetch('/data/external_professor.json').then(res => res.json()),
-            fetch('/data/executive.json').then(res => res.json())
+            fetch('/data/structures/programs.json').then(res => res.json())
         ]);
         
-        masterData = { students, advisors, programs, externalProfessors, executives };
-        studentPageState.filteredData = [...masterData.students]; // ตั้งค่าข้อมูลเริ่มต้น
+        masterData = { 
+            students: studentsData,
+            advisors: advisorsData,
+            programs: programsData
+        };
+
+        studentPageState.filteredData = [...masterData.students];
+        advisorPageState.filteredData = [...masterData.advisors];
     }
 
     // =================================================================
@@ -90,11 +112,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'advisors': renderAdvisorsSection(); break;
         }
     }
-
-    // --- Section Renderers ---
     
     function renderOverview() {
-        // --- ส่วนการคำนวณข้อมูลนักศึกษา ---
         const totalStudents = masterData.students.length;
         const masterStudents = masterData.students.filter(s => s.degree === 'ปริญญาโท').length;
         const phdStudents = masterData.students.filter(s => s.degree === 'ปริญญาเอก').length;
@@ -103,20 +122,21 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('overview-student-master').textContent = masterStudents;
         document.getElementById('overview-student-phd').textContent = phdStudents;
 
-        // --- ส่วนการคำนวณข้อมูลบุคลากร ---
-        const totalAdvisors = masterData.advisors.length;
-        const totalExternal = masterData.externalProfessors.length;
-        const totalExecutives = masterData.executives.length;
-        const totalStaff = totalAdvisors + totalExternal + totalExecutives;
+        const allStaff = masterData.advisors || [];
+        const totalStaff = allStaff.length;
+
+        const totalInternalAdvisors = allStaff.filter(a => a.type.includes('อาจารย์ประจำ')).length;
+        const totalExternal = allStaff.filter(a => a.type === 'อาจารย์บัณฑิตพิเศษภายนอก').length;
+        const totalExecutives = allStaff.filter(a => a.type === 'ผู้บริหารในคณะ').length;
 
         document.getElementById('overview-staff-total').textContent = totalStaff;
-        document.getElementById('overview-advisor-count').textContent = totalAdvisors;
+        document.getElementById('overview-advisor-count').textContent = totalInternalAdvisors;
         document.getElementById('overview-external-count').textContent = totalExternal;
         document.getElementById('overview-executive-count').textContent = totalExecutives;
 
-        // --- สร้างกราฟวงกลม ---
-        createPieChart('student-overview-chart', ['ปริญญาโท', 'ปริญญาเอก'], [masterStudents, phdStudents]);
-        createPieChart('staff-overview-chart', ['อาจารย์ภายใน', 'อาจารย์ภายนอก', 'ผู้บริหาร'], [totalAdvisors, totalExternal, totalExecutives]);
+        createPieChart('staff-overview-chart', 
+            ['อาจารย์ภายใน', 'อาจารย์ภายนอก', 'ผู้บริหาร'], 
+            [totalInternalAdvisors, totalExternal, totalExecutives]);
     }
 
     function renderStudentsSection() {
@@ -125,16 +145,18 @@ document.addEventListener('DOMContentLoaded', () => {
             setupStudentFiltersAndSorting();
             studentPageState.filtersInitialized = true;
         }
-        // [แก้ไข] เรียกใช้ฟังก์ชันที่ถูกต้องในการแสดงผลครั้งแรก
         applyStudentFiltersAndSorting(); 
     }
     
     function renderAdvisorsSection() {
-        renderAdvisorsTable(masterData.advisors);
-        // Add event listeners for advisor filters and buttons
+        if (!advisorPageState.filtersInitialized) {
+            populateAdvisorTypeFilter();
+            setupAdvisorFilters();
+            advisorPageState.filtersInitialized = true;
+        }
+        applyAdvisorFilters(); 
     }
 
-    // [ฟังก์ชันใหม่]
     function updateSortHeaders() {
         document.querySelectorAll('#section-students th.sortable').forEach(headerCell => {
             headerCell.classList.remove('asc', 'desc');
@@ -148,32 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Component Rendering (Charts & Tables)
     // =================================================================
     
-    function renderAdvisorsTable(advisorsToRender) {
-         if (!advisorsTableBody) return;
-        advisorsTableBody.innerHTML = '';
-        
-        advisorsToRender.forEach(advisor => {
-             const tr = document.createElement('tr');
-             const roles = advisor.roles && advisor.roles.length > 0 ? advisor.roles.join(', ') : 'N/A';
-             tr.innerHTML = `
-                <td>${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}</td>
-                <td>${advisor.email}</td>
-                <td>${roles}</td>
-                <td class="action-cell">
-                    <button class="btn-edit" title="แก้ไข" data-id="${advisor.advisor_id}"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="btn-delete" title="ลบ" data-id="${advisor.advisor_id}"><i class="fas fa-trash-alt"></i></button>
-                </td>
-             `;
-             advisorsTableBody.appendChild(tr);
-        });
-    }
-    
-    // [ฟังก์ชันใหม่] สำหรับสร้างกราฟวงกลม
     function createPieChart(canvasId, labels, data) {
         const ctx = document.getElementById(canvasId)?.getContext('2d');
         if (!ctx) return;
         
-        // ทำลาย instance เก่าของ chart ถ้ามีอยู่
         if (Chart.getChart(canvasId)) {
             Chart.getChart(canvasId).destroy();
         }
@@ -184,14 +184,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: labels,
                 datasets: [{
                     data: data,
-                    // --- [ส่วนที่แก้ไข] เปลี่ยนชุดสีใหม่ ---
                     backgroundColor: [
-                        '#F47C7C', // ชมพู-แดง อ่อน
-                        '#F7A488', // ส้ม-พีช
-                        '#FAD02E', // เหลือง
-                        '#82E0AA', // เขียวพาสเทล
-                        '#74B9FF', // ฟ้า
-                        '#A593E0'  // ม่วงพาสเทล
+                        '#F47C7C',
+                        '#F7A488', 
+                        '#FAD02E', 
+                        '#82E0AA', 
+                        '#74B9FF', 
+                        '#A593E0' 
                     ],
                     borderColor: '#fff',
                     borderWidth: 2
@@ -228,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         [studentIdFilter, studentNameFilter, studentEmailFilter, advisorFilter].forEach(input => {
             input.addEventListener('input', () => {
-                studentPageState.currentPage = 1; // กลับไปหน้าแรกเมื่อกรองใหม่
+                studentPageState.currentPage = 1;
                 applyStudentFiltersAndSorting();
             });
         });
@@ -267,8 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     studentPageState.sortDirection = 'asc';
                 }
                 
-                // (บรรทัดที่ตั้งค่า currentPage = 1 ถูกลบออกไปแล้ว)
-                
                 applyStudentFiltersAndSorting();
             });
         });
@@ -293,6 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const advisorMatch = !advisorId || student.main_advisor_id === advisorId;
             return idMatch && nameMatch && emailMatch && advisorMatch;
         });
+        
+        processedData.reverse();
 
         const { sortKey, sortDirection } = studentPageState;
         if (sortKey && sortDirection) {
@@ -347,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tr = document.createElement('tr');
                 tr.classList.add('clickable-row');
                 tr.onclick = () => {
-                    // กำหนด URL ของหน้ารายละเอียด พร้อมส่ง student_id ไปเป็น parameter
                     window.location.href = `/Admin_Page/html_admin/manage_detail_user.html?id=${student.student_id}`;
                 };
 
@@ -365,13 +363,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 tr.querySelector('.btn-edit').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    // เมื่อกดปุ่มแก้ไข ก็ให้ไปที่หน้ารายละเอียดเช่นกัน
                     window.location.href = `/Admin_Page/html_admin/manage_detail_user.html?id=${student.student_id}`;
                 });
                 tr.querySelector('.btn-delete').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    if (confirm(`คุณต้องการลบข้อมูลของนักศึกษา ID: ${student.student_id} ใช่หรือไม่?`)) {
-                        alert(`(จำลอง) กำลังลบข้อมูลนักศึกษา ID: ${student.student_id}`);
+
+                    const studentIdToDelete = e.currentTarget.dataset.id;
+
+                    if (confirm(`คุณต้องการลบข้อมูลของนักศึกษา ID: ${studentIdToDelete} ใช่หรือไม่?\nการกระทำนี้ไม่สามารถย้อนกลับได้`)) {
+
+                        let students = JSON.parse(localStorage.getItem('savedStudents') || '[]');
+
+                        const updatedStudents = students.filter(s => s.student_id !== studentIdToDelete);
+
+                        localStorage.setItem('savedStudents', JSON.stringify(updatedStudents));
+
+                        alert(`ลบข้อมูลนักศึกษา ID: ${studentIdToDelete} เรียบร้อยแล้ว`);
+                        window.location.reload();
                     }
                 });
                 
@@ -381,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStudentPagination();
     }
 
-    // --- [ฟังก์ชันใหม่] สำหรับสร้างและอัปเดตปุ่ม Pagination ---
     function updateStudentPagination() {
         const controlsContainer = document.getElementById('pagination-students');
         if (!controlsContainer) return;
@@ -409,6 +416,229 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderAdvisorsSection() {
+    if (!advisorPageState.filtersInitialized) {
+        populateAdvisorTypeFilter();
+        setupAdvisorFilters();
+        setupAdvisorSorting();
+        advisorPageState.filtersInitialized = true;
+    }
+        advisorPageState.filteredData = [...masterData.advisors];
+        renderAdvisorsTablePage();
+    }
+
+    function populateAdvisorTypeFilter() {
+        const advisorTypeFilter = document.getElementById('filter-advisor-type');
+        if (!advisorTypeFilter) return;
+
+        const advisorTypes = [
+            "อาจารย์ประจำ", "อาจารย์ประจำหลักสูตร", "อาจารย์ผู้รับผิดชอบหลักสูตร",
+            "อาจารย์บัณฑิตพิเศษภายใน", "อาจารย์บัณฑิตพิเศษภายนอก", "ผู้บริหาร"
+        ];
+
+        advisorTypeFilter.innerHTML = '<option value="">ทุกประเภท</option>';
+        advisorTypes.forEach(type => {
+            advisorTypeFilter.add(new Option(type, type));
+        });
+    }
+
+    function setupAdvisorFilters() {
+        const nameFilter = document.getElementById('filter-advisor-by-name');
+        const emailFilter = document.getElementById('filter-advisor-email');
+        const phoneFilter = document.getElementById('filter-advisor-phone');
+        const typeFilter = document.getElementById('filter-advisor-type');
+        const resetBtn = document.getElementById('reset-advisor-filters-btn');
+
+        const filterInputs = [nameFilter, emailFilter, phoneFilter, typeFilter];
+
+        filterInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                advisorPageState.currentPage = 1;
+                applyAdvisorFilters();
+            });
+        });
+
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                nameFilter.value = '';
+                emailFilter.value = '';
+                phoneFilter.value = '';
+                typeFilter.value = '';
+                advisorPageState.currentPage = 1;
+                advisorPageState.sortKey = null;
+                advisorPageState.sortDirection = null;
+                applyAdvisorFilters();
+            });
+        }
+    }
+
+    function applyAdvisorFilters() {
+        const nameQuery = document.getElementById('filter-advisor-by-name').value.toLowerCase();
+        const emailQuery = document.getElementById('filter-advisor-email').value.toLowerCase();
+        const phoneQuery = document.getElementById('filter-advisor-phone').value;
+        const typeQuery = document.getElementById('filter-advisor-type').value;
+
+        let processedData = masterData.advisors.filter(advisor => {
+            const fullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.toLowerCase();
+            const phone = advisor.phone || '';
+
+            const nameMatch = !nameQuery || fullName.includes(nameQuery);
+            const emailMatch = !emailQuery || advisor.email.toLowerCase().includes(emailQuery);
+            const phoneMatch = !phoneQuery || phone.includes(phoneQuery);
+            const typeMatch = !typeQuery || advisor.type === typeQuery;
+
+            return nameMatch && emailMatch && phoneMatch && typeMatch;
+        });
+
+            const { sortKey, sortDirection } = advisorPageState;
+            if (sortKey && sortDirection) {
+            processedData.sort((a, b) => {
+                const valA = getAdvisorValueForSort(a, sortKey);
+                const valB = getAdvisorValueForSort(b, sortKey);
+
+                const comparison = String(valA).localeCompare(String(valB), 'th');
+                
+                return sortDirection === 'asc' ? comparison : -comparison;
+            });
+        }
+
+        advisorPageState.filteredData = processedData;
+        renderAdvisorsTablePage();
+        updateAdvisorSortHeaders();
+    }
+
+    function setupAdvisorSorting() {
+    document.querySelectorAll('#section-advisors th.sortable').forEach(headerCell => {
+        headerCell.addEventListener('click', () => {
+            const sortKey = headerCell.dataset.sortKey;
+            
+            if (advisorPageState.sortKey === sortKey) {
+                if (advisorPageState.sortDirection === 'asc') {
+                    advisorPageState.sortDirection = 'desc';
+                } else {
+                    advisorPageState.sortKey = null;
+                    advisorPageState.sortDirection = null;
+                }
+            } else {
+                advisorPageState.sortKey = sortKey;
+                advisorPageState.sortDirection = 'asc';
+            }
+            
+            applyAdvisorFilters();
+        });
+    });
+}
+
+    function getAdvisorValueForSort(advisor, key) {
+        switch (key) {
+            case 'full_name':
+                return `${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}`;
+            default:
+                return advisor[key] || '';
+        }
+    }
+
+    function updateAdvisorSortHeaders() {
+        document.querySelectorAll('#section-advisors th.sortable').forEach(headerCell => {
+            headerCell.classList.remove('asc', 'desc');
+            if (headerCell.dataset.sortKey === advisorPageState.sortKey) {
+                headerCell.classList.add(advisorPageState.sortDirection);
+            }
+        });
+    }
+
+    function renderAdvisorsTablePage() {
+        const advisorsTableBody = document.getElementById('advisors-table-body');
+        if (!advisorsTableBody) return;
+
+        advisorsTableBody.innerHTML = '';
+        document.getElementById('advisor-count').textContent = `รายชื่ออาจารย์ (${advisorPageState.filteredData.length})`;
+
+        const start = (advisorPageState.currentPage - 1) * advisorPageState.rowsPerPage;
+        const end = start + advisorPageState.rowsPerPage;
+        const paginatedItems = advisorPageState.filteredData.slice(start, end);
+
+        if (paginatedItems.length === 0) {
+            advisorsTableBody.innerHTML = `<tr><td colspan="5" class="text-center">ไม่พบข้อมูลอาจารย์ตามเงื่อนไข</td></tr>`;
+        } else {
+            paginatedItems.forEach(advisor => {
+                const tr = document.createElement('tr');
+                tr.classList.add('clickable-row');
+                tr.addEventListener('click', () => {
+                    if (advisor.email) {
+                        window.location.href = `/Admin_Page/html_admin/manage_detail_advisor.html?email=${advisor.email}`;
+                    } else {
+                        alert('ไม่พบอีเมลของอาจารย์ท่านนี้');
+                    }
+                });
+
+                tr.innerHTML = `
+                    <td>${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}</td>
+                    <td>${advisor.email || '-'}</td>
+                    <td>${advisor.phone || '-'}</td>
+                    <td>${advisor.type || '-'}</td>
+                    <td class="action-cell">
+                        <button class="btn-edit" title="แก้ไข" data-id="${advisor.advisor_id}"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn-delete" title="ลบ" data-id="${advisor.advisor_id}"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+
+                const editButton = tr.querySelector('.btn-edit');
+                const deleteButton = tr.querySelector('.btn-delete');
+
+                if (editButton) {
+                    editButton.addEventListener('click', (e) => {
+                        e.stopPropagation(); 
+                        const advisorId = e.currentTarget.dataset.id;
+                        alert(`(ตัวอย่าง) กำลังแก้ไขข้อมูลอาจารย์ ID: ${advisorId}`);
+                    });
+                }
+
+                if (deleteButton) {
+                    deleteButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const advisorId = e.currentTarget.dataset.id;
+                        if (confirm(`คุณต้องการลบข้อมูลอาจารย์ ID: ${advisorId} ใช่หรือไม่?`)) {
+                            alert(`(ตัวอย่าง) กำลังลบข้อมูลอาจารย์ ID: ${advisorId}`);
+                        }
+                    });
+                }
+                
+                advisorsTableBody.appendChild(tr);
+            });
+        }
+        updateAdvisorPagination();
+    }
+
+    function updateAdvisorPagination() {
+        const controlsContainer = document.getElementById('pagination-advisors');
+        if (!controlsContainer) return;
+
+        const totalPages = Math.ceil(advisorPageState.filteredData.length / advisorPageState.rowsPerPage);
+        if (totalPages <= 1) {
+            controlsContainer.innerHTML = '';
+            return;
+        }
+
+        controlsContainer.innerHTML = `
+            <span class="page-info">หน้า ${advisorPageState.currentPage} จาก ${totalPages}</span>
+            <button class="pagination-btn prev-btn" ${advisorPageState.currentPage === 1 ? 'disabled' : ''}>ก่อนหน้า</button>
+            <button class="pagination-btn next-btn" ${advisorPageState.currentPage >= totalPages ? 'disabled' : ''}>ถัดไป</button>
+        `;
+
+        controlsContainer.querySelector('.prev-btn').addEventListener('click', () => {
+            if (advisorPageState.currentPage > 1) {
+                advisorPageState.currentPage--;
+                renderAdvisorsTablePage();
+            }
+        });
+        controlsContainer.querySelector('.next-btn').addEventListener('click', () => {
+            if (advisorPageState.currentPage < totalPages) {
+                advisorPageState.currentPage++;
+                renderAdvisorsTablePage();
+            }
+        });
+    }
     // =================================================================
     // 6. Initialize Page
     // =================================================================

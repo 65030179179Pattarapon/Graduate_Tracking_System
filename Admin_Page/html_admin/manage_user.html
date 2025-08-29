@@ -146,7 +146,7 @@
 
                     <div class="table-header">
                         <h2>รายชื่อนักศึกษา (<span id="student-count">0</span>)</h2>
-                        <button id="add-student-btn" class="btn-primary"><i class="fas fa-plus"></i> เพิ่มนักศึกษาใหม่</button>
+                            <button id="add-student-btn" class="btn-primary"><i class="fas fa-user-plus"></i> เพิ่มนักศึกษาใหม่ </button>
                     </div>
                     <div class="table-container">
                         <table>
@@ -163,29 +163,62 @@
                             <tbody id="students-table-body"></tbody>
                         </table>
                     </div>
-                    <div class="pagination-controls" id="pagination-students">
-                        </div>
+                    <div class="pagination-controls" id="pagination-students"></div>
                 </div>
             </section>
 
             <section id="section-advisors" class="content-section">
-                 <h1><i class="fas fa-user-tie"></i> จัดการรายชื่ออาจารย์</h1>
-                 <p>เพิ่ม แก้ไข และกำหนดบทบาท (Role) ของอาจารย์ในระบบ</p>
-                 <div class="table-card">
+                <h1><i class="fas fa-user-tie"></i> จัดการรายชื่ออาจารย์</h1>
+                <p>เพิ่ม แก้ไข และกำหนดบทบาท (Role) ของอาจารย์ในระบบ</p>
+
+                <div class="table-card">
+
+                    <div class="filter-card">
+                            <summary class="filter-header">
+                                <h3><i class="fas fa-filter"></i> ตัวกรองข้อมูลอาจารย์</h3>
+                            </summary>
+                            <div class="filter-body">
+                                <div class="filter-grid four-cols">
+                                    <div class="filter-group">
+                                        <label for="filter-advisor-by-name">ชื่อ-นามสกุล</label>
+                                        <input type="text" id="filter-advisor-by-name" placeholder="ค้นหา...">
+                                    </div>
+                                    <div class="filter-group">
+                                        <label for="filter-advisor-email">อีเมล</label>
+                                        <input type="text" id="filter-advisor-email" placeholder="ค้นหา...">
+                                    </div>
+                                    <div class="filter-group">
+                                        <label for="filter-advisor-phone">เบอร์โทรศัพท์</label>
+                                        <input type="text" id="filter-advisor-phone" placeholder="ค้นหา...">
+                                    </div>
+                                    <div class="filter-group">
+                                        <label for="filter-advisor-type">ประเภทของอาจารย์</label>
+                                        <select id="filter-advisor-type"></select>
+                                    </div>
+                                </div>
+                                <div class="filter-actions">
+                                    <button id="reset-advisor-filters-btn" class="btn-secondary">
+                                        <i class="fas fa-undo"></i> ล้างการค้นหา
+                                    </button>
+                                </div>
+                            </div>
+                    </div>
+
                     <div class="table-header">
-                        <h2>รายชื่ออาจารย์</h2>
+                        <h2 id="advisor-count">รายชื่ออาจารย์ (กำลังโหลด...)</h2>
                         <div class="table-actions">
-                            <input type="text" id="search-advisor-input" placeholder="🔍 ค้นหาจากชื่อ, อีเมล...">
                             <button id="add-advisor-btn" class="btn-primary"><i class="fas fa-plus"></i> เพิ่มอาจารย์ใหม่</button>
                         </div>
                     </div>
+
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ชื่อ-นามสกุล</th>
-                                    <th>อีเมล</th>
-                                    <th>บทบาท (Roles)</th>
+                                    <th class="sortable" data-sort-key="full_name">ชื่อ-นามสกุล</th>
+                                    <th class="sortable" data-sort-key="email">อีเมล</th>
+                                    <th>เบอร์โทรศัพท์</th> 
+                                    <th class="sortable" data-sort-key="type">ประเภทของอาจารย์</th>
                                     <th>ดำเนินการ</th>
                                 </tr>
                             </thead>
@@ -193,8 +226,10 @@
                                 </tbody>
                         </table>
                     </div>
+
                     <div class="pagination-controls" id="pagination-advisors">
                         </div>
+
                 </div>
             </section>
         </main>
