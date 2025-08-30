@@ -9,6 +9,7 @@
     "prefix_en": "Asst. Prof.",
     "first_name_en": "Surachai",
     "last_name_en": "Pimsalee",
+    "gender": "ชาย",
     "phone": "02-329-8111",
     "type": "อาจารย์ประจำ",
     "roles": ["สอน", "ที่ปรึกษาวิทยานิพนธ์ร่วม"],
@@ -18,7 +19,22 @@
     "expertise": ["วิศวกรรมไฟฟ้าสื่อสาร", "การประมวลผลสัญญาณดิจิทัล"],
     "contact_email": "surachai.p@kmitl.ac.th",
     "office_location": "อาคาร A ห้อง 101",
-    "profile_image_url": "/assets/images/advisors/adv011.png"
+    "profile_image_url": "/assets/images/advisors/adv011.png",
+    "assigned_programs": [9, 11],
+    "academic_works": [
+      {
+        "title": "การวิเคราะห์ประสิทธิภาพของเทคนิคการประมวลผลสัญญาณดิจิทัลสำหรับเครือข่าย 5G",
+        "publish_date": "2024-11-15",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q1)",
+        "attachment_file": "/uploads/works/adv011_paper_01.pdf"
+      },
+      {
+        "title": "การออกแบบวงจรกรองสัญญาณแบบปรับค่าได้สำหรับการสื่อสารไร้สาย",
+        "publish_date": "2023-05-22",
+        "publication_type": "บทความนำเสนอในที่ประชุมวิชาการระดับนานาชาติ (IEEE)",
+        "attachment_file": "/uploads/works/adv011_conf_01.pdf"
+      }
+    ]
   },
   {
     "email": "phongkiat.j@kmitl.ac.th",
@@ -39,7 +55,16 @@
     "expertise": ["เทคโนโลยีการออกแบบผลิตภัณฑ์", "นวัตกรรมการออกแบบ"],
     "contact_email": "phongkiat.j@kmitl.ac.th",
     "office_location": "อาคาร B ห้อง 202",
-    "profile_image_url": "/assets/images/advisors/adv012.png"
+    "profile_image_url": "/assets/images/advisors/adv012.png",
+    "assigned_programs": [6],
+    "academic_works": [
+      {
+        "title": "นวัตกรรมการออกแบบบรรจุภัณฑ์ที่เป็นมิตรต่อสิ่งแวดล้อมจากวัสดุชีวภาพ",
+        "publish_date": "2025-01-30",
+        "publication_type": "บทความวิจัยในวารสารระดับชาติ (TCI 1)",
+        "attachment_file": "/uploads/works/adv012_paper_01.pdf"
+      }
+    ]
   },
   {
     "email": "kosol.t@kmitl.ac.th",
@@ -60,7 +85,22 @@
     "expertise": ["การศึกษาเกษตร", "เทคโนโลยีการเกษตรอัจฉริยะ"],
     "contact_email": "kosol.t@kmitl.ac.th",
     "office_location": "อาคาร C ห้อง 303",
-    "profile_image_url": "/assets/images/advisors/adv013.png"
+    "profile_image_url": "/assets/images/advisors/adv013.png",
+    "assigned_programs": [12, 13],
+    "academic_works": [
+      {
+        "title": "การพัฒนาระบบฟาร์มอัจฉริยะเพื่อการเพาะปลูกพืชในโรงเรือนแบบปิด",
+        "publish_date": "2024-08-01",
+        "publication_type": "สิทธิบัตร",
+        "attachment_file": "/uploads/works/adv013_patent_01.pdf"
+      },
+      {
+        "title": "ตำราเรียน: เทคโนโลยีการเกษตรสมัยใหม่",
+        "publish_date": "2023-01-10",
+        "publication_type": "หนังสือ/ตำรา",
+        "attachment_file": "/uploads/works/adv013_book_01.pdf"
+      }
+    ]
   },
   {
     "email": "paiboon.p@kmitl.ac.th",
@@ -81,7 +121,16 @@
     "expertise": ["นวัตกรรมการเรียนรู้", "การบริหารการศึกษา"],
     "contact_email": "paiboon.p@kmitl.ac.th",
     "office_location": "อาคาร D ห้อง 404",
-    "profile_image_url": "/assets/images/advisors/adv014.png"
+    "profile_image_url": "/assets/images/advisors/adv014.png",
+    "assigned_programs": [2, 3],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      }
+    ]
   },
   {
     "email": "piya.j@kmitl.ac.th",
@@ -102,7 +151,16 @@
     "expertise": ["การพัฒนาซอฟต์แวร์เพื่อการศึกษา", "วิทยาการข้อมูล"],
     "contact_email": "piya.j@kmitl.ac.th",
     "office_location": "อาคาร A ห้อง 105",
-    "profile_image_url": "/assets/images/advisors/adv015.png"
+    "profile_image_url": "/assets/images/advisors/adv015.png",
+    "assigned_programs": [8],
+    "academic_works": [
+      {
+        "title": "An Application of Data Science for Personalized Learning Paths in Higher Education",
+        "publish_date": "2024-03-18",
+        "publication_type": "บทความนำเสนอในที่ประชุมวิชาการระดับนานาชาติ (ICER)",
+        "attachment_file": "/uploads/works/adv015_conf_01.pdf"
+      }
+    ]
   },
   {
     "email": "prasert.k@kmitl.ac.th",
@@ -123,7 +181,16 @@
     "expertise": ["การวิจัยทางการศึกษา", "สถิติเพื่อการวิจัย"],
     "contact_email": "prasert.k@kmitl.ac.th",
     "office_location": "อาคาร D ห้อง 411",
-    "profile_image_url": "/assets/images/advisors/adv016.png"
+    "profile_image_url": "/assets/images/advisors/adv016.png",
+    "assigned_programs": [1, 4, 5],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      }
+    ]
   },
   {
     "email": "winai.j@kmitl.ac.th",
@@ -144,7 +211,16 @@
     "expertise": ["วิศวกรรมเครื่องกล", "พลังงานทดแทน"],
     "contact_email": "winai.j@kmitl.ac.th",
     "office_location": "อาคาร B ห้อง 210",
-    "profile_image_url": "/assets/images/advisors/adv017.png"
+    "profile_image_url": "/assets/images/advisors/adv017.png",
+    "assigned_programs": [1, 4, 5],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      }
+    ]
   },
   {
     "email": "amornchai.c@kmitl.ac.th",
@@ -165,7 +241,16 @@
     "expertise": ["เทคโนโลยีอาหาร", "วิศวกรรมกระบวนการชีวภาพ"],
     "contact_email": "amornchai.c@kmitl.ac.th",
     "office_location": "อาคาร C ห้อง 313",
-    "profile_image_url": "/assets/images/advisors/adv018.png"
+    "profile_image_url": "/assets/images/advisors/adv018.png",
+    "assigned_programs": [12],
+    "academic_works": [
+        {
+            "title": "การสกัดสารต้านอนุมูลอิสระจากเปลือกผลไม้เพื่อใช้ในผลิตภัณฑ์อาหาร",
+            "publish_date": "2024-06-11",
+            "publication_type": "บทความวิจัยในวารสารระดับชาติ (TCI 1)",
+            "attachment_file": "/uploads/works/adv018_paper_01.pdf"
+        }
+    ]
   },
   {
     "email": "apirat.l@kmitl.ac.th",
@@ -186,7 +271,16 @@
     "expertise": ["วิศวกรรมโทรคมนาคม", "โครงข่ายสื่อสารคอมพิวเตอร์"],
     "contact_email": "apirat.l@kmitl.ac.th",
     "office_location": "อาคาร A ห้อง 108",
-    "profile_image_url": "/assets/images/advisors/adv019.png"
+    "profile_image_url": "/assets/images/advisors/adv019.png",
+    "assigned_programs": [9],
+    "academic_works": [
+        {
+            "title": "การสกัดสารต้านอนุมูลอิสระจากเปลือกผลไม้เพื่อใช้ในผลิตภัณฑ์อาหาร",
+            "publish_date": "2024-06-11",
+            "publication_type": "บทความวิจัยในวารสารระดับชาติ (TCI 1)",
+            "attachment_file": "/uploads/works/adv018_paper_01.pdf"
+        }
+    ]
   },
   {
     "email": "nathathai.j@kmitl.ac.th",
@@ -207,7 +301,16 @@
     "expertise": ["การออกแบบกราฟิก", "เทคโนโลยีมัลติมีเดีย"],
     "contact_email": "nathathai.j@kmitl.ac.th",
     "office_location": "อาคาร B ห้อง 205",
-    "profile_image_url": "/assets/images/advisors/adv020.png"
+    "profile_image_url": "/assets/images/advisors/adv020.png",
+    "assigned_programs": [6, 7],
+    "academic_works": [
+        {
+            "title": "การประยุกต์ใช้เทคโนโลยี Augmented Reality ในสื่อการเรียนการสอน",
+            "publish_date": "2023-08-20",
+            "publication_type": "บทความนำเสนอในที่ประชุมวิชาการระดับชาติ",
+            "attachment_file": "/uploads/works/adv020_conf_01.pdf"
+        }
+    ]
   },
   {
     "email": "aphisak.s@kmitl.ac.th",
@@ -228,7 +331,16 @@
     "expertise": ["การวัดและประเมินผลการศึกษา", "เทคโนโลยีดิจิทัลเพื่อการเรียนรู้"],
     "contact_email": "aphisak.s@external-uni.ac.th",
     "office_location": "มหาวิทยาลัยภายนอก",
-    "profile_image_url": "/assets/images/advisors/adv021.png"
+    "profile_image_url": "/assets/images/advisors/adv021.png",
+    "assigned_programs": [],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      }
+    ]
   },
   {
     "email": "thanongsak.s@kmitl.ac.th",
@@ -249,7 +361,16 @@
     "expertise": ["ระบบสมองกลฝังตัว", "อินเทอร์เน็ตของสรรพสิ่ง (IoT)"],
     "contact_email": "thanongsak.s@kmitl.ac.th",
     "office_location": "อาคารสำนักงานคณบดี",
-    "profile_image_url": "/assets/images/advisors/adv022.png"
+    "profile_image_url": "/assets/images/advisors/adv022.png",
+    "assigned_programs": [8, 10],
+    "academic_works": [
+        {
+            "title": "A Framework for IoT-Based Smart Campus Management",
+            "publish_date": "2025-02-12",
+            "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q1)",
+            "attachment_file": "/uploads/works/adv022_paper_01.pdf"
+        }
+    ]
   },
   {
     "email": "priyaporn.t@kmitl.ac.th",
@@ -270,7 +391,22 @@
     "expertise": ["การพัฒนาภาวะผู้นำ", "การจัดการองค์กรการศึกษา"],
     "contact_email": "priyaporn.t@kmitl.ac.th",
     "office_location": "สำนักงานคณบดี",
-    "profile_image_url": "/assets/images/advisors/exec001.png"
+    "profile_image_url": "/assets/images/advisors/exec001.png",
+    "assigned_programs": [ 1 ],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      },
+      {
+        "title": "หนังสือ: ภาวะผู้นำยุคดิจิทัลสำหรับผู้บริหารการศึกษา",
+        "publish_date": "2023-06-01",
+        "publication_type": "หนังสือ/ตำรา",
+        "attachment_file": "/uploads/works/exec001_book_01.pdf"
+      }
+    ]
   },
   {
     "email": "kanjana.b@kmitl.ac.th",
@@ -291,7 +427,16 @@
     "expertise": ["เทคโนโลยีชีวภาพทางการเกษตร", "การปรับปรุงพันธุ์พืช"],
     "contact_email": "kanjana.b@kmitl.ac.th",
     "office_location": "อาคาร C ห้อง 320",
-    "profile_image_url": "/assets/images/advisors/adv023.png"
+    "profile_image_url": "/assets/images/advisors/adv023.png",
+    "assigned_programs": [1, 4, 5],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      }
+    ]
   },
   {
     "email": "sarawut.i@kmitl.ac.th",
@@ -312,6 +457,15 @@
     "expertise": ["ภาษาอังกฤษเพื่อการศึกษา", "การสอนภาษาแบบบูรณาการ"],
     "contact_email": "sarawut.i@kmitl.ac.th",
     "office_location": "อาคาร D ห้อง 401",
-    "profile_image_url": "/assets/images/advisors/adv024.png"
+    "profile_image_url": "/assets/images/advisors/adv024.png",
+    "assigned_programs": [1, 4, 5],
+    "academic_works": [
+      {
+        "title": "ผลกระทบของเทคโนโลยีดิจิทัลต่อผลสัมฤทธิ์ทางการเรียนของนักศึกษา",
+        "publish_date": "2023-10-02",
+        "publication_type": "บทความวิจัยในวารสารระดับนานาชาติ (Q2)",
+        "attachment_file": "/uploads/works/adv016_paper_01.pdf"
+      }
+    ]
   }
 ]

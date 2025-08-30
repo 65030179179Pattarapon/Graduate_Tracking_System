@@ -307,17 +307,44 @@ button[type="submit"]:hover {
 /* --- [เพิ่ม] Styles for Account Management --- */
 
 .password-group {
+    position: relative; /* กำหนดให้เป็นจุดอ้างอิงของปุ่ม */
     display: flex;
-    gap: 10px;
+    align-items: center;
 }
 
 .password-group input {
-    flex-grow: 1;
-    background-color: #e9ecef; /* ทำให้ดูเหมือน readonly */
+    /* เพิ่มช่องว่างด้านขวาของ input เพื่อไม่ให้ข้อความทับปุ่ม */
+    padding-right: 50px !important; 
+    width: 100%;
 }
 
-.password-group button {
-    flex-shrink: 0; /* ป้องกันไม่ให้ปุ่มถูกบีบ */
+/* สไตล์สำหรับปุ่มไอคอน (ปุ่มสร้าง, ปุ่มลูกตา) */
+.btn-icon {
+    position: absolute; /* ทำให้ลอยอยู่เหนือ input */
+    right: 10px; /* ระยะห่างจากขอบขวา */
+    top: 50%;
+    transform: translateY(-50%); /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    
+    /* ดีไซน์ปุ่ม */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 16px;
+    
+    /* ขนาดและรูปทรง */
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.btn-icon:hover {
+    color: var(--color-primary);
+    background-color: #e9ecef;
 }
 
 /* Utility class สำหรับซ่อน Element */

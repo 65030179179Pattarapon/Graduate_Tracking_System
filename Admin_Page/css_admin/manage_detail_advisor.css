@@ -232,16 +232,71 @@ textarea:disabled {
 }
 
 /* =================================================================
-   5. Advisor-Specific Styles (ส่วนที่เพิ่มใหม่สำหรับอาจารย์)
+   5. Advisor-Specific Styles (Roles & Programs Section) - [REVISED]
    ================================================================= */
+
+/* Styles for the dynamic program dropdowns */
+.dynamic-select-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.dynamic-select-wrapper select {
+    flex-grow: 1; /* ให้ dropdown ขยายเต็มพื้นที่ */
+}
+
+.btn-add-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #e7f5ff;
+    color: #1c7ed6;
+    border: 1px solid #a5d8ff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-top: 5px; /* เว้นระยะห่างจาก dropdown ด้านบน */
+}
+
+.btn-add-more:hover {
+    background-color: #d0ebff;
+    border-color: #74c0fc;
+}
+
+.btn-remove-item {
+    background: transparent;
+    border: none;
+    color: #adb5bd;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    border-radius: 50%;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-remove-item:hover {
+    color: #e03131;
+    background-color: #fff5f5;
+}
+
+/* Styles for the roles checkbox group */
 .checkbox-group {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
-    padding: 15px;
+    /* จัดเป็น 3 คอลัมน์บนจอใหญ่ และปรับลดอัตโนมัติบนจอเล็ก */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 20px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 8px;
+    height: 100%; /* ทำให้ความสูงเท่ากับ form-group ข้างๆ */
+    box-sizing: border-box;
 }
 
 .checkbox-item {
@@ -251,12 +306,44 @@ textarea:disabled {
     font-size: 15px;
 }
 
+.checkbox-item label {
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
 .checkbox-item input[type="checkbox"] {
     width: 18px;
     height: 18px;
     accent-color: var(--color-primary);
+    cursor: pointer;
 }
 
+.checkbox-item input[type="checkbox"]:checked + label {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+#section-roles .form-group {
+    margin-bottom: 25px; 
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    display: block;
+}
+
+.checkbox-item-complex {
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+#assistant-dean-select {
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 28px; 
+    max-width: calc(100% - 28px);
+}
 /* =================================================================
    6. Table & Pagination Styles
    ================================================================= */
@@ -315,4 +402,78 @@ tbody tr:last-child td {
 .btn-add-row:hover {
     background-color: #dee2e6;
     border-color: #adb5bd;
+}
+
+.password-group {
+    position: relative;
+    display: flex; 
+    align-items: center;
+}
+
+.password-group input {
+    padding-right: 50px !important; 
+    width: 100%;
+}
+
+.btn-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 16px;
+    padding: 8px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+    color: var(--color-primary);
+    background-color: #e9ecef;
+}
+
+#section-account .form-grid.single-col .form-group {
+    max-width: calc(50% - 10px);
+}
+
+.hidden {
+    display: none !important;
+}
+
+#gender-other-input {
+    margin-top: 10px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-primary {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    display: inline-flex; 
+    align-items: center;
+    gap: 8px; 
+    background-color: var(--color-primary); 
+    border: none;
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #d13c74; 
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 12px rgba(237, 73, 136, 0.3); 
 }

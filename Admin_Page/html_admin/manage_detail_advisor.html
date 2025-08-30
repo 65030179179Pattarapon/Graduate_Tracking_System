@@ -46,16 +46,16 @@
             </button>
             <hr class="sidebar-divider">
             <button class="sidebar-btn" data-section="profile">
-                <i class="fas fa-user-circle"></i> ข้อมูลทั่วไปและตำแหน่ง
+                <i class="fas fa-user-circle"></i> ข้อมูลทั่วไป
             </button>
             <button class="sidebar-btn" data-section="roles">
-                <i class="fas fa-briefcase"></i> บทบาทและความเชี่ยวชาญ
+                <i class="fas fa-user-graduate"></i> บทบาทอาจารย์บัณฑิต
             </button>
             <button class="sidebar-btn" data-section="students">
-                <i class="fas fa-users"></i> นักศึกษาในที่ปรึกษา
+                <i class="fas fa-users"></i> นักศึกษาที่รับผิดชอบ
             </button>
-            <button class="sidebar-btn" data-section="documents">
-                <i class="fas fa-paperclip"></i> เอกสารที่เกี่ยวข้อง
+            <button class="sidebar-btn" data-section="publications">
+                <i class="fas fa-book-open"></i> ผลงานทางวิชาการที่ได้รับการตีพิมพ์
             </button>
             <hr class="sidebar-divider">
             <a href="/Admin_Page/html_admin/manage_user.html" class="sidebar-btn">
@@ -74,6 +74,7 @@
             <section id="section-account" class="content-section active">
                 <div class="detail-card">
                     <h3><i class="fas fa-user-shield"></i> การจัดการบัญชี</h3>
+                    
                     <div class="subsection">
                         <h5>ข้อมูลปัจจุบัน</h5>
                         <div class="form-grid two-cols">
@@ -83,14 +84,21 @@
                             </div>
                             <div class="form-group">
                                 <label>รหัสผ่านปัจจุบัน</label>
-                                <input type="password" value="••••••••" disabled>
+                                <div class="password-group">
+                                    <input type="password" id="current-password" value="••••••••" disabled>
+                                    <button id="toggle-current-password" class="btn-icon" title="แสดง/ซ่อนรหัสผ่าน">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
                     <hr class="subtle-divider">
+
                     <div class="subsection">
                         <h5>แก้ไขข้อมูลบัญชี</h5>
-                        <div class="form-grid two-cols">
+                        <div class="form-grid single-col">
                             <div class="form-group">
                                 <label>อีเมลใหม่</label>
                                 <input type="email" id="new-email" placeholder="กรอกอีเมลใหม่ (ถ้าต้องการเปลี่ยน)">
@@ -101,7 +109,9 @@
                                 <label>รหัสผ่านใหม่</label>
                                 <div class="password-group">
                                     <input type="text" id="new-password" placeholder="กดปุ่ม 'สร้าง' เพื่อสุ่มรหัสผ่านใหม่">
-                                    <button id="generate-password-btn" class="btn-secondary" title="สุ่มรหัสผ่านใหม่"><i class="fas fa-sync-alt"></i> สร้าง</button>
+                                    <button id="generate-password-btn" class="btn-icon" title="สุ่มรหัสผ่านใหม่">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -115,54 +125,70 @@
 
             <section id="section-profile" class="content-section">
                 <div class="detail-card">
-                    <h3><i class="fas fa-user-circle"></i> ข้อมูลทั่วไปและตำแหน่ง</h3>
+                    <h3><i class="fas fa-user-circle"></i> ข้อมูลทั่วไป</h3>
+                    
                     <div class="form-grid single-col">
                         <div class="form-group short-input">
-                            <label>รหัสอาจารย์ (Advisor ID)</label>
+                            <label>รหัสอาจารย์</label>
                             <input type="text" id="advisor-id" disabled>
                         </div>
                     </div>
+                    
                     <div class="form-grid four-cols">
                         <div class="form-group"><label>คำนำหน้า (ไทย)</label><select id="prefix-th"></select></div>
                         <div class="form-group"><label>ชื่อ (ไทย)</label><input type="text" id="firstname-th"></div>
+                        <div class="form-group"><label>ชื่อกลาง (ไทย)</label><input type="text" id="middlename-th" placeholder="(ถ้ามี)"></div>
                         <div class="form-group"><label>นามสกุล (ไทย)</label><input type="text" id="lastname-th"></div>
-                        <div class="form-group"><label>ตำแหน่งทางวิชาการ</label><select id="academic-position"></select></div>
                     </div>
+                    
                     <div class="form-grid four-cols">
-                        <div class="form-group"><label>Prefix (EN)</label><select id="prefix-en"></select></div>
+                        <div class="form-group"><label>คำนำหน้า (อังกฤษ)</label><select id="prefix-en"></select></div>
                         <div class="form-group"><label>First Name (EN)</label><input type="text" id="firstname-en"></div>
+                        <div class="form-group"><label>Middle Name (EN)</label><input type="text" id="middlename-en" placeholder="(Optional)"></div>
                         <div class="form-group"><label>Last Name (EN)</label><input type="text" id="lastname-en"></div>
                     </div>
-                    <div class="form-grid three-cols">
-                         <div class="form-group"><label>อีเมลสำหรับติดต่อ</label><input type="email" id="contact-email"></div>
-                         <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="phone"></div>
-                         <div class="form-group"><label>ห้องทำงาน</label><input type="text" id="office-location"></div>
-                    </div>
-                     <div class="form-grid two-cols">
-                        <div class="form-group"><label>คณะ/หน่วยงาน</label><input type="text" id="faculty"></div>
-                        <div class="form-group"><label>ภาควิชา</label><select id="department"></select></div>
+
+                    <div class="form-grid four-cols">
+                        <div class="form-group"><label>อีเมล</label><input type="email" id="contact-email"></div>
+                        <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="phone"></div>
+                        <div class="form-group"><label>เบอร์โทรสำรอง</label><input type="tel" id="backup-phone" placeholder="(ถ้ามี)"></div>
+                        <div class="form-group">
+                            <label>เพศ</label>
+                            <select id="gender">
+                                </select>
+                            <input type="text" id="gender-other-input" class="hidden" placeholder="โปรดระบุ">
+                        </div>
                     </div>
                 </div>
             </section>
             
             <section id="section-roles" class="content-section">
                 <div class="detail-card">
-                    <h3><i class="fas fa-briefcase"></i> บทบาทและความเชี่ยวชาญ</h3>
+                    <h3><i class="fas fa-sitemap"></i> บทบาทและการประจำหลักสูตร</h3>
+
+                    <div class="form-group">
+                        <label>อาจารย์ประจำหลักสูตร</label>
+                        <div id="program-select-container">
+                            </div>
+                        <button type="button" id="add-program-btn" class="btn-add-more">
+                            <i class="fas fa-plus-circle"></i> เพิ่มหลักสูตร
+                        </button>
+                    </div>
+
                     <div class="form-grid two-cols">
                         <div class="form-group">
                             <label>ประเภทของอาจารย์</label>
-                            <select id="advisor-type"></select>
+                            <select id="advisor-type" class="form-control">
+                                </select>
                         </div>
+
                         <div class="form-group">
-                            <label>บทบาทในระบบ (เลือกได้หลายข้อ)</label>
+                            <label>บทบาทอาจารย์บัณฑิต (เลือกได้หลายข้อ)</label>
                             <div id="roles-checkbox-container" class="checkbox-group">
                                 </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label>ความเชี่ยวชาญ (คั่นแต่ละรายการด้วยจุลภาค ,)</label>
-                        <textarea id="expertise" rows="3" placeholder="เช่น วิศวกรรมไฟฟ้าสื่อสาร, การประมวลผลสัญญาณดิจิทัล"></textarea>
-                    </div>
+                    
                 </div>
             </section>
             
