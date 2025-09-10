@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>จัดการข้อมูลอาจารย์ - Admin</title>
     <link rel="stylesheet" href="/Admin_Page/css_admin/common.css" />
-    <link rel="stylesheet" href="/Admin_Page/css_admin/manage_detail_advisor.css" /> 
+    <link rel="stylesheet" href="/Admin_Page/css_admin/manage_detail_advisor.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     <link rel="icon" href="/assets/images/logo.png">
 </head>
@@ -49,13 +49,13 @@
                 <i class="fas fa-user-circle"></i> ข้อมูลทั่วไป
             </button>
             <button class="sidebar-btn" data-section="roles">
-                <i class="fas fa-user-graduate"></i> บทบาทอาจารย์บัณฑิต
+                <i class="fas fa-briefcase"></i> บทบาทและหลักสูตร
             </button>
-            <button class="sidebar-btn" data-section="students">
-                <i class="fas fa-users"></i> นักศึกษาที่รับผิดชอบ
+            <button class="sidebar-btn" data-section="advised-students">
+                <i class="fas fa-user-graduate"></i> นักศึกษาในที่ปรึกษา
             </button>
             <button class="sidebar-btn" data-section="publications">
-                <i class="fas fa-book-open"></i> ผลงานทางวิชาการที่ได้รับการตีพิมพ์
+                <i class="fas fa-file-alt"></i> ผลงานตีพิมพ์
             </button>
             <hr class="sidebar-divider">
             <a href="/Admin_Page/html_admin/manage_user.html" class="sidebar-btn">
@@ -65,7 +65,7 @@
 
         <main class="main-content">
             <div class="main-header">
-                <h1><i class="fas fa-edit"></i> จัดการข้อมูลอาจารย์</h1>
+                <h1><i class="fas fa-user-tie"></i> จัดการข้อมูลอาจารย์</h1>
                 <div class="action-buttons">
                     <button id="save-all-btn" class="btn-primary"><i class="fas fa-save"></i> บันทึกการเปลี่ยนแปลงทั้งหมด</button>
                 </div>
@@ -98,7 +98,7 @@
 
                     <div class="subsection">
                         <h5>แก้ไขข้อมูลบัญชี</h5>
-                        <div class="form-grid single-col">
+                        <div class="form-grid two-cols">
                             <div class="form-group">
                                 <label>อีเมลใหม่</label>
                                 <input type="email" id="new-email" placeholder="กรอกอีเมลใหม่ (ถ้าต้องการเปลี่ยน)">
@@ -108,16 +108,20 @@
                             <div class="form-group">
                                 <label>รหัสผ่านใหม่</label>
                                 <div class="password-group">
-                                    <input type="text" id="new-password" placeholder="กดปุ่ม 'สร้าง' เพื่อสุ่มรหัสผ่านใหม่">
-                                    <button id="generate-password-btn" class="btn-icon" title="สุ่มรหัสผ่านใหม่">
-                                        <i class="fas fa-sync-alt"></i>
-                                    </button>
+                                    <input type="password" id="new-password" placeholder="กรอกรหัสผ่านใหม่">
+                                    <button id="toggle-new-password" class="btn-icon" title="แสดง/ซ่อนรหัสผ่าน"><i class="fas fa-eye"></i></button>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>ยืนยันรหัสผ่านใหม่</label>
-                                <input type="text" id="confirm-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                                <div class="password-group">
+                                    <input type="password" id="confirm-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                                    <button id="toggle-confirm-password" class="btn-icon" title="แสดง/ซ่อนรหัสผ่าน"><i class="fas fa-eye"></i></button>
+                                </div>
                             </div>
+                        </div>
+                         <div class="form-group">
+                             <button id="generate-password-btn" class="btn-secondary"><i class="fas fa-sync-alt"></i> สุ่มรหัสผ่านใหม่</button>
                         </div>
                     </div>
                 </div>
@@ -143,64 +147,68 @@
                     
                     <div class="form-grid four-cols">
                         <div class="form-group"><label>คำนำหน้า (อังกฤษ)</label><select id="prefix-en"></select></div>
-                        <div class="form-group"><label>First Name (EN)</label><input type="text" id="firstname-en"></div>
-                        <div class="form-group"><label>Middle Name (EN)</label><input type="text" id="middlename-en" placeholder="(Optional)"></div>
-                        <div class="form-group"><label>Last Name (EN)</label><input type="text" id="lastname-en"></div>
+                        <div class="form-group"><label>First Name</label><input type="text" id="firstname-en"></div>
+                        <div class="form-group"><label>Middle Name</label><input type="text" id="middlename-en" placeholder="(Optional)"></div>
+                        <div class="form-group"><label>Last Name</label><input type="text" id="lastname-en"></div>
                     </div>
 
-                    <div class="form-grid four-cols">
-                        <div class="form-group"><label>อีเมล</label><input type="email" id="contact-email"></div>
-                        <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="phone"></div>
-                        <div class="form-group"><label>เบอร์โทรสำรอง</label><input type="tel" id="backup-phone" placeholder="(ถ้ามี)"></div>
-                        <div class="form-group">
+                    <div class="form-grid three-cols">
+                        <div class="form-group"><label>อีเมลสำหรับติดต่อ</label><input type="email" id="contact-email"></div>
+                        <div class="form-group"><label>เบอร์โทรศัพท์หลัก</label><input type="tel" id="phone"></div>
+                        <div class="form-group"><label>เบอร์โทรศัพท์สำรอง</label><input type="tel" id="backup-phone"></div>
+                    </div>
+                    <div class="form-grid three-cols">
+                         <div class="form-group">
                             <label>เพศ</label>
                             <select id="gender">
-                                </select>
+                                <option value="">-- ไม่ระบุ --</option>
+                                <option value="ชาย">ชาย</option>
+                                <option value="หญิง">หญิง</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
                             <input type="text" id="gender-other-input" class="hidden" placeholder="โปรดระบุ">
                         </div>
                     </div>
                 </div>
             </section>
-            
+
             <section id="section-roles" class="content-section">
                 <div class="detail-card">
-                    <h3><i class="fas fa-sitemap"></i> บทบาทและการประจำหลักสูตร</h3>
-
-                    <div class="form-group">
-                        <label>อาจารย์ประจำหลักสูตร</label>
-                        <div id="program-select-container">
-                            </div>
-                        <button type="button" id="add-program-btn" class="btn-add-more">
-                            <i class="fas fa-plus-circle"></i> เพิ่มหลักสูตร
-                        </button>
-                    </div>
+                    <h3><i class="fas fa-briefcase"></i> บทบาทและหลักสูตรที่รับผิดชอบ</h3>
 
                     <div class="form-grid two-cols">
                         <div class="form-group">
-                            <label>ประเภทของอาจารย์</label>
-                            <select id="advisor-type" class="form-control">
-                                </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>บทบาทอาจารย์บัณฑิต (เลือกได้หลายข้อ)</label>
-                            <div id="roles-checkbox-container" class="checkbox-group">
-                                </div>
+                            <label for="advisor-type">ประเภทของอาจารย์</label>
+                            <select id="advisor-type"></select>
                         </div>
                     </div>
-                    
+
+                    <div class="form-group">
+                        <label>บทบาทหน้าที่</label>
+                        <div id="roles-checkbox-container" class="checkbox-group">
+                            </div>
+                    </div>
+
+                     <div class="form-group">
+                        <label>หลักสูตรที่ได้รับมอบหมาย</label>
+                        <div id="program-select-container">
+                            </div>
+                        <button id="add-program-btn" class="btn-add-row small-btn"><i class="fas fa-plus"></i> เพิ่มหลักสูตร</button>
+                    </div>
                 </div>
             </section>
-            
-            <section id="section-students" class="content-section">
-                <div class="detail-card">
-                    <h3><i class="fas fa-users"></i> นักศึกษาในที่ปรึกษา</h3>
+
+            <section id="section-advised-students" class="content-section">
+                 <div class="detail-card">
+                    <h3><i class="fas fa-user-graduate"></i> รายชื่อนักศึกษาในที่ปรึกษา</h3>
                     <div class="table-container">
-                        <table id="advised-students-table">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>รหัสนักศึกษา</th>
                                     <th>ชื่อ-นามสกุล</th>
+                                    <th>อีเมล</th>
+                                    <th>ระดับการศึกษา</th>
                                     <th>หลักสูตร</th>
                                     <th>บทบาท</th>
                                     <th>สถานะ</th>
@@ -213,33 +221,34 @@
                     <div class="pagination-controls" id="advised-students-pagination"></div>
                 </div>
             </section>
-            
-            <section id="section-documents" class="content-section">
+
+            <section id="section-publications" class="content-section">
                 <div class="detail-card">
-                    <h3><i class="fas fa-paperclip"></i> เอกสารที่เกี่ยวข้อง (ไฟล์แนบ)</h3>
+                    <h3><i class="fas fa-file-alt"></i> ผลงานตีพิมพ์</h3>
                     <div class="table-container">
-                        <table id="attachments-table">
+                        <table>
                             <thead>
                                 <tr>
-                                    <th>ชื่อเอกสาร</th>
-                                    <th>วันที่อัปโหลด</th>
+                                    <th>ชื่อผลงาน</th>
+                                    <th>วันที่ตีพิมพ์</th>
+                                    <th>ลักษณะการตีพิมพ์</th>
                                     <th>ไฟล์แนบ</th>
-                                    <th>ลบ</th>
+                                    <th>ดำเนินการ</th>
                                 </tr>
                             </thead>
-                            <tbody id="attachments-tbody">
+                            <tbody id="publications-tbody">
                                 </tbody>
                         </table>
                     </div>
-                    <div class="pagination-controls" id="attachments-pagination"></div>
-                    <button id="add-attachment-btn" class="btn-add-row"><i class="fas fa-plus"></i> เพิ่มเอกสารแนบ</button>
+                    <div class="pagination-controls" id="publications-pagination"></div>
+                    <button id="add-publication-btn" class="btn-add-row"><i class="fas fa-plus"></i> เพิ่มผลงานตีพิมพ์</button>
                 </div>
             </section>
-
         </main>
     </div>
 
-    <div id="logout-confirm-modal" class="modal-overlay" style="display: none;"></div>
+    <div id="logout-confirm-modal" class="modal-overlay" style="display: none;">
+    </div>
 
     <script src="/Admin_Page/js_admin/common.js"></script>
     <script src="/Admin_Page/js_admin/manage_detail_advisor.js"></script>

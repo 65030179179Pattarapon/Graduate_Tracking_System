@@ -1,4 +1,4 @@
-// /Admin_Page/js_admin/manage_user.js (Updated with Pagination)
+// /Admin_Page/js_admin/manage_user.js (Corrected & Final Version)
 
 document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sortKey: null,
         sortDirection: null,
         filtersInitialized: false,
-        currentPage: 1,      // หน้าปัจจุบัน
-        rowsPerPage: 10      // จำนวนรายการต่อหน้า
+        currentPage: 1,       // หน้าปัจจุบัน
+        rowsPerPage: 10       // จำนวนรายการต่อหน้า
     };
 
     let chartInstance = null;
@@ -152,16 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!advisorPageState.filtersInitialized) {
             populateAdvisorTypeFilter();
             setupAdvisorFilters();
+            setupAdvisorSorting();
             advisorPageState.filtersInitialized = true;
         }
         applyAdvisorFilters(); 
     }
 
-    function updateSortHeaders() {
-        document.querySelectorAll('#section-students th.sortable').forEach(headerCell => {
+    function updateSortHeaders(section, state) {
+        document.querySelectorAll(`#section-${section} th.sortable`).forEach(headerCell => {
             headerCell.classList.remove('asc', 'desc');
-            if (headerCell.dataset.sortKey === studentSortState.key) {
-                headerCell.classList.add(studentSortState.direction);
+            if (headerCell.dataset.sortKey === state.sortKey) {
+                headerCell.classList.add(state.sortDirection);
             }
         });
     }
@@ -184,14 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: labels,
                 datasets: [{
                     data: data,
-                    backgroundColor: [
-                        '#F47C7C',
-                        '#F7A488', 
-                        '#FAD02E', 
-                        '#82E0AA', 
-                        '#74B9FF', 
-                        '#A593E0' 
-                    ],
+                    backgroundColor: ['#F47C7C', '#F7A488', '#FAD02E', '#82E0AA', '#74B9FF', '#A593E0'],
                     borderColor: '#fff',
                     borderWidth: 2
                 }]
@@ -199,11 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                    }
-                }
+                plugins: { legend: { position: 'bottom' } }
             }
         });
     }
@@ -225,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const advisorFilter = document.getElementById('filter-advisor-name');
         const resetBtn = document.getElementById('reset-student-filters-btn');
 
-        [studentIdFilter, studentNameFilter, studentEmailFilter, advisorFilter].forEach(input => {
+        [studentIdFilter, studentNameFilter, studentEmailFilter].forEach(input => {
             input.addEventListener('input', () => {
                 studentPageState.currentPage = 1;
                 applyStudentFiltersAndSorting();
@@ -245,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 studentPageState.sortKey = null;
                 studentPageState.sortDirection = null;
                 studentPageState.currentPage = 1;
-                updateSortHeaders();
                 applyStudentFiltersAndSorting();
             });
         }
@@ -253,81 +242,55 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('#section-students th.sortable').forEach(headerCell => {
             headerCell.addEventListener('click', () => {
                 const sortKey = headerCell.dataset.sortKey;
-                
                 if (studentPageState.sortKey === sortKey) {
-                    if (studentPageState.sortDirection === 'asc') {
-                        studentPageState.sortDirection = 'desc';
-                    } else { 
-                        studentPageState.sortKey = null; 
-                        studentPageState.sortDirection = null; 
-                    }
+                    studentPageState.sortDirection = studentPageState.sortDirection === 'asc' ? 'desc' : 'asc';
                 } else {
                     studentPageState.sortKey = sortKey;
                     studentPageState.sortDirection = 'asc';
                 }
-                
                 applyStudentFiltersAndSorting();
             });
         });
     }
 
     function applyStudentFiltersAndSorting() {
-        const studentIdFilter = document.getElementById('filter-student-id');
-        const studentNameFilter = document.getElementById('filter-student-name');
-        const studentEmailFilter = document.getElementById('filter-student-email');
-        const advisorFilter = document.getElementById('filter-advisor-name');
-
-        const idQuery = studentIdFilter.value.toLowerCase();
-        const nameQuery = studentNameFilter.value.toLowerCase();
-        const emailQuery = studentEmailFilter.value.toLowerCase();
-        const advisorId = advisorFilter.value;
+        const idQuery = document.getElementById('filter-student-id').value.toLowerCase();
+        const nameQuery = document.getElementById('filter-student-name').value.toLowerCase();
+        const emailQuery = document.getElementById('filter-student-email').value.toLowerCase();
+        const advisorId = document.getElementById('filter-advisor-name').value;
 
         let processedData = masterData.students.filter(student => {
             const fullName = `${student.prefix_th}${student.first_name_th} ${student.last_name_th}`.toLowerCase();
-            const idMatch = student.student_id.toLowerCase().includes(idQuery);
-            const nameMatch = fullName.includes(nameQuery);
-            const emailMatch = student.email.toLowerCase().includes(emailQuery);
-            const advisorMatch = !advisorId || student.main_advisor_id === advisorId;
-            return idMatch && nameMatch && emailMatch && advisorMatch;
+            return fullName.includes(nameQuery) &&
+                   student.student_id.toLowerCase().includes(idQuery) &&
+                   student.email.toLowerCase().includes(emailQuery) &&
+                   (!advisorId || student.main_advisor_id === advisorId);
         });
-        
-        processedData.reverse();
 
         const { sortKey, sortDirection } = studentPageState;
-        if (sortKey && sortDirection) {
+        if (sortKey) {
             processedData.sort((a, b) => {
-                const advisorA = masterData.advisors.find(adv => adv.advisor_id === a.main_advisor_id);
-                const advisorB = masterData.advisors.find(adv => adv.advisor_id === b.main_advisor_id);
-                const valA = getValueForSort(a, sortKey, advisorA);
-                const valB = getValueForSort(b, sortKey, advisorB);
-                if (valA < valB) return sortDirection === 'asc' ? -1 : 1;
-                if (valA > valB) return sortDirection === 'asc' ? 1 : -1;
-                return 0;
+                const valA = getValueForSort(a, sortKey);
+                const valB = getValueForSort(b, sortKey);
+                const comparison = String(valA).localeCompare(String(valB), 'th');
+                return sortDirection === 'asc' ? comparison : -comparison;
             });
         }
         
         studentPageState.filteredData = processedData;
         renderStudentsTablePage();
-        updateSortHeaders();
+        updateSortHeaders('students', studentPageState);
     }
     
-    function getValueForSort(student, key, advisor) {
-        switch (key) {
-            case 'full_name': return `${student.first_name_th}${student.last_name_th}`;
-            case 'advisor_name': return advisor ? `${advisor.first_name_th}${advisor.last_name_th}` : '';
-            default: return student[key] || '';
+    function getValueForSort(student, key) {
+        if (key === 'full_name') return `${student.first_name_th}${student.last_name_th}`;
+        if (key === 'advisor_name') {
+            const advisor = masterData.advisors.find(adv => adv.advisor_id === student.main_advisor_id);
+            return advisor ? `${advisor.first_name_th}${advisor.last_name_th}` : '';
         }
+        return student[key] || '';
     }
 
-    function updateSortHeaders() {
-        document.querySelectorAll('#section-students th.sortable').forEach(headerCell => {
-            headerCell.classList.remove('asc', 'desc');
-            if (headerCell.dataset.sortKey === studentPageState.sortKey) {
-                headerCell.classList.add(studentPageState.sortDirection);
-            }
-        });
-    }
-    
     function renderStudentsTablePage() {
         if (!studentsTableBody) return;
         studentsTableBody.innerHTML = '';
@@ -345,9 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const mainAdvisorName = mainAdvisor ? `${mainAdvisor.first_name_th} ${mainAdvisor.last_name_th}`.trim() : '-';
                 const tr = document.createElement('tr');
                 tr.classList.add('clickable-row');
-                tr.onclick = () => {
-                    window.location.href = `/Admin_Page/html_admin/manage_detail_user.html?id=${student.student_id}`;
-                };
+                tr.onclick = () => window.location.href = `/Admin_Page/html_admin/manage_detail_user.html?id=${student.student_id}`;
 
                 tr.innerHTML = `
                     <td>${student.student_id}</td>
@@ -356,8 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${student.phone || '-'}</td>
                     <td>${mainAdvisorName}</td>
                     <td class="action-cell">
-                        <button class="btn-edit" title="แก้ไข" data-id="${student.student_id}"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-delete" title="ลบ" data-id="${student.student_id}"><i class="fas fa-trash-alt"></i></button>
+                        <button class="btn-edit" title="แก้ไข"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn-delete" title="ลบ"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
                 
@@ -367,18 +328,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 tr.querySelector('.btn-delete').addEventListener('click', (e) => {
                     e.stopPropagation();
-
-                    const studentIdToDelete = e.currentTarget.dataset.id;
-
-                    if (confirm(`คุณต้องการลบข้อมูลของนักศึกษา ID: ${studentIdToDelete} ใช่หรือไม่?\nการกระทำนี้ไม่สามารถย้อนกลับได้`)) {
-
+                    if (confirm(`คุณต้องการลบข้อมูลของนักศึกษา ID: ${student.student_id} ใช่หรือไม่?`)) {
                         let students = JSON.parse(localStorage.getItem('savedStudents') || '[]');
-
-                        const updatedStudents = students.filter(s => s.student_id !== studentIdToDelete);
-
+                        const updatedStudents = students.filter(s => s.student_id !== student.student_id);
                         localStorage.setItem('savedStudents', JSON.stringify(updatedStudents));
-
-                        alert(`ลบข้อมูลนักศึกษา ID: ${studentIdToDelete} เรียบร้อยแล้ว`);
+                        alert(`ลบข้อมูลนักศึกษา ID: ${student.student_id} เรียบร้อยแล้ว`);
                         window.location.reload();
                     }
                 });
@@ -392,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateStudentPagination() {
         const controlsContainer = document.getElementById('pagination-students');
         if (!controlsContainer) return;
-        const totalPages = Math.ceil(studentPageState.filteredData.length / studentPageState.rowsPerPage);
+        const totalPages = Math.ceil(studentPageState.filteredData.length / studentPageState.rowsPerPage) || 1;
         if (totalPages <= 1) {
             controlsContainer.innerHTML = '';
             return;
@@ -417,29 +371,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAdvisorsSection() {
-    if (!advisorPageState.filtersInitialized) {
-        populateAdvisorTypeFilter();
-        setupAdvisorFilters();
-        setupAdvisorSorting();
-        advisorPageState.filtersInitialized = true;
-    }
-        advisorPageState.filteredData = [...masterData.advisors];
-        renderAdvisorsTablePage();
+        if (!advisorPageState.filtersInitialized) {
+            populateAdvisorTypeFilter();
+            setupAdvisorFilters();
+            setupAdvisorSorting();
+            advisorPageState.filtersInitialized = true;
+        }
+        applyAdvisorFilters();
     }
 
     function populateAdvisorTypeFilter() {
         const advisorTypeFilter = document.getElementById('filter-advisor-type');
         if (!advisorTypeFilter) return;
-
-        const advisorTypes = [
-            "อาจารย์ประจำ", "อาจารย์ประจำหลักสูตร", "อาจารย์ผู้รับผิดชอบหลักสูตร",
-            "อาจารย์บัณฑิตพิเศษภายใน", "อาจารย์บัณฑิตพิเศษภายนอก", "ผู้บริหาร"
-        ];
-
+        const advisorTypes = [...new Set(masterData.advisors.map(a => a.type).filter(Boolean))];
         advisorTypeFilter.innerHTML = '<option value="">ทุกประเภท</option>';
-        advisorTypes.forEach(type => {
-            advisorTypeFilter.add(new Option(type, type));
-        });
+        advisorTypes.forEach(type => advisorTypeFilter.add(new Option(type, type)));
     }
 
     function setupAdvisorFilters() {
@@ -449,9 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const typeFilter = document.getElementById('filter-advisor-type');
         const resetBtn = document.getElementById('reset-advisor-filters-btn');
 
-        const filterInputs = [nameFilter, emailFilter, phoneFilter, typeFilter];
-
-        filterInputs.forEach(input => {
+        [nameFilter, emailFilter, phoneFilter, typeFilter].forEach(input => {
             input.addEventListener('input', () => {
                 advisorPageState.currentPage = 1;
                 applyAdvisorFilters();
@@ -480,77 +424,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let processedData = masterData.advisors.filter(advisor => {
             const fullName = `${advisor.prefix_th || ''}${advisor.first_name_th || ''} ${advisor.last_name_th || ''}`.toLowerCase();
-            const phone = advisor.phone || '';
-
-            const nameMatch = !nameQuery || fullName.includes(nameQuery);
-            const emailMatch = !emailQuery || advisor.email.toLowerCase().includes(emailQuery);
-            const phoneMatch = !phoneQuery || phone.includes(phoneQuery);
-            const typeMatch = !typeQuery || advisor.type === typeQuery;
-
-            return nameMatch && emailMatch && phoneMatch && typeMatch;
+            return fullName.includes(nameQuery) &&
+                   (advisor.email && advisor.email.toLowerCase().includes(emailQuery)) &&
+                   (advisor.phone || '').includes(phoneQuery) &&
+                   (!typeQuery || advisor.type === typeQuery);
         });
 
-            const { sortKey, sortDirection } = advisorPageState;
-            if (sortKey && sortDirection) {
+        const { sortKey, sortDirection } = advisorPageState;
+        if (sortKey) {
             processedData.sort((a, b) => {
                 const valA = getAdvisorValueForSort(a, sortKey);
                 const valB = getAdvisorValueForSort(b, sortKey);
-
                 const comparison = String(valA).localeCompare(String(valB), 'th');
-                
                 return sortDirection === 'asc' ? comparison : -comparison;
             });
         }
 
         advisorPageState.filteredData = processedData;
         renderAdvisorsTablePage();
-        updateAdvisorSortHeaders();
+        updateSortHeaders('advisors', advisorPageState);
     }
 
     function setupAdvisorSorting() {
-    document.querySelectorAll('#section-advisors th.sortable').forEach(headerCell => {
-        headerCell.addEventListener('click', () => {
-            const sortKey = headerCell.dataset.sortKey;
-            
-            if (advisorPageState.sortKey === sortKey) {
-                if (advisorPageState.sortDirection === 'asc') {
-                    advisorPageState.sortDirection = 'desc';
+        document.querySelectorAll('#section-advisors th.sortable').forEach(headerCell => {
+            headerCell.addEventListener('click', () => {
+                const sortKey = headerCell.dataset.sortKey;
+                if (advisorPageState.sortKey === sortKey) {
+                    advisorPageState.sortDirection = advisorPageState.sortDirection === 'asc' ? 'desc' : 'asc';
                 } else {
-                    advisorPageState.sortKey = null;
-                    advisorPageState.sortDirection = null;
+                    advisorPageState.sortKey = sortKey;
+                    advisorPageState.sortDirection = 'asc';
                 }
-            } else {
-                advisorPageState.sortKey = sortKey;
-                advisorPageState.sortDirection = 'asc';
-            }
-            
-            applyAdvisorFilters();
+                applyAdvisorFilters();
+            });
         });
-    });
-}
-
-    function getAdvisorValueForSort(advisor, key) {
-        switch (key) {
-            case 'full_name':
-                return `${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}`;
-            default:
-                return advisor[key] || '';
-        }
     }
 
-    function updateAdvisorSortHeaders() {
-        document.querySelectorAll('#section-advisors th.sortable').forEach(headerCell => {
-            headerCell.classList.remove('asc', 'desc');
-            if (headerCell.dataset.sortKey === advisorPageState.sortKey) {
-                headerCell.classList.add(advisorPageState.sortDirection);
-            }
-        });
+    function getAdvisorValueForSort(advisor, key) {
+        if (key === 'full_name') return `${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}`;
+        return advisor[key] || '';
     }
 
     function renderAdvisorsTablePage() {
-        const advisorsTableBody = document.getElementById('advisors-table-body');
         if (!advisorsTableBody) return;
-
         advisorsTableBody.innerHTML = '';
         document.getElementById('advisor-count').textContent = `รายชื่ออาจารย์ (${advisorPageState.filteredData.length})`;
 
@@ -564,13 +480,16 @@ document.addEventListener('DOMContentLoaded', () => {
             paginatedItems.forEach(advisor => {
                 const tr = document.createElement('tr');
                 tr.classList.add('clickable-row');
-                tr.addEventListener('click', () => {
+                
+                const navigateToDetail = () => {
                     if (advisor.email) {
                         window.location.href = `/Admin_Page/html_admin/manage_detail_advisor.html?email=${advisor.email}`;
                     } else {
                         alert('ไม่พบอีเมลของอาจารย์ท่านนี้');
                     }
-                });
+                };
+
+                tr.addEventListener('click', navigateToDetail);
 
                 tr.innerHTML = `
                     <td>${advisor.prefix_th}${advisor.first_name_th} ${advisor.last_name_th}</td>
@@ -578,31 +497,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${advisor.phone || '-'}</td>
                     <td>${advisor.type || '-'}</td>
                     <td class="action-cell">
-                        <button class="btn-edit" title="แก้ไข" data-id="${advisor.advisor_id}"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-delete" title="ลบ" data-id="${advisor.advisor_id}"><i class="fas fa-trash-alt"></i></button>
+                        <button class="btn-edit" title="แก้ไข"><i class="fas fa-pencil-alt"></i></button>
+                        <button class="btn-delete" title="ลบ"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
 
-                const editButton = tr.querySelector('.btn-edit');
-                const deleteButton = tr.querySelector('.btn-delete');
-
-                if (editButton) {
-                    editButton.addEventListener('click', (e) => {
-                        e.stopPropagation(); 
-                        const advisorId = e.currentTarget.dataset.id;
-                        alert(`(ตัวอย่าง) กำลังแก้ไขข้อมูลอาจารย์ ID: ${advisorId}`);
-                    });
-                }
-
-                if (deleteButton) {
-                    deleteButton.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const advisorId = e.currentTarget.dataset.id;
-                        if (confirm(`คุณต้องการลบข้อมูลอาจารย์ ID: ${advisorId} ใช่หรือไม่?`)) {
-                            alert(`(ตัวอย่าง) กำลังลบข้อมูลอาจารย์ ID: ${advisorId}`);
-                        }
-                    });
-                }
+                tr.querySelector('.btn-edit').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navigateToDetail();
+                });
+                
+                tr.querySelector('.btn-delete').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm(`คุณต้องการลบข้อมูลอาจารย์ ID: ${advisor.advisor_id} ใช่หรือไม่?`)) {
+                        alert(`(ตัวอย่าง) กำลังลบข้อมูลอาจารย์ ID: ${advisor.advisor_id}`);
+                    }
+                });
                 
                 advisorsTableBody.appendChild(tr);
             });
